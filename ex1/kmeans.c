@@ -5,25 +5,31 @@
 #include <math.h>
 
 struct vector;
+struct list;
+struct S;
 
-typedef struct {
+struct list {
 	struct vector* vector;
 	struct list* next;
 	struct list* prev;
-} list;
+};
 
-typedef struct {
-	list* vectors;
+struct S {
+	struct list* vectors;
 	struct vector* center;
 	struct S* next;
-} S;
+};
 
-typedef struct {
-	S* S;
+struct vector {
+	struct S* S;
 	float* vector;
 	int size;
-	list* list;
-} vector;
+	struct list* list;
+};
+
+typedef struct vector vector;
+typedef struct list list;
+typedef struct S S;
 
 vector* vector_init(float* vals, int N) {
       vector* v;
@@ -113,6 +119,22 @@ void divide(vector* v, float c) {
 	}
 }
 
+
+double dist(vector* v1, vector* v2) {
+	double sum;
+	
+	for (int i=0; i<v1->size; i++) {
+		sum += pow(v1->vector[i] - v2->vector[i], 2);
+	}
+	return sum;
+}
+
+void zero(vector* v) {
+	for(int i=0; i<v->size; i++) {
+		v->vector[i] = 0.0;
+	}
+}
+
 void recenter(S* S){
 	list* current;
 	int n = 0;
@@ -133,20 +155,35 @@ void recenter(S* S){
 
 }
 
-double dist(vector* v1, vector* v2) {
-	double sum;
-	
-	for (int i=0; i<v1->size; i++) {
-		sum += pow(v1->vector[i] - v2->vector[i], 2);
-	}
-	return sum;
+void remove_S(vector* v) {
+	list* next;
+	list* prev;
+	S* S;
+
+	prev = v->list->prev;
+	next = v->list->next;
+	S = v->S;
+	v->S = NULL;
+
+	if (prev == NULL && next == NULL) { 
+		S->vectors = NULL;
+	} if (prev == NULL) {
+		S->vectors = next;
+		next->prev = NULL;
+	} if (next == NULL) {
+		prev->next = NULL;
+	} next->prev = prev;
+	prev->next = next;
 }
 
-void zero(vector* v) {
-	for(int i=0; i<v->size; i++) {
-		v->vector[i] = 0.0;
-	}
+
+void add_to_S(S* S, vector* v) { 
+	remove_S(v);
+	v->S = S;
+	v->list->next = S->vectors;
+	S->vectors = v->list;
 }
+
 
 void printVec(vector* v) {
 	int i;
