@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 struct vector;
 
@@ -12,14 +13,16 @@ typedef struct {
 } list;
 
 typedef struct {
-	list vectors;
+	list* vectors;
 	struct vector* center;
+	struct S* next;
 } S;
 
 typedef struct {
 	S* S;
 	float* vector;
 	int size;
+	list* list;
 } vector;
 
 vector* vector_init(float* vals, int N) {
@@ -37,6 +40,45 @@ vector* vector_init(float* vals, int N) {
       v->S = NULL;
       return v;
 }
+
+S* S_init(vector* v){
+	S* Set;
+
+	assert(v!=NULL);
+	Set = (S*)malloc(sizeof(S));
+	assert(Set != NULL);
+	Set->vectors = NULL;
+	Set->center = v;
+	Set->next = NULL;
+
+	return Set; 
+}
+
+
+S* clusters_init(list* vectors, int K){
+	S* head;
+	S* curr = NULL;
+	S* prev;
+
+	assert(vectors!=NULL);
+	head = S_init(vectors->vector);
+	prev = head;
+
+	while(K>0){
+		if (vectors == NULL){
+			printf("%s\n", "Not enough vectors!");
+			exit(EXIT_FAILURE);
+		}
+		curr = S_init(vectors->vector);
+		prev->next = curr;
+		vectors = vectors->next;
+		K--;
+	}
+	prev->next = curr;
+
+	return head;
+}
+
 
 void vector_free(vector* v){
 		assert(v != NULL);
@@ -84,10 +126,26 @@ void recenter(S* S){
 	}
 	while(current!=NULL){
 		n++;
-		u = add(u,current->vector);
+		add(S->center,current->vector);
 		current = current->next;
 	}
-	u = divide(u,n);
+	divide(S->center,n);
+
+}
+
+double dist(vector* v1, vector* v2) {
+	double sum;
+	
+	for (int i=0; i<v1->size; i++) {
+		sum += pow(v1->vector[i] - v2->vector[i], 2);
+	}
+	return sum;
+}
+
+void zero(vector* v) {
+	for(int i=0; i<v->size; i++) {
+		v->vector[i] = 0.0;
+	}
 }
 
 void printVec(vector* v) {
