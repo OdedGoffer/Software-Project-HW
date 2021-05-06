@@ -113,6 +113,7 @@ list* read_vectors(char* filename){
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
+		printf("%s\n", "Not a valid filename!");
 		exit(EXIT_FAILURE);
 	}
 
@@ -164,9 +165,20 @@ int free_vectors(list* head){
 
 int main () {
 
+	char filename[100];
 	list* vectors;
+	list* current;
 
+
+	// printf("%s\n", "Please enter filename:");
+	// scanf("%s", &filename);
 	vectors = read_vectors("tests/input_1.txt");
-	printVec(vectors->vector);
+	current = vectors;
+
+	while(current != NULL){
+		printVec(current->vector);
+		current = current->next;
+	}
+
 	return free_vectors(vectors);
 } 
