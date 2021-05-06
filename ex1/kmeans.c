@@ -72,6 +72,11 @@ void divide(vector* v, float c) {
 	}
 }
 
+void recenter(S* S){
+	zero(S->center);
+	
+}
+
 void printVec(vector* v) {
 	int i;
 	int vec_size;
