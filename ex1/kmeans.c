@@ -42,6 +42,8 @@ vector* vector_init(float* vals, int N) {
       v->vector = (float*)malloc(sizeof(float)*N);
       assert (v->vector != NULL);
       memcpy(v->vector, vals, sizeof(float)*N);
+      v->list = (list*)malloc(sizeof(list));
+      assert (v->list != NULL);
       v->size = N;
       v->S = NULL;
       return v;
@@ -90,6 +92,9 @@ void vector_free(vector* v){
 		assert(v != NULL);
 		if (v->vector != NULL){
 			free(v->vector);
+		}
+		if (v->list != NULL){
+			free(v->list);
 		}
 		free(v);
 	}
