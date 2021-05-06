@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 struct vector;
 
@@ -72,9 +73,19 @@ void divide(vector* v, float c) {
 	}
 }
 
-void recenter(S* S){
-	zero(S->center);
+double dist(vector* v1, vector* v2) {
+	double sum;
 	
+	for (int i=0; i<v1->size; i++) {
+		sum += pow(v1->vector[i] - v2->vector[i], 2);
+	}
+	return sum;
+}
+
+void zero(vector* v) {
+	for(int i=0; i<v->size; i++) {
+		v->vector[i] = 0.0;
+	}
 }
 
 void printVec(vector* v) {
@@ -204,6 +215,20 @@ int main () {
 		printVec((vector*)current->vector);
 		current = (list*)current->next;
 	}
+
+	float vals1[] = {1.0, 1.0, 1.0};
+	vector* v1 = vector_init(vals1, 3);
+	float vals2[] = {3.0, 3.0, 3.0};
+	vector* v2 = vector_init(vals2, 3);
+	printVec(v1);
+	printVec(v2);
+	double distance;
+	distance = dist(v1, v2);
+	printf("%lf\n", distance);
+	vector* sum = add(v1, v2);
+	printVec(sum);
+	zero(sum);
+	printVec(sum);
 
 	return free_vectors(vectors);
 } 
