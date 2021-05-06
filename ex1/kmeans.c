@@ -23,10 +23,12 @@ typedef struct {
 } vector;
 
 vector* vector_init(float* vals, int N) {
+      vector* v;
+
       if (vals == NULL) {
       	return NULL;
       }
-      vector* v = (vector*)malloc(sizeof(vector));
+      v = (vector*)malloc(sizeof(vector));
       assert(v != NULL);
       v->vector = (float*)malloc(sizeof(float)*N);
       assert (v->vector != NULL);
@@ -45,25 +47,37 @@ void vector_free(vector* v){
 	}
 
 vector* add(vector* v1, vector* v2) {
+	float* vals;
+	int i;
+	vector* sum;
+
 	assert (v1 != NULL && v2 != NULL);
-	float vals[v1->size];
-	for (int i=0; i<v1->size; i++) {
+
+	vals = malloc((v1->size)*sizeof(float));
+
+	for (i=0; i<v1->size; i++) {
 		vals[i] = v1->vector[i] + v2->vector[i];
 	}
-	vector* sum = vector_init(vals, v1->size);	
+	sum = vector_init(vals, v1->size);
+	free(vals);	
 	return sum;
 }
 
 void divide(vector* v, float c) {
+	int i;
+
 	assert (v != NULL);
-	for (int i=0; i<v->size; i++) {
+	for (i=0; i<v->size; i++) {
 		v->vector[i] = v->vector[i]/c;
 	}
 }
 
 void printVec(vector* v) {
-	int i = 0;
-	for (i; i<v->size -1; i++) {
+	int i;
+	int vec_size;
+
+	vec_size = v->size;
+	for (i=0; i<vec_size-1; i++) {
 		printf("%.4f, ", v->vector[i]);
 	}
 	printf("%.4f\n ", v->vector[i]);
@@ -94,10 +108,8 @@ int getN(char* filename) {
 
 list* read_vectors(char* filename){
 
-	list* head = (list*)malloc(sizeof(list));
-	assert(head != NULL);
-	head->prev = NULL;
-	list* now = head;
+	list* head;
+	list* now;
 	list* tmp;
 	FILE* fp;
 	int N;
@@ -109,6 +121,11 @@ list* read_vectors(char* filename){
 	int i = 0;
 	vector* v;
 
+	head = (list*)malloc(sizeof(list));
+	assert(head != NULL);
+	head->prev = NULL;
+
+	now = head;
 	N = getN(filename);
 
 	fp = fopen(filename, "r");
@@ -120,7 +137,7 @@ list* read_vectors(char* filename){
 	vals = (float*)malloc(N*sizeof(float));
 	assert(vals != NULL);
 
-	while (read = getline(&line, &len, fp) != -1) {
+	while ((read = getline(&line, &len, fp)) != -1) {
 		i=0;
 		token = strtok(line, ",");
 		while (token != NULL) {
@@ -150,34 +167,37 @@ int free_vectors(list* head){
 
 	list* now = head;
 	list* tmp;
-	vector* vec;
 
 	while(now->next != NULL){
 		tmp = now;
-		now = now->next;
+		now = (list*)now->next;
 		
 		free(tmp);
 	}
-	vector_free(now->vector);
+	vector_free((vector*)now->vector);
 	free(now);
 	return 0;
 }
 
 int main () {
 
+	/*
 	char filename[100];
+	*/
 	list* vectors;
 	list* current;
 
+/*
+	printf("%s\n", "Please enter filename:");
+	scanf("%s", &filename);
 
-	// printf("%s\n", "Please enter filename:");
-	// scanf("%s", &filename);
+*/
 	vectors = read_vectors("tests/input_1.txt");
 	current = vectors;
 
 	while(current != NULL){
-		printVec(current->vector);
-		current = current->next;
+		printVec((vector*)current->vector);
+		current = (list*)current->next;
 	}
 
 	return free_vectors(vectors);
