@@ -44,6 +44,7 @@ vector* vector_init(float* vals, int N) {
       memcpy(v->vector, vals, sizeof(float)*N);
       v->list = (list*)malloc(sizeof(list));
       assert (v->list != NULL);
+      v->list->vector = v;
       v->size = N;
       v->S = NULL;
       return v;
@@ -65,24 +66,25 @@ S* S_init(vector* v){
 
 S* clusters_init(list* vectors, int K){
 	S* head;
-	S* curr = NULL;
+	S* curr;
 	S* prev;
 
 	assert(vectors!=NULL);
 	head = S_init(vectors->vector);
 	prev = head;
 
-	while(K>0){
+	while(K>1){
+		vectors = vectors->next;
 		if (vectors == NULL){
 			printf("%s\n", "Not enough vectors!");
 			exit(EXIT_FAILURE);
 		}
 		curr = S_init(vectors->vector);
 		prev->next = curr;
-		vectors = vectors->next;
+		prev = curr;
 		K--;
 	}
-	prev->next = curr;
+	prev->next = NULL;
 
 	return head;
 }
@@ -172,20 +174,27 @@ void remove_S(vector* v) {
 
 	if (prev == NULL && next == NULL) { 
 		S->vectors = NULL;
-	} if (prev == NULL) {
+	} else if (prev == NULL) {
 		S->vectors = next;
 		next->prev = NULL;
-	} if (next == NULL) {
+	} else if (next == NULL) {
 		prev->next = NULL;
-	} next->prev = prev;
-	prev->next = next;
+	} else { 
+		next->prev = prev;
+		prev->next = next;
+	}
+	v->list->next = NULL;
+	v->list->prev = NULL;
 }
 
 
 void add_to_S(S* S, vector* v) { 
 	remove_S(v);
 	v->S = S;
-	v->list->next = S->vectors;
+	(v->list)->next = S->vectors;
+	if(S->vectors != NULL){
+		(S->vectors)->prev = v->list;
+	}
 	S->vectors = v->list;
 }
 
@@ -303,7 +312,9 @@ int main () {
 	char filename[100];
 	*/
 	list* vectors;
-	list* current;
+	list* curr_vec;
+	S* clusters;
+	S* curr_S;
 
 /*
 	printf("%s\n", "Please enter filename:");
@@ -311,11 +322,19 @@ int main () {
 
 */
 	vectors = read_vectors("tests/input_1.txt");
-	current = vectors;
+	clusters = clusters_init(vectors,7);
+	curr_vec = vectors;
+	curr_S = clusters;
 
-	while(current != NULL){
-		printVec((vector*)current->vector);
-		current = (list*)current->next;
+	while(curr_S != NULL && curr_vec->vector != NULL){
+		add_to_S(curr_S,curr_vec->vector);
+		curr_S = curr_S->next;
+	}
+	curr_S = clusters;
+	
+	while(curr_S != NULL){
+		printVec((curr_S->vectors)->vector);
+		curr_S = curr_S->next;
 	}
 
 	return free_vectors(vectors);
