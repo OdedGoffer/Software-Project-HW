@@ -46,7 +46,7 @@ void vector_free(vector* v){
 		free(v);
 	}
 
-vector* add(vector* v1, vector* v2) {
+void add(vector* v1, vector* v2) {
 	float* vals;
 	int i;
 	vector* sum;
@@ -56,11 +56,10 @@ vector* add(vector* v1, vector* v2) {
 	vals = malloc((v1->size)*sizeof(float));
 
 	for (i=0; i<v1->size; i++) {
-		vals[i] = v1->vector[i] + v2->vector[i];
+		v1->vector[i] = v1->vector[i] + v2->vector[i];
 	}
-	sum = vector_init(vals, v1->size);
 	free(vals);	
-	return sum;
+	return;
 }
 
 void divide(vector* v, float c) {
@@ -73,8 +72,22 @@ void divide(vector* v, float c) {
 }
 
 void recenter(S* S){
+	list* current;
+	int n = 0;
+
+	assert(S!=NULL);
+	current = S->vectors;
+
 	zero(S->center);
-	
+	if(current == NULL){
+		return;
+	}
+	while(current!=NULL){
+		n++;
+		u = add(u,current->vector);
+		current = current->next;
+	}
+	u = divide(u,n);
 }
 
 void printVec(vector* v) {
