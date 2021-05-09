@@ -15,7 +15,7 @@ struct S {
 
 struct vector {
 	struct S* S;
-	float* vector;
+	double* vector;
 	int size;
 	struct vector* next;
 	struct vector* prev;
@@ -24,12 +24,12 @@ struct vector {
 typedef struct vector vector;
 typedef struct S S;
 
-void vector_init(float* vals, int N, vector* v) {
+void vector_init(double* vals, int N, vector* v) {
       
       assert(v != NULL && vals != NULL);
-      v->vector = (float*)malloc(sizeof(float)*N);
+      v->vector = (double*)malloc(sizeof(double)*N);
       assert (v->vector != NULL);
-      memcpy(v->vector, vals, sizeof(float)*N);
+      memcpy(v->vector, vals, sizeof(double)*N);
       v->size = N;
       v->S = NULL;
       v->next = NULL;
@@ -104,17 +104,16 @@ S* clusters_init(vector* vectors, int K){
 
 void add(vector* v1, vector* v2) {
 	
-	float* vals;
 	int i;
 
 	assert (v1 != NULL && v2 != NULL);
 
 	for (i=0; i<(v1->size); i++) {
-		v1->vector[i] = v1->vector[i] + v2->vector[i];
+		v1->vector[i] = (v1->vector[i]) + (v2->vector[i]);
 	}
 }
 
-void divide(vector* v, float c) {
+void divide(vector* v, double c) {
 	
 	int i;
 
@@ -125,13 +124,13 @@ void divide(vector* v, float c) {
 }
 
 
-float dist(vector* v1, vector* v2) {
+double dist(vector* v1, vector* v2) {
 	
 	int i;
 	double sum = 0;
 	
 	for (i=0; i<v1->size; i++) {
-		sum += (float)pow(v1->vector[i] - v2->vector[i], 2);
+		sum += pow(v1->vector[i] - v2->vector[i], 2);
 	}
 	return sum;
 }
@@ -148,7 +147,7 @@ void zero(vector* v) {
 void recenter(S* S){
 	
 	vector* current;
-	int n = 0;
+	double n = 0.0;
 
 	assert(S!=NULL);
 	current = S->vectors;
@@ -157,7 +156,7 @@ void recenter(S* S){
 		return;
 	}
 	while(current!=NULL){
-		n++;
+		n += 1.0;
 		add(S->center,current);
 		current = current->next;
 	}
@@ -239,12 +238,12 @@ vector* read_vectors(char* filename, int k){
 	ssize_t read;
 	int i;
 	int p = 0;
-	float num;
+	double num;
 	vector* vectors;
 
 	N = getN(filename);
 
-	float vals[N];
+	double vals[N];
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
@@ -296,20 +295,18 @@ void free_vectors(vector* vectors){
 
 
 S* closest_clust(vector* v, S* clusters) {
+
 	S* closest_clust;
-	vector* closest_center;
-	float min_dist;
+	double min_dist;
 	vector* curr;
 
 	curr = clusters->center;
 	min_dist = dist(v, curr);
-	closest_center = curr;
 	closest_clust = clusters;
 	while (clusters->next != NULL) {
 		clusters = clusters->next;
 		curr = clusters->center;
 		if (min_dist > dist(v, curr)) {
-			closest_center = curr;
 			closest_clust = clusters;
 			min_dist = dist(v, curr);
 		}
@@ -324,7 +321,7 @@ int main () {
 	/*
 	char filename[100];
 	*/
-	int K = 7;
+	int K = 2;
 	int MAX_ITER = 200;
 	S* clusters;
 	S* curr_S;
@@ -345,20 +342,19 @@ int main () {
 	clusters = clusters_init(vectors, K);
 	curr_S = clusters;
 
-
-	while(i<MAX_ITER){
+	while(i<10){
 		i++;
 		CHANGE = 0;
 		p = 0;
 		while(vectors[p].size != 0){
-			p++;
 			min_S = closest_clust(&vectors[p], clusters);
 			if (vectors[p].S != min_S){
 				CHANGE = 1;
 				add_S(min_S, &vectors[p]);
 			}
-			
+			p++;
 		}
+
 
 		if (CHANGE == 0){
 			break;
@@ -367,12 +363,31 @@ int main () {
 		curr_S = clusters;
 		while(curr_S != NULL){
 			recenter(curr_S);
-			printf("%d\n", i);
+			curr_S = curr_S -> next;
+		}
+
+		curr_S = clusters;
+		int size;
+		while(curr_S != NULL){
+			size = 0;
+			v = curr_S->vectors;
+			while(v!=NULL){
+				size++;
+				v = v-> next;
+			}
+			printf("%d\n", size);
 			printVec(curr_S->center);
 			curr_S = curr_S -> next;
 		}
 
+
+		printf("%s\n\n\n\n", "---------");
+
+
+
 	}
+
+	printf("%d\n", i);
 
 
 	curr_S = clusters;
