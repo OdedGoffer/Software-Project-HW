@@ -2,71 +2,208 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 struct vector;
+struct S;
 
-typedef struct {
-	struct vector* vector;
-	struct list* next;
-	struct list* prev;
-} list;
-
-typedef struct {
-	list vectors;
+struct S {
+	struct vector* vectors;
 	struct vector* center;
-} S;
+	struct S* next;
+};
 
-typedef struct {
-	S* S;
-	float* vector;
+struct vector {
+	struct S* S;
+	double* vector;
 	int size;
-} vector;
+	struct vector* next;
+	struct vector* prev;
+};
 
-vector* vector_init(float* vals, int N) {
-      if (vals == NULL) {
-      	return NULL;
-      }
-      vector* v = (vector*)malloc(sizeof(vector));
-      assert(v != NULL);
-      v->vector = (float*)malloc(sizeof(float)*N);
+typedef struct vector vector;
+typedef struct S S;
+
+void vector_init(double* vals, int N, vector* v) {
+      
+      assert(v != NULL && vals != NULL);
+      v->vector = (double*)malloc(sizeof(double)*N);
       assert (v->vector != NULL);
-      memcpy(v->vector, vals, sizeof(float)*N);
+      memcpy(v->vector, vals, sizeof(double)*N);
       v->size = N;
       v->S = NULL;
-      return v;
+      v->next = NULL;
+      v->prev = NULL;
 }
 
-void vector_free(vector* v){
-		assert(v != NULL);
-		if (v->vector != NULL){
-			free(v->vector);
+void sentinal_vector_init(vector* v) {
+      
+      assert(v != NULL);
+      v->size = -1;
+      v->vector = NULL;
+      v->S = NULL;
+      v->next = NULL;
+      v->prev = NULL;
+}
+
+void printVec(vector* v) {
+	
+	int i;
+	int vec_size;
+
+	assert(v != NULL);
+
+	vec_size = v->size;
+	for (i=0; i<vec_size-1; i++) {
+		printf("%.4f, ", v->vector[i]);
+	}
+	printf("%.4f\n", v->vector[i]);
+}
+
+S* S_init(vector* v){
+	S* Set;
+
+	assert(v!=NULL);
+	Set = (S*)malloc(sizeof(S));
+	assert(Set != NULL);
+	Set->vectors = v;
+	v->S = Set;
+	Set->center = (vector*)malloc(sizeof(vector));
+	assert(Set->center != NULL);
+	vector_init(v->vector,v->size,Set->center);
+	Set->next = NULL;
+
+	return Set; 
+}
+
+
+S* clusters_init(vector* vectors, int K){
+	
+	S* head;
+	S* curr;
+	S* prev;
+
+	assert(vectors!=NULL);
+	head = S_init(vectors);
+	prev = head;
+
+	while(K>1){
+		vectors++;
+		if (vectors->size == 0){
+			printf("%s\n", "Not enough vectors!");
+			exit(EXIT_FAILURE);
 		}
-		free(v);
+		curr = S_init(vectors);
+		prev->next = curr;
+		prev = curr;
+		K--;
 	}
+	prev->next = NULL;
 
-vector* add(vector* v1, vector* v2) {
-	assert (v1 != NULL && v2 != NULL);
-	float vals[v1->size];
-	for (int i=0; i<v1->size; i++) {
-		vals[i] = v1->vector[i] + v2->vector[i];
-	}
-	vector* sum = vector_init(vals, v1->size);	
-	return sum;
+	return head;
 }
 
-void divide(vector* v, float c) {
+void add(vector* v1, vector* v2) {
+	
+	int i;
+
+	assert (v1 != NULL && v2 != NULL);
+
+	for (i=0; i<(v1->size); i++) {
+		v1->vector[i] = (v1->vector[i]) + (v2->vector[i]);
+	}
+}
+
+void divide(vector* v, double c) {
+	
+	int i;
+
 	assert (v != NULL);
-	for (int i=0; i<v->size; i++) {
+	for (i=0; i<v->size; i++) {
 		v->vector[i] = v->vector[i]/c;
 	}
 }
 
-void printVec(vector* v) {
-	int i = 0;
-	for (i; i<v->size -1; i++) {
-		printf("%.4f, ", v->vector[i]);
+
+double dist(vector* v1, vector* v2) {
+	
+	int i;
+	double sum = 0;
+	
+	for (i=0; i<v1->size; i++) {
+		sum += pow(v1->vector[i] - v2->vector[i], 2);
 	}
-	printf("%.4f\n ", v->vector[i]);
+	return sum;
+}
+
+void zero(vector* v) {
+
+	int i;
+
+	for(i=0; i<v->size; i++) {
+		v->vector[i] = 0.0;
+	}
+}
+
+void recenter(S* S){
+	
+	vector* current;
+	double n = 0.0;
+
+	assert(S!=NULL);
+	current = S->vectors;
+	zero(S->center);
+	if(current == NULL){
+		return;
+	}
+	while(current!=NULL){
+		n += 1.0;
+		add(S->center,current);
+		current = current->next;
+	}
+	divide(S->center,n);
+}
+
+void remove_S(vector* v) {
+	
+	vector* next;
+	vector* prev;
+	S* S;
+
+	prev = v->prev;
+	next = v->next;
+	S = v->S;
+	if(S == NULL){
+		return;
+	}
+	v->S = NULL;
+
+
+	if (prev == NULL && next == NULL) { 
+		S->vectors = NULL;
+	} else if (prev == NULL) {
+		S->vectors = next;
+		next->prev = NULL;
+	} else if (next == NULL) {
+		prev->next = NULL;
+	} else { 
+		next->prev = prev;
+		prev->next = next;
+	}
+	v->next = NULL;
+	v->prev = NULL;		
+}
+
+
+void add_S(S* S, vector* v){
+	
+	remove_S(v);
+	v->S = S;
+	v->next = S->vectors;
+	if(S->vectors != NULL){
+		(S->vectors)->prev = v;
+	}
+	S->vectors = v;
 }
 
 int getN(char* filename) {
@@ -92,24 +229,21 @@ int getN(char* filename) {
 	return N;
 }
 
-list* read_vectors(char* filename){
+vector* read_vectors(char* filename, int k){
 
-	list* head = (list*)malloc(sizeof(list));
-	assert(head != NULL);
-	head->prev = NULL;
-	list* now = head;
-	list* tmp;
 	FILE* fp;
 	int N;
+	int BUFF_SIZE = 256;
+	char linebuff[BUFF_SIZE];
 	char* token;
-	char* line = NULL;
-	size_t len = 0;
-	ssize_t read;
-	float* vals;
-	int i = 0;
-	vector* v;
+	int i;
+	int p = 0;
+	double num;
+	vector* vectors;
 
 	N = getN(filename);
+
+	double vals[N];
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
@@ -117,68 +251,169 @@ list* read_vectors(char* filename){
 		exit(EXIT_FAILURE);
 	}
 
-	vals = (float*)malloc(N*sizeof(float));
-	assert(vals != NULL);
+	vectors = (vector*)malloc(k*sizeof(vector));
+	assert(vectors != NULL);
 
-	while (read = getline(&line, &len, fp) != -1) {
+	while (fgets(linebuff,BUFF_SIZE,fp)!=NULL) {
 		i=0;
-		token = strtok(line, ",");
+		token = strtok(linebuff, ",");
 		while (token != NULL) {
-			float num = atof(token);
+			num = atof(token);
 			vals[i] = num;
 			i++;
 			token = strtok(NULL, ",");
 		}
-		v = vector_init(vals, N);
-		now->vector = (struct vector*)v;
-		tmp = now;
-		now = (list*)malloc(sizeof(list));
-		now->prev = (struct list*)tmp;
-		tmp->next = (struct list*)now;
+
+		if(p == k){
+			k *= 2;
+			vectors = (vector*)realloc(vectors, k*sizeof(vector));
+			assert(vectors != NULL);
+		}
+
+		vector_init(vals, N, &vectors[p]);
+		p++;
 	}
 
-	now = (list*)now->prev;
-	free(now->next);
-	now->next = NULL;
-	free(vals);
-	free(line);
+	sentinal_vector_init(&vectors[p]);
+
 	fclose(fp);
-	return head;
+	return vectors;
 }
 
-int free_vectors(list* head){
+void free_vectors(vector* vectors){
 
-	list* now = head;
-	list* tmp;
-	vector* vec;
+	vector* arr;
+	arr = vectors;
 
-	while(now->next != NULL){
-		tmp = now;
-		now = now->next;
-		
-		free(tmp);
+	while(vectors->size != -1){
+		free(vectors->vector);
+		vectors++;
 	}
-	vector_free(now->vector);
-	free(now);
-	return 0;
+	free(vectors->vector);
+	free(arr);
+}
+
+
+S* closest_clust(vector* v, S* clusters) {
+
+	S* closest_clust;
+	double min_dist;
+	vector* curr;
+
+	curr = clusters->center;
+	min_dist = dist(v, curr);
+	closest_clust = clusters;
+	while (clusters->next != NULL) {
+		clusters = clusters->next;
+		curr = clusters->center;
+		if (min_dist > dist(v, curr)) {
+			closest_clust = clusters;
+			min_dist = dist(v, curr);
+		}
+	
+	}
+
+	return closest_clust;
+}
+
+void free_clusters(S* clusters){
+	S* curr;
+	while(clusters != NULL){
+		curr = clusters;
+		clusters = clusters->next;
+		free(curr->center->vector);
+		free(curr->center);
+		free(curr);
+	}
 }
 
 int main () {
 
 	char filename[100];
-	list* vectors;
-	list* current;
+	int K = 3;
+	int n;
+	int MAX_ITER = 200;
+	int max_inpt;
+	S* clusters;
+	S* curr_S;
+	S* min_S;
+	int i = 0;
+	int CHANGE = 0;
+	int ARR_SIZE = 2;
+	vector* vectors;
+	vector* v;
+	int p=0;
 
 
-	// printf("%s\n", "Please enter filename:");
-	// scanf("%s", &filename);
-	vectors = read_vectors("tests/input_1.txt");
-	current = vectors;
+	printf("%s\n", "Please enter filename:");
+	scanf("%s", filename);
 
-	while(current != NULL){
-		printVec(current->vector);
-		current = current->next;
+
+	vectors = read_vectors(filename, ARR_SIZE);
+
+	printf("%s\n", "Please enter K:");
+	scanf("%d", &K);
+
+	clusters = clusters_init(vectors, K);
+	curr_S = clusters;
+
+	
+	/*not good*/
+	printf("%s\n", "Please enter maximum iterations, or press enter to leave default:");
+	n = scanf("%d", &max_inpt);
+	if(n>0){
+		MAX_ITER = max_inpt;
 	}
 
-	return free_vectors(vectors);
+	while(i<MAX_ITER){
+		i++;
+		CHANGE = 0;
+		p = 0;
+		while(vectors[p].size != -1){
+			min_S = closest_clust(&vectors[p], clusters);
+			if (vectors[p].S != min_S){
+				CHANGE = 1;
+				add_S(min_S, &vectors[p]);
+			}
+			p++;
+		}
+
+
+		if (CHANGE == 0){
+			break;
+		}
+
+		curr_S = clusters;
+		while(curr_S != NULL){
+			recenter(curr_S);
+			curr_S = curr_S -> next;
+		}
+
+		curr_S = clusters;
+		int size;
+		while(curr_S != NULL){
+			size = 0;
+			v = curr_S->vectors;
+			while(v!=NULL){
+				size++;
+				v = v-> next;
+			}
+			curr_S = curr_S -> next;
+		}
+
+
+
+	}
+
+	curr_S = clusters;
+	while(curr_S != NULL){
+		printVec(curr_S->center);
+		curr_S = curr_S -> next;
+	}
+
+	free_clusters(clusters);
+
+	free_vectors(vectors);
+
+	return 0;
 } 
