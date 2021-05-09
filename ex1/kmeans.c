@@ -15,7 +15,7 @@ struct S {
 
 struct vector {
 	struct S* S;
-	float* vector;
+	double* vector;
 	int size;
 	struct vector* next;
 	struct vector* prev;
@@ -24,12 +24,12 @@ struct vector {
 typedef struct vector vector;
 typedef struct S S;
 
-void vector_init(float* vals, int N, vector* v) {
+void vector_init(double* vals, int N, vector* v) {
       
       assert(v != NULL && vals != NULL);
-      v->vector = (float*)malloc(sizeof(float)*N);
+      v->vector = (double*)malloc(sizeof(double)*N);
       assert (v->vector != NULL);
-      memcpy(v->vector, vals, sizeof(float)*N);
+      memcpy(v->vector, vals, sizeof(double)*N);
       v->size = N;
       v->S = NULL;
       v->next = NULL;
@@ -39,11 +39,25 @@ void vector_init(float* vals, int N, vector* v) {
 void sentinal_vector_init(vector* v) {
       
       assert(v != NULL);
-      v->size = 0;
+      v->size = -1;
       v->vector = NULL;
       v->S = NULL;
       v->next = NULL;
       v->prev = NULL;
+}
+
+void printVec(vector* v) {
+	
+	int i;
+	int vec_size;
+
+	assert(v != NULL);
+
+	vec_size = v->size;
+	for (i=0; i<vec_size-1; i++) {
+		printf("%.4f, ", v->vector[i]);
+	}
+	printf("%.4f\n", v->vector[i]);
 }
 
 S* S_init(vector* v){
@@ -52,8 +66,11 @@ S* S_init(vector* v){
 	assert(v!=NULL);
 	Set = (S*)malloc(sizeof(S));
 	assert(Set != NULL);
-	Set->vectors = NULL;
-	Set->center = v;
+	Set->vectors = v;
+	v->S = Set;
+	Set->center = (vector*)malloc(sizeof(vector));
+	assert(Set->center != NULL);
+	vector_init(v->vector,v->size,Set->center);
 	Set->next = NULL;
 
 	return Set; 
@@ -86,20 +103,18 @@ S* clusters_init(vector* vectors, int K){
 	return head;
 }
 
-
 void add(vector* v1, vector* v2) {
 	
-	float* vals;
 	int i;
 
 	assert (v1 != NULL && v2 != NULL);
 
 	for (i=0; i<(v1->size); i++) {
-		v1->vector[i] = v1->vector[i] + v2->vector[i];
+		v1->vector[i] = (v1->vector[i]) + (v2->vector[i]);
 	}
 }
 
-void divide(vector* v, float c) {
+void divide(vector* v, double c) {
 	
 	int i;
 
@@ -110,13 +125,13 @@ void divide(vector* v, float c) {
 }
 
 
-float dist(vector* v1, vector* v2) {
+double dist(vector* v1, vector* v2) {
 	
 	int i;
 	double sum = 0;
 	
 	for (i=0; i<v1->size; i++) {
-		sum += (float)pow(v1->vector[i] - v2->vector[i], 2);
+		sum += pow(v1->vector[i] - v2->vector[i], 2);
 	}
 	return sum;
 }
@@ -133,17 +148,16 @@ void zero(vector* v) {
 void recenter(S* S){
 	
 	vector* current;
-	int n = 0;
+	double n = 0.0;
 
 	assert(S!=NULL);
 	current = S->vectors;
-
 	zero(S->center);
 	if(current == NULL){
 		return;
 	}
 	while(current!=NULL){
-		n++;
+		n += 1.0;
 		add(S->center,current);
 		current = current->next;
 	}
@@ -192,19 +206,6 @@ void add_S(S* S, vector* v){
 	S->vectors = v;
 }
 
-
-void printVec(vector* v) {
-	
-	int i;
-	int vec_size;
-
-	vec_size = v->size;
-	for (i=0; i<vec_size-1; i++) {
-		printf("%.4f, ", v->vector[i]);
-	}
-	printf("%.4f\n", v->vector[i]);
-}
-
 int getN(char* filename) {
 
 	FILE* fp;
@@ -232,18 +233,17 @@ vector* read_vectors(char* filename, int k){
 
 	FILE* fp;
 	int N;
+	int BUFF_SIZE = 256;
+	char linebuff[BUFF_SIZE];
 	char* token;
-	char* line = NULL;
-	size_t len = 0;
-	ssize_t read;
 	int i;
 	int p = 0;
-	float num;
+	double num;
 	vector* vectors;
 
 	N = getN(filename);
 
-	float vals[N];
+	double vals[N];
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
@@ -254,9 +254,9 @@ vector* read_vectors(char* filename, int k){
 	vectors = (vector*)malloc(k*sizeof(vector));
 	assert(vectors != NULL);
 
-	while ((read = getline(&line, &len, fp)) != -1) {
+	while (fgets(linebuff,BUFF_SIZE,fp)!=NULL) {
 		i=0;
-		token = strtok(line, ",");
+		token = strtok(linebuff, ",");
 		while (token != NULL) {
 			num = atof(token);
 			vals[i] = num;
@@ -285,7 +285,7 @@ void free_vectors(vector* vectors){
 	vector* arr;
 	arr = vectors;
 
-	while(vectors->size != 0){
+	while(vectors->size != -1){
 		free(vectors->vector);
 		vectors++;
 	}
@@ -293,59 +293,125 @@ void free_vectors(vector* vectors){
 	free(arr);
 }
 
+
 S* closest_clust(vector* v, S* clusters) {
+
 	S* closest_clust;
-	vector* closest_center;
-	float min_dist;
+	double min_dist;
 	vector* curr;
 
 	curr = clusters->center;
 	min_dist = dist(v, curr);
-	closest_center = curr;
 	closest_clust = clusters;
 	while (clusters->next != NULL) {
 		clusters = clusters->next;
 		curr = clusters->center;
 		if (min_dist > dist(v, curr)) {
-			closest_center = curr;
 			closest_clust = clusters;
 			min_dist = dist(v, curr);
 		}
+	
+	}
+
 	return closest_clust;
+}
+
+void free_clusters(S* clusters){
+	S* curr;
+	while(clusters != NULL){
+		curr = clusters;
+		clusters = clusters->next;
+		free(curr->center->vector);
+		free(curr->center);
+		free(curr);
 	}
 }
 
 int main () {
 
-	/*
 	char filename[100];
-	*/
+	int K = 3;
+	int n;
+	int MAX_ITER = 200;
+	int max_inpt;
 	S* clusters;
 	S* curr_S;
+	S* min_S;
 	int i = 0;
+	int CHANGE = 0;
 	int ARR_SIZE = 2;
 	vector* vectors;
+	vector* v;
+	int p=0;
 
-/*
+
 	printf("%s\n", "Please enter filename:");
-	scanf("%s", &filename);
-*/
+	scanf("%s", filename);
 
-	vectors = read_vectors("tests/input_1.txt", ARR_SIZE);
-	clusters = clusters_init(vectors,7);
+
+	vectors = read_vectors(filename, ARR_SIZE);
+
+	printf("%s\n", "Please enter K:");
+	scanf("%d", &K);
+
+	clusters = clusters_init(vectors, K);
 	curr_S = clusters;
 
-	while(curr_S != NULL && vectors[i].size != 0){
-		add_S(curr_S,&vectors[i]);
-		curr_S = curr_S->next;
-		i++;
-	}
-	curr_S = clusters;
 	
-	while(curr_S != NULL){
-		printVec((curr_S->vectors));
-		curr_S = curr_S->next;
+	/*not good*/
+	printf("%s\n", "Please enter maximum iterations, or press enter to leave default:");
+	n = scanf("%d", &max_inpt);
+	if(n>0){
+		MAX_ITER = max_inpt;
 	}
+
+	while(i<MAX_ITER){
+		i++;
+		CHANGE = 0;
+		p = 0;
+		while(vectors[p].size != -1){
+			min_S = closest_clust(&vectors[p], clusters);
+			if (vectors[p].S != min_S){
+				CHANGE = 1;
+				add_S(min_S, &vectors[p]);
+			}
+			p++;
+		}
+
+
+		if (CHANGE == 0){
+			break;
+		}
+
+		curr_S = clusters;
+		while(curr_S != NULL){
+			recenter(curr_S);
+			curr_S = curr_S -> next;
+		}
+
+		curr_S = clusters;
+		int size;
+		while(curr_S != NULL){
+			size = 0;
+			v = curr_S->vectors;
+			while(v!=NULL){
+				size++;
+				v = v-> next;
+			}
+			curr_S = curr_S -> next;
+		}
+
+
+
+	}
+
+	curr_S = clusters;
+	while(curr_S != NULL){
+		printVec(curr_S->center);
+		curr_S = curr_S -> next;
+	}
+
+	free_clusters(clusters);
 
 	free_vectors(vectors);
 
