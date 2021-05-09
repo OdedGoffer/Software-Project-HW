@@ -293,6 +293,27 @@ void free_vectors(vector* vectors){
 	free(arr);
 }
 
+S* Closest_Clust(vector* v, S* clusters) {
+	S* closest_clust;
+	vector* closest_center;
+	float min_dist;
+	vector* curr;
+
+	curr = clusters->center;
+	min_dist = dist(v, curr);
+	closest_center = curr;
+	while (clusters->next != NULL) {
+		clusters = clusters->next;
+		curr = clusters->center;
+		if (min_dist > dist(v, curr)) {
+			closest_center = curr;
+			closest_clust = clusters;
+			min_dist = dist(v, curr);
+		}
+	return closest_clust;
+	}
+}
+
 int main () {
 
 	/*
@@ -307,8 +328,8 @@ int main () {
 /*
 	printf("%s\n", "Please enter filename:");
 	scanf("%s", &filename);
-
 */
+
 	vectors = read_vectors("tests/input_1.txt", ARR_SIZE);
 	clusters = clusters_init(vectors,7);
 	curr_S = clusters;
