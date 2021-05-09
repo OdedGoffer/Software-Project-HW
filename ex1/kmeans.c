@@ -293,7 +293,7 @@ void free_vectors(vector* vectors){
 	free(arr);
 }
 
-S* Closest_Clust(vector* v, S* clusters) {
+S* closest_clust(vector* v, S* clusters) {
 	S* closest_clust;
 	vector* closest_center;
 	float min_dist;
