@@ -302,6 +302,7 @@ S* Closest_Clust(vector* v, S* clusters) {
 	curr = clusters->center;
 	min_dist = dist(v, curr);
 	closest_center = curr;
+	closest_clust = clusters;
 	while (clusters->next != NULL) {
 		clusters = clusters->next;
 		curr = clusters->center;
