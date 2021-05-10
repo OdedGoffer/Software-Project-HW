@@ -60,7 +60,8 @@ void printVec(vector* v) {
 	printf("%.4f\n", v->vector[i]);
 }
 
-S* S_init(vector* v){
+S* S_init(vector* v) {
+
 	S* Set;
 
 	assert(v!=NULL);
@@ -76,8 +77,7 @@ S* S_init(vector* v){
 	return Set; 
 }
 
-
-S* clusters_init(vector* vectors, int K){
+S* clusters_init(vector* vectors, int K) {
 	
 	S* head;
 	S* curr;
@@ -89,7 +89,7 @@ S* clusters_init(vector* vectors, int K){
 
 	while(K>1){
 		vectors++;
-		if (vectors->size == 0){
+		if (vectors->size == 0) {
 			printf("%s\n", "Not enough vectors!");
 			exit(EXIT_FAILURE);
 		}
@@ -124,7 +124,6 @@ void divide(vector* v, double c) {
 	}
 }
 
-
 double dist(vector* v1, vector* v2) {
 	
 	int i;
@@ -145,7 +144,7 @@ void zero(vector* v) {
 	}
 }
 
-void recenter(S* S){
+void recenter(S* S) {
 	
 	vector* current;
 	double n = 0.0;
@@ -153,10 +152,10 @@ void recenter(S* S){
 	assert(S!=NULL);
 	current = S->vectors;
 	zero(S->center);
-	if(current == NULL){
+	if(current == NULL) {
 		return;
 	}
-	while(current!=NULL){
+	while(current!=NULL) {
 		n += 1.0;
 		add(S->center,current);
 		current = current->next;
@@ -178,7 +177,6 @@ void remove_S(vector* v) {
 	}
 	v->S = NULL;
 
-
 	if (prev == NULL && next == NULL) { 
 		S->vectors = NULL;
 	} else if (prev == NULL) {
@@ -195,73 +193,43 @@ void remove_S(vector* v) {
 }
 
 
-void add_S(S* S, vector* v){
+void add_S(S* S, vector* v) {
 	
 	remove_S(v);
 	v->S = S;
 	v->next = S->vectors;
-	if(S->vectors != NULL){
+	if(S->vectors != NULL) {
 		(S->vectors)->prev = v;
 	}
 	S->vectors = v;
 }
 
-int getN(char* filename) {
+vector* read_vectors() {
 
-	FILE* fp;
-	char buff[255];
-	int N = 0;
-	char* token;
-
-	fp = fopen(filename, "r");
-
-	if (fp == NULL) {
-		exit(EXIT_FAILURE);
-	}
-	
-	fgets(buff, 255, fp);
-	token = strtok(buff, ",");
-	while (token != NULL) {
-		N++;
-		token = strtok(NULL, ",");
-	}
-	fclose(fp);
-	return N;
-}
-
-vector* read_vectors(char* filename, int k){
-
-	FILE* fp;
+	int k = 2;
 	int N;
-	int BUFF_SIZE = 256;
-	char linebuff[BUFF_SIZE];
-	char* token;
-	int i;
+	int i = 0;
 	int p = 0;
-	double num;
 	vector* vectors;
-
-	N = getN(filename);
-
-	double vals[N];
-
-	fp = fopen(filename, "r");
-	if (fp == NULL) {
-		printf("%s\n", "Not a valid filename!");
-		exit(EXIT_FAILURE);
-	}
+	char c;
+	double val;
+	double vals[100];
 
 	vectors = (vector*)malloc(k*sizeof(vector));
 	assert(vectors != NULL);
 
-	while (fgets(linebuff,BUFF_SIZE,fp)!=NULL) {
-		i=0;
-		token = strtok(linebuff, ",");
-		while (token != NULL) {
-			num = atof(token);
-			vals[i] = num;
+	while (scanf("%lf%c", &val, &c) == 2) {
+		if (c == ',') {
+			vals[i] = val;
 			i++;
-			token = strtok(NULL, ",");
+		} else if (c == '\n') {
+			vals[i] = val;
+			if (p == 0) {
+				N = i+1;
+			}
+			vector_init(vals, N, &vectors[p]);
+			p++;
+			i = 0;
 		}
 
 		if(p == k){
@@ -269,30 +237,25 @@ vector* read_vectors(char* filename, int k){
 			vectors = (vector*)realloc(vectors, k*sizeof(vector));
 			assert(vectors != NULL);
 		}
-
-		vector_init(vals, N, &vectors[p]);
-		p++;
 	}
 
 	sentinal_vector_init(&vectors[p]);
 
-	fclose(fp);
 	return vectors;
 }
 
-void free_vectors(vector* vectors){
+void free_vectors(vector* vectors) {
 
 	vector* arr;
 	arr = vectors;
 
-	while(vectors->size != -1){
+	while(vectors->size != -1) {
 		free(vectors->vector);
 		vectors++;
 	}
 	free(vectors->vector);
 	free(arr);
 }
-
 
 S* closest_clust(vector* v, S* clusters) {
 
@@ -316,7 +279,7 @@ S* closest_clust(vector* v, S* clusters) {
 	return closest_clust;
 }
 
-void free_clusters(S* clusters){
+void free_clusters(S* clusters) {
 	S* curr;
 	while(clusters != NULL){
 		curr = clusters;
@@ -327,43 +290,25 @@ void free_clusters(S* clusters){
 	}
 }
 
-int main () {
+int main (int argc, char* argv[]) {
 
-	char filename[100];
-	int K = 3;
-	int n;
-	int MAX_ITER = 200;
-	int max_inpt;
+	int K;
+	int MAX_ITER;
 	S* clusters;
 	S* curr_S;
 	S* min_S;
 	int i = 0;
 	int CHANGE = 0;
-	int ARR_SIZE = 2;
 	vector* vectors;
-	vector* v;
-	int p=0;
+	int p = 0;
 
+	K = atoi(argv[1]);
+	MAX_ITER = argc == 3 ? atoi(argv[2]) : 200;
 
-	printf("%s\n", "Please enter filename:");
-	scanf("%s", filename);
-
-
-	vectors = read_vectors(filename, ARR_SIZE);
-
-	printf("%s\n", "Please enter K:");
-	scanf("%d", &K);
+	vectors = read_vectors();
 
 	clusters = clusters_init(vectors, K);
 	curr_S = clusters;
-
-	
-	/*not good*/
-	printf("%s\n", "Please enter maximum iterations, or press enter to leave default:");
-	n = scanf("%d", &max_inpt);
-	if(n>0){
-		MAX_ITER = max_inpt;
-	}
 
 	while(i<MAX_ITER){
 		i++;
@@ -378,7 +323,6 @@ int main () {
 			p++;
 		}
 
-
 		if (CHANGE == 0){
 			break;
 		}
@@ -388,21 +332,6 @@ int main () {
 			recenter(curr_S);
 			curr_S = curr_S -> next;
 		}
-
-		curr_S = clusters;
-		int size;
-		while(curr_S != NULL){
-			size = 0;
-			v = curr_S->vectors;
-			while(v!=NULL){
-				size++;
-				v = v-> next;
-			}
-			curr_S = curr_S -> next;
-		}
-
-
-
 	}
 
 	curr_S = clusters;
