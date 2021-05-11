@@ -15,7 +15,10 @@ class vector:
 		return vector(tuple(x/c for x in self.vec))
 
 	def __str__(self):
-		return repr(round(self.vec, 4))
+		res = ""
+		for i in self.vec:
+			res += str(round(i,4)) + ", "
+		return res[:-2]
 
 	def dist(self, c):
 		assert self.len == c.len
@@ -33,7 +36,7 @@ class S:
 		vec.S = self
 
 	def __str__(self):
-		return "Set size: " + str(len(self.S)) + " | Set centre: " + str(self.u)
+		return str(self.u)
 
 	def remove(self, vec):
 		self.S.remove(vec)
@@ -53,7 +56,7 @@ class S:
 			self.u = self.u + v
 		self.u = self.u/len(self.S)
 
-def kmeans(K, MAX_ITER = 200):
+def kmeans(K, MAX_ITER):
 	vectors = []
 	clusters = []
 	for line in sys.stdin:
@@ -81,3 +84,37 @@ def kmeans(K, MAX_ITER = 200):
 
 	for Si in clusters:
 		print(Si)
+
+if __name__ == "__main__":
+
+	agrs = sys.argv
+	K = 0;
+	MAX_ITER = 200;
+
+	try:
+		K = agrs[1]
+		if not K.isnumeric():
+			print("You must provide an approriate K value")
+			exit(0)
+		K = int(K)
+		if K <= 0:
+			print("K must be a positive number")
+			exit(0)
+
+	except IndexError:
+		print("You must provide a K value")
+		exit(0)
+
+	try:
+		MAX_ITER = agrs[2]
+		if not MAX_ITER.isnumeric():
+			print("You must provide an approriate maximum iteration")
+			exit(0)
+		MAX_ITER = int(MAX_ITER)
+		if MAX_ITER <= 0:
+			print("Maximum iterations must be positive")
+			exit(0)
+	except IndexError:
+		pass
+
+	kmeans(K,MAX_ITER)
