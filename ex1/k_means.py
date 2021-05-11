@@ -1,3 +1,5 @@
+import sys
+
 class vector:
 
 	def __init__(self, vec):
@@ -13,7 +15,7 @@ class vector:
 		return vector(tuple(x/c for x in self.vec))
 
 	def __str__(self):
-		return repr(self.vec)
+		return repr(round(self.vec, 4))
 
 	def dist(self, c):
 		assert self.len == c.len
@@ -22,7 +24,6 @@ class vector:
 	def zero(self):
 		c = tuple(0 for i in range(self.len))
 		self.vec = c
-
 
 class S:
 
@@ -52,15 +53,10 @@ class S:
 			self.u = self.u + v
 		self.u = self.u/len(self.S)
 
-
-
-
-
-def kmeans(K, filename, MAX_ITER = 200):
+def kmeans(K, MAX_ITER = 200):
 	vectors = []
-	clusters=[]
-	fh = open(filename, 'r')
-	for line in fh:
+	clusters = []
+	for line in sys.stdin:
 		line.strip()
 		vectors.append(vector(tuple(map(float, line.split(',')))))
 
@@ -85,8 +81,3 @@ def kmeans(K, filename, MAX_ITER = 200):
 
 	for Si in clusters:
 		print(Si)
-
-
-
-
-kmeans(15, "tests/input_3.txt", MAX_ITER=300)
