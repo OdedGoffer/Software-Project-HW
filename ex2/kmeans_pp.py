@@ -30,23 +30,16 @@ def smart_centroids(vectors, K):
 		row_num = np.random.choice(N, vectors['Prob'])
 		centroids = centroids.append(vectors.iloc[row_num])
 
-	iter = centroids.iterrows()
-	num_arr = []
-	for i in range(K):
-		curr = next(iter)[1]
-		for j in range(d):
-			num_arr.append(curr[j])
-
-	iter = vectors.iterrows()
-	curr = next(iter, None)
-	while (curr != None & curr[1].name not in centroids.index):
-		for i in range(d):
-			num_arr.append(curr[j])
-
+	vectors = vectors.drop(['Dist','Prob'], axis=1)
+	centroids = centroids.drop(['Dist','Prob'], axis=1)
+	vectors = vectors.drop([i for i in centroids.index])
+	vectors = centroids.merge(vectors,how='outer')
+	num_arr = vectors.to_numpy().flatten()
+	
 	return num_arr
 
-def closest_Dist(centroids, vector, d):
-	D = sum(np.square(vector[:d] - centroids.iloc[0][:d]))
+def closest_Dist(centroids, vector):
+	D = sum(np.square(vector[:-2] - centroids.iloc[0][:-2]))
 	for (centroid in centroids):
 		tmp_val = sum(np.square(vector[:N] - centroid[:N]))
 		if (tmp_val <= D):
