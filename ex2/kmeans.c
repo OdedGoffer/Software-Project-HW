@@ -379,7 +379,7 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
         	PyList_SetItem(python_lst, i, python_float);
 	}
 	
-	free(num_arr)
+	free(num_arr);
 	return python_lst;
 }
 
