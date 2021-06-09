@@ -204,33 +204,25 @@ void add_S(S* S, vector* v) {
 	S->vectors = v;
 }
 
-vector* read_vectors() {
+vector* read_vectors(float* num_arr, int N, int d) {
 
 	int k = 2;
-	int N;
 	int i = 0;
+	int j = 0;
 	int p = 0;
 	vector* vectors;
-	char c;
-	double val;
 	double vals[100];
 
 	vectors = (vector*)malloc(k*sizeof(vector));
 	assert(vectors != NULL);
 
-	while (scanf("%lf%c", &val, &c) == 2) {
-		if (c == ',') {
-			vals[i] = val;
-			i++;
-		} else if (c == '\n') {
-			vals[i] = val;
-			if (p == 0) {
-				N = i+1;
-			}
-			vector_init(vals, N, &vectors[p]);
-			p++;
-			i = 0;
+	for (i=0; i<N, i++) {
+		for (j=0; j<d; j++) {
+			vals[j] = num_arr[N*i+j];
+			j++;
 		}
+		vector_init(vals, d, &vectors[p]);
+		p++;
 
 		if(p == k){
 			k *= 2;
@@ -290,10 +282,8 @@ void free_clusters(S* clusters) {
 	}
 }
 
-int main (int argc, char* argv[]) {
+int kmeans (float* num_arr, int N, int d, int K, int MAX_ITER) {
 
-	int K;
-	int MAX_ITER;
 	S* clusters;
 	S* curr_S;
 	S* min_S;
@@ -302,10 +292,7 @@ int main (int argc, char* argv[]) {
 	vector* vectors;
 	int p = 0;
 
-	K = atoi(argv[1]);
-	MAX_ITER = argc == 3 ? atoi(argv[2]) : 200;
-
-	vectors = read_vectors();
+	vectors = read_vectors(float* num_arr, int N, int d);
 
 	clusters = clusters_init(vectors, K);
 	curr_S = clusters;
