@@ -409,8 +409,3 @@ PyInit_kmeans(void)
 	}
 	return m;
 }
-
-int main(int argc, char const *argv[])
-{
-	return 0;
-}
