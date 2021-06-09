@@ -221,7 +221,6 @@ vector* read_vectors(double* num_arr, int N, int d) {
 	for (i=0; i<N; i++) {
 		for (j=0; j<d; j++) {
 			vals[j] = num_arr[N*i+j];
-			j++;
 		}
 		vector_init(vals, d, &vectors[p]);
 		p++;
