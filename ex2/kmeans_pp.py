@@ -2,6 +2,7 @@ import argparse
 import numpy as np
 import pandas as pd
 from kmeans import kmeans as fit
+np.random.seed(0)
 
 ###################
 #Parse CMD
@@ -33,7 +34,6 @@ def join_files(file_name_1, file_name_2):
 	data = data1.merge(data2, on=0)
 	data.columns = np.arange(len(data.columns))
 	data.drop(columns=data.columns[0], axis=1, inplace=True)
-	print(data)
 	
 	return data
 
@@ -46,7 +46,6 @@ def smart_centroids(vectors, K):
 	N,d = vectors.shape
 	vectors['Dist'] = vectors['Prob'] = 0.0
 	centroids = vectors.sample()
-	np.random.seed(0)
 	Z = 1
 	
 	while (Z < K):
@@ -88,4 +87,3 @@ if __name__ == "__main__":
 	data = join_files(file_name_1, file_name_2)
 	data = smart_centroids(data, k)
 	print(data[:10])
-	x = fit(data, N, d, k, max_iter)
