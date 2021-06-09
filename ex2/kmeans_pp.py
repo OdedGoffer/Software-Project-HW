@@ -48,6 +48,7 @@ def smart_centroids(vectors, K):
 	N = vectors.shape()[0]
 	vectors['Dist'] = vectors['Prob'] = 0
 	centroids = vectors.sample()
+	np.random.seed(0)
 	Z = 1
 
 	while (Z < K):
