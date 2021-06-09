@@ -339,8 +339,6 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 	free_vectors(vectors);
 
 	return centroids;
-
-	free(centroids);
 } 
 
 static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
@@ -369,18 +367,20 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
         	PyErr_SetString(PyExc_TypeError, "list items must be float.");
         	return NULL;
     	}
+	
     	num_arr[i] = PyFloat_AsDouble(pItem);
 	}
 
 	num_arr = kmeans(num_arr, N, d, K, MAX_ITER);
-    python_lst = PyList_New(N*d);
+	python_lst = PyList_New(N*d);
 
-    for (i=0; i<N*d; i++) {
-        python_float = Py_BuildValue("f", num_arr[i]);
-        PyList_SetItem(python_lst, i, python_float);
-    }
-
-    return python_lst;
+	for (i=0; i<N*d; i++) {
+        	python_float = Py_BuildValue("f", num_arr[i]);
+        	PyList_SetItem(python_lst, i, python_float);
+	}
+	
+	free(num_arr)
+	return python_lst;
 }
 
 static PyMethodDef capiMethods[] = {
