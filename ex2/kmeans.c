@@ -1,3 +1,5 @@
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -204,7 +206,7 @@ void add_S(S* S, vector* v) {
 	S->vectors = v;
 }
 
-vector* read_vectors(float* num_arr, int N, int d) {
+vector* read_vectors(double* num_arr, int N, int d) {
 
 	int k = 2;
 	int i = 0;
@@ -216,7 +218,7 @@ vector* read_vectors(float* num_arr, int N, int d) {
 	vectors = (vector*)malloc(k*sizeof(vector));
 	assert(vectors != NULL);
 
-	for (i=0; i<N, i++) {
+	for (i=0; i<N; i++) {
 		for (j=0; j<d; j++) {
 			vals[j] = num_arr[N*i+j];
 			j++;
@@ -282,7 +284,7 @@ void free_clusters(S* clusters) {
 	}
 }
 
-int kmeans (float* num_arr, int N, int d, int K, int MAX_ITER) {
+static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 
 	S* clusters;
 	S* curr_S;
@@ -291,8 +293,9 @@ int kmeans (float* num_arr, int N, int d, int K, int MAX_ITER) {
 	int CHANGE = 0;
 	vector* vectors;
 	int p = 0;
+	double* centroids;
 
-	vectors = read_vectors(float* num_arr, int N, int d);
+	vectors = read_vectors(num_arr, N, d);
 
 	clusters = clusters_init(vectors, K);
 	curr_S = clusters;
@@ -321,9 +324,14 @@ int kmeans (float* num_arr, int N, int d, int K, int MAX_ITER) {
 		}
 	}
 
+	centroids = (double*)malloc(K*d*sizeof(double));
+	p = 0;
 	curr_S = clusters;
-	while(curr_S != NULL){
-		printVec(curr_S->center);
+	while(curr_S != NULL) {
+		for (i=0; i<d; i++) {
+			centroids[p*K+i] = curr_S->center->vector[i];
+		}
+		p++;
 		curr_S = curr_S -> next;
 	}
 
@@ -331,5 +339,69 @@ int kmeans (float* num_arr, int N, int d, int K, int MAX_ITER) {
 
 	free_vectors(vectors);
 
-	return 0;
+	return centroids;
+
+	free(centroids);
 } 
+
+static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
+	double* num_arr;
+	PyObject *pList;
+	PyObject *pItem;
+	Py_ssize_t size;
+	int N;
+	int d;
+	int K;
+	int MAX_ITER;
+	int i;
+
+	if (!PyArg_ParseTuple(args, "O!iiii", &PyList_Type, &pList, &N, &d, &K, &MAX_ITER)) {
+    	PyErr_SetString(PyExc_TypeError, "parameter must be a list.");
+    	return NULL;
+	}
+
+	num_arr = (double*)malloc(N*d*sizeof(double));
+	size = PyList_Size(pList);
+	for (i=0; i<size; i++) {
+    	pItem = PyList_GetItem(pList, i);
+    	if(!PyFloat_Check(pItem)) {
+        	PyErr_SetString(PyExc_TypeError, "list items must be float.");
+        	return NULL;
+    	}
+    	num_arr[i] = PyFloat_AsDouble(pItem);
+	}
+
+	return Py_BuildValue("?", kmeans(num_arr, N, d, K, MAX_ITER));
+}
+
+static PyMethodDef capiMethods[] = {
+	{
+		"kmeans", (PyCFunction) kmeans_capi, METH_VARARGS,
+		PyDoc_STR("smart choosing of centroids")
+	},
+	{NULL, NULL, 0, NULL}
+};
+
+static struct PyModuleDef moduledef = {
+	PyModuleDef_HEAD_INIT,
+	"kmeans",
+	NULL,
+	-1,
+	capiMethods
+};
+
+PyMODINIT_FUNC
+PyInit_kmeans(void)
+{
+	PyObject *m;
+	m = PyModule_Create(&moduledef);
+	if (!m) {
+		return NULL;
+	}
+	return m;
+}
+
+int main(int argc, char const *argv[])
+{
+	return 0;
+}
