@@ -354,6 +354,8 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	int K;
 	int MAX_ITER;
 	int i;
+	PyObject* python_lst;
+	PyObject* python_float;
 
 	if (!PyArg_ParseTuple(args, "O!iiii", &PyList_Type, &pList, &N, &d, &K, &MAX_ITER)) {
     	PyErr_SetString(PyExc_TypeError, "parameter must be a list.");
@@ -371,7 +373,15 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
     	num_arr[i] = PyFloat_AsDouble(pItem);
 	}
 
-	return Py_BuildValue("?", kmeans(num_arr, N, d, K, MAX_ITER));
+	num_arr = kmeans(num_arr, N, d, K, MAX_ITER);
+    python_lst = PyList_New(N*d);
+
+    for (i=0; i<N*d; i++) {
+        python_float = Py_BuildValue("f", num_arr[i]);
+        PyList_SetItem(python_lst, i, python_float);
+    }
+
+    return python_lst;
 }
 
 static PyMethodDef capiMethods[] = {
