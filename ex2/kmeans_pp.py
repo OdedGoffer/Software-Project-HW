@@ -20,6 +20,7 @@ file_name_1 = args.file_name_1
 file_name_2 = args.file_name_2 
 
 print(k, max_iter, file_name_1, file_name_2)
+
 ###################
 #Join file_1 + file_2
 ###################
