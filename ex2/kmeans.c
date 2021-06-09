@@ -370,7 +370,7 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	
     	num_arr[i] = PyFloat_AsDouble(pItem);
 	}
-
+	num_arr = (double*)realloc(num_arr, K*d*sizeof(double));
 	num_arr = kmeans(num_arr, N, d, K, MAX_ITER);
 	python_lst = PyList_New(N*d);
 

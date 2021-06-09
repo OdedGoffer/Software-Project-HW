@@ -30,10 +30,10 @@ def join_files(file_name_1, file_name_2):
 	data1 = pd.read_csv(file_name_1, header=None)
 	data2 = pd.read_csv(file_name_2, header=None)
 
-	print(data1.columns)
-
-	data = data1.join(data2, on=0, how="inner", lsuffix="__")
+	data = data1.merge(data2, on=0)
 	data.columns = np.arange(len(data.columns))
+	data.drop(columns=data.columns[0], axis=1, inplace=True)
+	print(data)
 	
 	return data
 
@@ -62,10 +62,8 @@ def smart_centroids(vectors, K):
 	vectors = vectors.drop(['Dist','Prob'], axis=1)
 	centroids = centroids.drop(['Dist','Prob'], axis=1)
 	vectors = vectors.drop([i for i in centroids.index])
-	print(vectors)
-	print(centroids)
 	vectors = pd.concat([centroids, vectors])
-	num_arr = vectors.to_numpy().flatten()
+	num_arr = vectors.to_numpy().flatten().tolist()
 	
 	return num_arr
 
@@ -89,5 +87,5 @@ if __name__ == "__main__":
 	parse_arguments()
 	data = join_files(file_name_1, file_name_2)
 	data = smart_centroids(data, k)
+	print(data[:10])
 	x = fit(data, N, d, k, max_iter)
-	print(x)
