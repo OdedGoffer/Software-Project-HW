@@ -375,7 +375,7 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	python_lst = PyList_New(K*d);
 
 	for (i=0; i<K*d; i++) {
-			python_float = Py_BuildValue("f", num_arr[i]);
+			python_float = Py_BuildValue("d", num_arr[i]);
 			PyList_SetItem(python_lst, i, python_float);
 	}
 	
