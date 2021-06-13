@@ -220,7 +220,7 @@ vector* read_vectors(double* num_arr, int N, int d) {
 
 	for (i=0; i<N; i++) {
 		for (j=0; j<d; j++) {
-			vals[j] = num_arr[N*i+j];
+			vals[j] = num_arr[(d*i)+j];
 		}
 		vector_init(vals, d, &vectors[p]);
 		p++;
@@ -329,7 +329,7 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 	p = 0;
 	curr_S = clusters;
 	while(curr_S != NULL) {
-		memcpy(centroids+(p*K), curr_S->center->vector, d*sizeof(double));
+		memcpy(centroids+(p*d), curr_S->center->vector, d*sizeof(double));
 		p++;
 		curr_S = curr_S -> next;
 	}
@@ -341,6 +341,7 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 
 static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	double* num_arr;
+  double* return_arr;
 	PyObject *pList;
 	PyObject *pItem;
 	Py_ssize_t size;
@@ -370,16 +371,17 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	
 		num_arr[i] = PyFloat_AsDouble(pItem);
 	}
-	num_arr = (double*)realloc(num_arr, K*d*sizeof(double));
-	num_arr = kmeans(num_arr, N, d, K, MAX_ITER);
+	return_arr = (double*)malloc(K*d*sizeof(double));
+	return_arr = kmeans(num_arr, N, d, K, MAX_ITER);
 	python_lst = PyList_New(K*d);
 
 	for (i=0; i<K*d; i++) {
-			python_float = Py_BuildValue("d", num_arr[i]);
+			python_float = Py_BuildValue("d", return_arr[i]);
 			PyList_SetItem(python_lst, i, python_float);
 	}
 	
 	free(num_arr);
+  free(return_arr);
 	return python_lst;
 }
 
