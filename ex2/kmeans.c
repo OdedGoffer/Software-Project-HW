@@ -27,25 +27,25 @@ typedef struct vector vector;
 typedef struct S S;
 
 void vector_init(double* vals, int N, vector* v) {
-      
-      assert(v != NULL && vals != NULL);
-      v->vector = (double*)malloc(sizeof(double)*N);
-      assert (v->vector != NULL);
-      memcpy(v->vector, vals, sizeof(double)*N);
-      v->size = N;
-      v->S = NULL;
-      v->next = NULL;
-      v->prev = NULL;
+	  
+	  assert(v != NULL && vals != NULL);
+	  v->vector = (double*)malloc(sizeof(double)*N);
+	  assert (v->vector != NULL);
+	  memcpy(v->vector, vals, sizeof(double)*N);
+	  v->size = N;
+	  v->S = NULL;
+	  v->next = NULL;
+	  v->prev = NULL;
 }
 
 void sentinal_vector_init(vector* v) {
-      
-      assert(v != NULL);
-      v->size = -1;
-      v->vector = NULL;
-      v->S = NULL;
-      v->next = NULL;
-      v->prev = NULL;
+	  
+	  assert(v != NULL);
+	  v->size = -1;
+	  v->vector = NULL;
+	  v->S = NULL;
+	  v->next = NULL;
+	  v->prev = NULL;
 }
 
 void printVec(vector* v) {
@@ -324,20 +324,18 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 	}
 
 	centroids = (double*)malloc(K*d*sizeof(double));
+	assert(centroids!=NULL);
+
 	p = 0;
 	curr_S = clusters;
 	while(curr_S != NULL) {
-		for (i=0; i<d; i++) {
-			centroids[p*K+i] = curr_S->center->vector[i];
-		}
+		memcpy(centroids+(p*K), curr_S->center->vector, d*sizeof(double));
 		p++;
 		curr_S = curr_S -> next;
 	}
 
 	free_clusters(clusters);
-
 	free_vectors(vectors);
-
 	return centroids;
 } 
 
@@ -355,28 +353,30 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	PyObject* python_float;
 
 	if (!PyArg_ParseTuple(args, "O!iiii", &PyList_Type, &pList, &N, &d, &K, &MAX_ITER)) {
-    	PyErr_SetString(PyExc_TypeError, "parameter must be a list.");
-    	return NULL;
+		PyErr_SetString(PyExc_TypeError, "parameter must be a list.");
+		return NULL;
 	}
 
 	num_arr = (double*)malloc(N*d*sizeof(double));
+	assert(num_arr!=NULL);
+
 	size = PyList_Size(pList);
 	for (i=0; i<size; i++) {
-    	pItem = PyList_GetItem(pList, i);
-    	if(!PyFloat_Check(pItem)) {
-        	PyErr_SetString(PyExc_TypeError, "list items must be float.");
-        	return NULL;
-    	}
+		pItem = PyList_GetItem(pList, i);
+		if(!PyFloat_Check(pItem)) {
+			PyErr_SetString(PyExc_TypeError, "list items must be float.");
+			return NULL;
+		}
 	
-    	num_arr[i] = PyFloat_AsDouble(pItem);
+		num_arr[i] = PyFloat_AsDouble(pItem);
 	}
 	num_arr = (double*)realloc(num_arr, K*d*sizeof(double));
 	num_arr = kmeans(num_arr, N, d, K, MAX_ITER);
-	python_lst = PyList_New(N*d);
+	python_lst = PyList_New(K*d);
 
-	for (i=0; i<N*d; i++) {
-        	python_float = Py_BuildValue("f", num_arr[i]);
-        	PyList_SetItem(python_lst, i, python_float);
+	for (i=0; i<K*d; i++) {
+			python_float = Py_BuildValue("f", num_arr[i]);
+			PyList_SetItem(python_lst, i, python_float);
 	}
 	
 	free(num_arr);

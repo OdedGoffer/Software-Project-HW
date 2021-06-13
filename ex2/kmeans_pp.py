@@ -87,3 +87,4 @@ if __name__ == "__main__":
 	data = join_files(file_name_1, file_name_2)
 	data = smart_centroids(data, k)
 	print(data[:10])
+	fit(data, N, d, k, max_iter)
