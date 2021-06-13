@@ -59,6 +59,7 @@ def smart_centroids(vectors, K):
 
 	vectors = vectors.drop(['Dist','Prob'], axis=1)
 	centroids = centroids.drop(['Dist','Prob'], axis=1)
+	print(sorted(centroids.index.tolist()))
 	vectors = vectors.drop([i for i in centroids.index])
 	vectors = pd.concat([centroids, vectors])
 	num_arr = vectors.to_numpy().flatten().tolist()
