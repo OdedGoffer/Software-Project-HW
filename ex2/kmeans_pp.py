@@ -28,13 +28,12 @@ def parse_arguments():
 ###################
 
 def join_files(file_name_1, file_name_2):
-	data1 = pd.read_csv(file_name_1, header=None)
-	data2 = pd.read_csv(file_name_2, header=None)
+	data1 = pd.read_csv(file_name_1, header=None, index_col=0)
+	data2 = pd.read_csv(file_name_2, header=None, index_col=0)
 
-	data = data1.merge(data2, on=0)
+	data = data1.merge(data2, left_index=True, right_index=True)
+	data.index = data.index.astype(int)
 	data.columns = np.arange(len(data.columns))
-	data.drop(columns=data.columns[0], axis=1, inplace=True)
-	
 	return data
 
 ###################
@@ -83,9 +82,9 @@ def closest_Dist(centroids, vector):
 ###################
 
 if __name__ == "__main__":
-    parse_arguments()
-    data = join_files(file_name_1, file_name_2)
-    data = smart_centroids(data, k)
-    print(data[:10])
-    print("")
-    print(fit(data, N, d, k, max_iter))
+	parse_arguments()
+	data = join_files(file_name_1, file_name_2)
+	data = smart_centroids(data, k)
+	print(data[:10])
+	print("")
+	print(fit(data, N, d, k, max_iter))
