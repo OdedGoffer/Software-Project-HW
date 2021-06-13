@@ -83,7 +83,6 @@ def closest_Dist(centroids, vector):
 ###################
 
 if __name__ == "__main__":
-	parse_arguments()
-	data = join_files(file_name_1, file_name_2)
-	data = smart_centroids(data, k)
-	print(fit(data, N, d, k, max_iter))
+    parse_arguments()
+    data = join_files(file_name_1, file_name_2)
+    data = smart_centroids(data, k)
