@@ -45,7 +45,7 @@ def closest_dist(centroids, vector): #returns distance from vector to closest ce
 	return D
 
 def print_chosen_centroids(centroids):
-	print(str(sorted(centroids.index.tolist())).strip("[]"))
+	print(str(centroids.index.tolist()).strip("[]").replace(" ",""))
 
 def format_vectors(centroids, vectors): #return a single python list of all vectors, where k centroids are first
 	vectors = vectors.drop(['Dist','Prob'], axis=1)
@@ -80,11 +80,12 @@ def smart_centroids(vectors, K): #Algo 1.1
 
 ###################
 #fit and print 
+
 def fit_and_print_centroids(num_arr, N, d, k, MAX_ITER):
 	centroids = np.split(np.array(fit(num_arr, N, d, k, MAX_ITER)),k)
 	for centroid in centroids:
-		np.round(centroid, decimals=4)
-		print(str(centroid.tolist()).strip("[]"))
+		centroid = np.round(centroid, decimals=4)
+		print(str(centroid.tolist()).strip("[]").replace(" ",""))
 
 
 
