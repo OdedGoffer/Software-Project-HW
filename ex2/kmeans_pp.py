@@ -28,12 +28,11 @@ def parse_arguments():
 ###################
 
 def join_files(file_name_1, file_name_2):
-	data1 = pd.read_csv(file_name_1, header=None, index_col=0)
-	data2 = pd.read_csv(file_name_2, header=None, index_col=0)
+	data1 = pd.read_csv(file_name_1, header=None, dtype={0:int})
+	data2 = pd.read_csv(file_name_2, header=None, dtype={0:int})
 
-	data = data1.merge(data2, left_index=True, right_index=True)
-	data.index = data.index.astype(int)
-	data.columns = np.arange(len(data.columns))
+	data = data1.merge(data2, on=0).sort_values(0)
+	data.set_index(0, inplace=True)
 	return data
 
 ###################
@@ -41,15 +40,15 @@ def join_files(file_name_1, file_name_2):
 ###################
 
 def smart_centroids(vectors, K):
-	global N,d 
+	global N,d
 	N,d = vectors.shape
 	vectors['Dist'] = vectors['Prob'] = 0.0
-	centroids = vectors.sample()
+	centroids = vectors.iloc[[np.random.choice(N)]]
 	Z = 1
 	
 	while (Z < K):
 		for i in range(N):
-			vectors['Dist'][i] = closest_Dist(centroids, vectors.iloc[i].to_numpy())
+			vectors['Dist'][i] = closest_dist(centroids, vectors.iloc[i].to_numpy())
 		sumd = sum(vectors['Dist'])
 		for i in range(N):
 			vectors['Prob'][i] = vectors['Dist'][i]/sumd
@@ -59,17 +58,20 @@ def smart_centroids(vectors, K):
 
 	vectors = vectors.drop(['Dist','Prob'], axis=1)
 	centroids = centroids.drop(['Dist','Prob'], axis=1)
-	print(sorted(centroids.index.tolist()))
+	print(str(sorted(centroids.index.tolist())).strip("[]"))
 	vectors = vectors.drop([i for i in centroids.index])
 	vectors = pd.concat([centroids, vectors])
 	num_arr = vectors.to_numpy().flatten().tolist()
 	
 	return num_arr
 
-def closest_Dist(centroids, vector):
-	D = sum(np.square(vector[:-2] - centroids.iloc[0].to_numpy()[:-2]))
+def dist(vec1, vec2):
+	return sum(np.square(vec1 - vec2))
+
+def closest_dist(centroids, vector):
+	D = dist(vector[:-2], centroids.iloc[0].to_numpy()[:-2])
 	for index, centroid in centroids.iterrows():
-		tmp_val = sum(np.square(vector[:N] - centroid.to_numpy()[:N]))
+		tmp_val = dist(vector[:-2], centroid.to_numpy()[:-2])
 		if (tmp_val <= D):
 			D = tmp_val
 	return D
@@ -86,6 +88,4 @@ if __name__ == "__main__":
 	parse_arguments()
 	data = join_files(file_name_1, file_name_2)
 	data = smart_centroids(data, k)
-	print(data[:10])
-	print("")
 	print(fit(data, N, d, k, max_iter))
