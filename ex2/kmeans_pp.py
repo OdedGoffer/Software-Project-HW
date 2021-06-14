@@ -2,7 +2,7 @@ import argparse
 import sys
 import numpy as np
 import pandas as pd
-from kmeans import kmeans as fit
+from kmeanssp import fit
 np.random.seed(0)
 
 #############
@@ -79,12 +79,14 @@ def smart_centroids(vectors, K): #Algo 1.1
 	return (num_arr, N, d)
 
 ###################
-#fit
-###################
+#fit and print 
+def fit_and_print_centroids(num_arr, N, d, k, MAX_ITER):
+	centroids = np.split(np.array(fit(num_arr, N, d, k, MAX_ITER)),k)
+	for centroid in centroids:
+		np.round(centroid, decimals=4)
+		print(str(centroid.tolist()).strip("[]"))
 
-###################
-#Print Results
-###################
+
 
 if __name__ == "__main__":
 
@@ -93,9 +95,6 @@ if __name__ == "__main__":
 	data = join_files(FILENAME_1, FILENAME_2)
 	num_arr, N, d = smart_centroids(data, k)
 	if num_arr == None:
-	    print("K value must be less than the number of vectors")
-	    sys.exit()
-	print("Start C")
-	centroids = np.split(np.array(fit(num_arr, N, d, k, MAX_ITER)), k)
-	for centroid in centroids:
-		print(str(centroid.tolist()).strip("[]"))
+		print("K value must be less than the number of vectors")
+		sys.exit()
+	fit_and_print_centroids(num_arr, N, d, k, MAX_ITER)

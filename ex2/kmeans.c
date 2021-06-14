@@ -426,7 +426,7 @@ static struct PyModuleDef moduledef = {
 };
 
 PyMODINIT_FUNC
-PyInit_kmeans(void)
+PyInit_kmeanssp(void)
 {
 	PyObject *m;
 	m = PyModule_Create(&moduledef);
