@@ -96,7 +96,6 @@ if __name__ == "__main__":
 	    print("K value must be less than the number of vectors")
 	    sys.exit()
 	print("Start C")
-	print(fit(num_arr, N, d, k, MAX_ITER))
-
-
-
+	centroids = np.split(np.array(fit(num_arr, N, d, k, MAX_ITER)), k)
+	for centroid in centroids:
+		print(str(centroid.tolist()).strip("[]"))
