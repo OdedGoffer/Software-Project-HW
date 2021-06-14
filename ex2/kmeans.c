@@ -411,15 +411,15 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 
 static PyMethodDef capiMethods[] = {
 	{
-		"kmeans", (PyCFunction) kmeans_capi, METH_VARARGS,
-		PyDoc_STR("smart choosing of centroids")
+		"fit", (PyCFunction) kmeans_capi, METH_VARARGS,
+		PyDoc_STR("Implements kmeans algorithm. Usage: fit(data_points, N, d, k, MAX_ITER)")
 	},
 	{NULL, NULL, 0, NULL}
 };
 
 static struct PyModuleDef moduledef = {
 	PyModuleDef_HEAD_INIT,
-	"kmeans",
+	"kmeanssp",
 	NULL,
 	-1,
 	capiMethods
