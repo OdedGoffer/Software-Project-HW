@@ -39,7 +39,7 @@ void vector_init(double* vals, int N, vector* v) {
 	  
 	  assert(v != NULL && vals != NULL);
 	  v->vector = (double*)malloc(sizeof(double)*N);
-	  assert (v->vector != NULL);
+	  assert (v->vector != NULL && "Error in memory allocation");
 	  memcpy(v->vector, vals, sizeof(double)*N);
 	  v->size = N;
 	  v->S = NULL;
@@ -80,11 +80,11 @@ S* S_init(vector* v) {
 
 	assert(v!=NULL);
 	Set = (S*)malloc(sizeof(S));
-	assert(Set != NULL);
+	assert(Set != NULL && "Error in memory allocation");
 	Set->vectors = v;
 	v->S = Set;
 	Set->center = (vector*)malloc(sizeof(vector));
-	assert(Set->center != NULL);
+	assert(Set->center != NULL && "Error in memory allocation");
 	vector_init(v->vector,v->size,Set->center);
 	Set->next = NULL;
 
@@ -237,7 +237,7 @@ vector* read_vectors(double* num_arr, int N, int d) {
 	double vals[100];
 
 	vectors = (vector*)malloc(k*sizeof(vector));
-	assert(vectors != NULL);
+	assert(vectors != NULL && "Error in memory allocation");
 
 	for (i=0; i<N; i++) {
 		for (j=0; j<d; j++) {
@@ -348,7 +348,7 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 	}
 
 	centroids = (double*)malloc(K*d*sizeof(double));
-	assert(centroids!=NULL);
+	assert(centroids!=NULL && "Error in memory allocation");
 
 	p = 0;
 	curr_S = clusters;
@@ -383,7 +383,7 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 	}
 
 	num_arr = (double*)malloc(N*d*sizeof(double));
-	assert(num_arr!=NULL);
+	assert(num_arr!=NULL && "Error in memory allocation");
 
 	size = PyList_Size(pList);
 	for (i=0; i<size; i++) {
@@ -396,6 +396,7 @@ static PyObject* kmeans_capi(PyObject* self, PyObject* args) {
 		num_arr[i] = PyFloat_AsDouble(pItem);
 	}
 	return_arr = (double*)malloc(K*d*sizeof(double));
+	assert(return_arr!=NULL && "Error in memory allocation");
 	return_arr = kmeans(num_arr, N, d, K, MAX_ITER);
 	python_lst = PyList_New(K*d);
 
