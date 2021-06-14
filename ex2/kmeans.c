@@ -9,12 +9,19 @@
 struct vector;
 struct S;
 
+/* Centroid struct. Each centroid has a vector indicating
+ * it's center and a list of vectors representing all
+ * vectors that belong to it. Each centroid points to the next centroid*/
 struct S {
 	struct vector* vectors;
 	struct vector* center;
 	struct S* next;
 };
 
+/* Vector struct. Each vector holds points to an array indicating
+ * it's value, and holds a size. Each vector points to a centroid S
+ * to which it belongs. Vectors also point to the next and previous
+ * vectors in the current centroid*/
 struct vector {
 	struct S* S;
 	double* vector;
@@ -26,6 +33,8 @@ struct vector {
 typedef struct vector vector;
 typedef struct S S;
 
+/* Initiate vector of size N with value vals. All other attributes
+ * of the vector are set to NULL*/
 void vector_init(double* vals, int N, vector* v) {
 	  
 	  assert(v != NULL && vals != NULL);
@@ -38,6 +47,8 @@ void vector_init(double* vals, int N, vector* v) {
 	  v->prev = NULL;
 }
 
+/* Sentinal vector of size -1 indicates the end of an array of
+ * vectors*/
 void sentinal_vector_init(vector* v) {
 	  
 	  assert(v != NULL);
@@ -62,6 +73,7 @@ void printVec(vector* v) {
 	printf("%.4f\n", v->vector[i]);
 }
 
+/* Initiate an empty centroid with center at vector*/
 S* S_init(vector* v) {
 
 	S* Set;
@@ -79,6 +91,7 @@ S* S_init(vector* v) {
 	return Set; 
 }
 
+/* Initiate K empty centrois with centers at the first K vectors*/
 S* clusters_init(vector* vectors, int K) {
 	
 	S* head;
@@ -105,6 +118,7 @@ S* clusters_init(vector* vectors, int K) {
 	return head;
 }
 
+/* Add vector v2 to vector v2 inplace*/
 void add(vector* v1, vector* v2) {
 	
 	int i;
@@ -116,6 +130,7 @@ void add(vector* v1, vector* v2) {
 	}
 }
 
+/* Divide vector v by scalar c inplace*/
 void divide(vector* v, double c) {
 	
 	int i;
@@ -126,6 +141,7 @@ void divide(vector* v, double c) {
 	}
 }
 
+/* Return distance between two vectors*/
 double dist(vector* v1, vector* v2) {
 	
 	int i;
@@ -137,6 +153,7 @@ double dist(vector* v1, vector* v2) {
 	return sum;
 }
 
+/* Zero a vector inplace*/
 void zero(vector* v) {
 
 	int i;
@@ -146,6 +163,7 @@ void zero(vector* v) {
 	}
 }
 
+/* Recalculate the center of centroid S, as defined in Kmeans algorithm*/
 void recenter(S* S) {
 	
 	vector* current;
@@ -165,6 +183,7 @@ void recenter(S* S) {
 	divide(S->center,n);
 }
 
+/* Detach vector v from its current centroid*/
 void remove_S(vector* v) {
 	
 	vector* next;
@@ -194,7 +213,8 @@ void remove_S(vector* v) {
 	v->prev = NULL;		
 }
 
-
+/* Add vector v to cluter around centroid S. This DOES NOT update
+ * the center of cluster S*/
 void add_S(S* S, vector* v) {
 	
 	remove_S(v);
@@ -206,6 +226,7 @@ void add_S(S* S, vector* v) {
 	S->vectors = v;
 }
 
+/* Parse input array into an array of vector structs*/
 vector* read_vectors(double* num_arr, int N, int d) {
 
 	int k = 2;
@@ -237,6 +258,7 @@ vector* read_vectors(double* num_arr, int N, int d) {
 	return vectors;
 }
 
+/* Free all vectors in array 'vectors'*/
 void free_vectors(vector* vectors) {
 
 	vector* arr;
@@ -250,6 +272,7 @@ void free_vectors(vector* vectors) {
 	free(arr);
 }
 
+/* Return pointer to S, the closest cluster to vector v*/
 S* closest_clust(vector* v, S* clusters) {
 
 	S* closest_clust;
@@ -272,6 +295,7 @@ S* closest_clust(vector* v, S* clusters) {
 	return closest_clust;
 }
 
+/*Free all clusters */
 void free_clusters(S* clusters) {
 	S* curr;
 	while(clusters != NULL){
@@ -283,6 +307,7 @@ void free_clusters(S* clusters) {
 	}
 }
 
+/* Classic kmeans algorithm*/
 static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 
 	S* clusters;
