@@ -16,6 +16,9 @@ def parse_arguments():
 	parser.add_argument('file_name_2', type=str, help="File name 2")
 
 	args = parser.parse_args()
+	if args.max_iter<=0:
+		print("Maximum interations must be a poitive whole number.")
+		sys.exit()
 
 	return (args.k, args.max_iter, args.file_name_1, args.file_name_2)
 
@@ -23,8 +26,16 @@ def parse_arguments():
 #Join file_1 + file_2:
 
 def join_files(file_name_1, file_name_2):
-	data1 = pd.read_csv(file_name_1, header=None, dtype={0:int})
-	data2 = pd.read_csv(file_name_2, header=None, dtype={0:int})
+	try:
+	  data1 = pd.read_csv(file_name_1, header=None, dtype={0:int})
+	except FileNotFoundError:
+		print('Error opening file:', file_name_1)
+		sys.exit()
+	try:
+	  data2 = pd.read_csv(file_name_2, header=None, dtype={0:int})
+	except FileNotFoundError:
+		print('Error opening file:', file_name_2)
+		sys.exit()
 
 	data = data1.merge(data2, on=0).sort_values(0)
 	data.set_index(0, inplace=True)
