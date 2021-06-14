@@ -57,7 +57,7 @@ def format_vectors(centroids, vectors): #return a single python list of all vect
 def smart_centroids(vectors, K): #Algo 1.1
 	
 	N,d = vectors.shape
-	if N<K:
+	if N<=K:
 		return (None,None,None)
 
 	vectors['Dist'] = vectors['Prob'] = 0.0
@@ -93,8 +93,9 @@ if __name__ == "__main__":
 	data = join_files(FILENAME_1, FILENAME_2)
 	num_arr, N, d = smart_centroids(data, k)
 	if num_arr == None:
-		print("K value must me less than the number of vectors")
-		sys.exit()
+	    print("K value must be less than the number of vectors")
+	    sys.exit()
+	print("Start C")
 	print(fit(num_arr, N, d, k, MAX_ITER))
 
 

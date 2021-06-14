@@ -322,15 +322,14 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 	vectors = read_vectors(num_arr, N, d);
 
 	clusters = clusters_init(vectors, K);
-	curr_S = clusters;
 
 	while(i<MAX_ITER){
 		i++;
 		CHANGE = 0;
 		p = 0;
 		while(vectors[p].size != -1){
-			min_S = closest_clust(&vectors[p], clusters);
-			if (vectors[p].S != min_S){
+			min_S = closest_clust(&vectors[p], clusters); /* Find closest cluster*/
+			if (vectors[p].S != min_S){ /*if vector does not belong to the closest cluster*/
 				CHANGE = 1;
 				add_S(min_S, &vectors[p]);
 			}
@@ -343,7 +342,7 @@ static double* kmeans (double* num_arr, int N, int d, int K, int MAX_ITER) {
 
 		curr_S = clusters;
 		while(curr_S != NULL){
-			recenter(curr_S);
+			recenter(curr_S); /*Recalculate the center of current S*/
 			curr_S = curr_S -> next;
 		}
 	}
