@@ -1,7 +1,5 @@
 #include "test_utils.h"
 #include <stdio.h>
-#include <errno.h>
-#include <string.h>
 #include <assert.h>
 
 #define TEST "vector_utils"
