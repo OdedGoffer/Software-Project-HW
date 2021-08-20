@@ -18,6 +18,7 @@ $(TARGET): $(OBJS)
 	$(info ****** SPKMEANS COMPILED SUCCESFULLY! ******)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
+	-@mkdir -p $(OBJDIR)
 	$(info compiling $@)
 	@$(CC) -c $(CFLAGS) -o $@ $<
 
