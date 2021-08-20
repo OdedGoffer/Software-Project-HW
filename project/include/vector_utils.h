@@ -2,10 +2,19 @@
 #define PROJECT_VECTOR_UTILS_H
 
 typedef struct vector {
-    double* vals;
-    int N;
+    double* values;
+    int size;
 } vector;
 
-vector* vector_init(double* vals, int N);
+/*Creates a new vector object.*/
+vector* vector_init(double* values, int size);
 
-#endif //PROJECT_VECTOR_UTILS_H
+void vector_free(vector* v);
+
+/*Adds v2 to v1 in place.*/
+void vector_add(vector* v1, vector* v2);
+
+/*Creates a deep copy og v.*/
+vector* vector_copy(vector* v);
+
+#endif

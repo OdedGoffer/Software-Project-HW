@@ -1,4 +1,6 @@
-CC=gcc
+CC = gcc
+CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
+#LDFLAGS = -lm
 SRCDIR = src
 OBJDIR = build
 TESTDIR = test
@@ -20,7 +22,7 @@ $(TARGET): $(OBJS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	-@mkdir -p $(OBJDIR)
 	$(info compiling $@)
-	@$(CC) -c $(CFLAGS) -o $@ $<
+	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 clean:
 	@rm -rf $(OBJDIR)/* $(TARGET)
