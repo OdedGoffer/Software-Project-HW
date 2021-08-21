@@ -3,10 +3,19 @@ CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
 #LDFLAGS = -lm
 SRCDIR = src
 OBJDIR = build
-TESTDIR = test
 SRCS := $(wildcard src/*.c)
-OBJS := $(SRCS:src/%.c=$(OBJDIR)/%.o)
-TESTS := $(wildcard test/*.c)
+OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+
+#TEST
+TESTDIR = test
+ALLTESTS := $(wildcard test/*.c)
+INT = $(TEST:%=$(TESTDIR)/$(OBJDIR)/%)
+TESTTARGETS = $(INT)
+ifeq ($(TESTTARGETS),)
+TESTTARGETS = $(ALLTESTS:$(TESTDIR)/%_test.c=$(TESTDIR)/$(OBJDIR)/%)
+endif
+TESTDEPS := $(ALLTESTS:$(TESTDIR)/%_test.c=$(OBJDIR)/%.o)
+TESTOBJS:= $(ALLTESTS:$(TESTDIR)/%.c=$(TESTDIR)/$(OBJDIR)/%.o)
 
 TARGET = spkmeans
 
@@ -21,8 +30,9 @@ $(TARGET): $(OBJS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	-@mkdir -p $(OBJDIR)
-	$(info compiling $@)
+	$(info $<...)
 	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(info ok)
 
 clean:
 	@rm -rf $(OBJDIR)/* $(TARGET)
@@ -31,8 +41,17 @@ run: $(TARGET)
 	$(info Running...)
 	@./$(TARGET)
 
-test: $(TESTS)
-	$(info TESTING: $<)
-	@gcc $(CFLAGS) $< -o $(TESTDIR)/tmp
-	-@./$(TESTDIR)/tmp
-	-@rm $(TESTDIR)/tmp
+#TEST
+test: $(TESTTARGETS)
+	-@rm -rf $(TESTDIR)/$(OBJDIR)
+
+$(TESTDIR)/$(OBJDIR)/%: $(TESTDIR)/$(OBJDIR)/%_test.o $(OBJDIR)/%.o
+	@$(CC) $(LDFLAGS) -o $@  $^
+	-@./$@
+
+$(OBJDIR)/%.o: $(TESTDIR)/%_test.c
+	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
+
+$(TESTDIR)/$(OBJDIR)%.o: $(TESTDIR)/%.c
+	-@mkdir -p $(TESTDIR)/$(OBJDIR)
+	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
