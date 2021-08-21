@@ -14,5 +14,7 @@ int main() {
     }
     v = vector_init(vals, N);
     printf("DONE!\n");
+	vector_free(v);
+
     return 0;
 }

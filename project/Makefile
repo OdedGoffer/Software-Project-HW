@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
-LDFLAGS = -lm -Wno-unused-command-line-argument
+CFLAGS = -g -ansi -Wall -Wextra -Werror -pedantic-errors
+LDFLAGS = -g -lm -Wno-unused-command-line-argument
 SRCDIR = src
 OBJDIR = build
 SRCS := $(wildcard src/*.c)
@@ -49,7 +49,8 @@ $(TESTDIR)/$(OBJDIR)/%: $(TESTDIR)/$(OBJDIR)/%_test.o $(OBJDIR)/%.o
 	@$(CC) $(LDFLAGS) -o $@  $^
 	-@./$@
 
-$(OBJDIR)/%.o: $(TESTDIR)/%_test.c
+$(OBJDIR)/%.o: $(TESTDIR)/$(OBJDIR)/%_test.o
+	-@mkdir -p $(OBJDIR)
 	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
 
 $(TESTDIR)/$(OBJDIR)%.o: $(TESTDIR)/%.c

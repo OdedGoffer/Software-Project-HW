@@ -9,6 +9,8 @@ typedef struct vector {
 /*Creates a new vector object.*/
 vector* vector_init(double* values, int size);
 
+vector* vector_init_zero(int size);
+
 void vector_free(vector* v);
 
 /*Adds v2 to v1 in place.*/
@@ -16,5 +18,8 @@ void vector_add(vector* v1, vector* v2);
 
 /*Creates a deep copy of v.*/
 vector* vector_copy(vector* v);
+
+/*Euclidean distance between vectors*/
+double vector_dist(vector* v1, vector* v2);
 
 #endif
