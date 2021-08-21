@@ -3,6 +3,7 @@ CFLAGS = -g -ansi -Wall -Wextra -Werror -pedantic-errors
 LDFLAGS = -g -lm -Wno-unused-command-line-argument
 SRCDIR = src
 OBJDIR = build
+MAINDIR = main
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
@@ -18,15 +19,22 @@ TESTDEPS := $(ALLTESTS:$(TESTDIR)/%_test.c=$(OBJDIR)/%.o)
 TESTOBJS:= $(ALLTESTS:$(TESTDIR)/%.c=$(TESTDIR)/$(OBJDIR)/%.o)
 
 TARGET = spkmeans
+TARGETOBJ = $(OBJDIR)/$(TARGET).o
 
 .PHONY: all clean run test
 
 all: $(TARGET)
+	$(info ****** SPKMEANS COMPILED SUCCESFULLY! ******)
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(TARGETOBJ)
 	$(info linking $(TARGET)...)
 	@$(CC) $(LDFLAGS) -o $@ $^
-	$(info ****** SPKMEANS COMPILED SUCCESFULLY! ******)
+
+$(TARGETOBJ): $(MAINDIR)/$(TARGET).c
+	-@mkdir -p $(OBJDIR)
+	$(info $<...)
+	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(info ok)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	-@mkdir -p $(OBJDIR)
@@ -45,7 +53,7 @@ run: $(TARGET)
 test: $(TESTTARGETS)
 	-@rm -rf $(TESTDIR)/$(OBJDIR)
 
-$(TESTDIR)/$(OBJDIR)/%: $(TESTDIR)/$(OBJDIR)/%_test.o $(OBJDIR)/%.o
+$(TESTDIR)/$(OBJDIR)/%: $(TESTDIR)/$(OBJDIR)/%_test.o $(OBJS)
 	@$(CC) $(LDFLAGS) -o $@  $^
 	-@./$@
 

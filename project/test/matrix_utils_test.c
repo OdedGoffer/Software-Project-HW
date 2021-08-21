@@ -27,3 +27,11 @@ void TEST_matrix_init() {
 
 	matrix_free(mat);
 }
+
+int main() {
+	start_test(TEST);
+
+	TEST_matrix_init();
+
+	end_test(TEST);
+}
