@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
-#LDFLAGS = -lm
+LDFLAGS = -lm -Wno-unused-command-line-argument
 SRCDIR = src
 OBJDIR = build
 SRCS := $(wildcard src/*.c)

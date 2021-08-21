@@ -9,7 +9,7 @@ void TEST_dummy() {
 	int i;
 
 	i = dummy_func();
-	assertf(i == 0, "dummy failure messsage");
+	assertf(i == 1, "dummy failure messsage");
 }
 
 int main() {
