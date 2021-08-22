@@ -1,8 +1,6 @@
 #include "test_utils/test_utils.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <assert.h>
 #include "../include/vector_utils.h"
 #include "../include/matrix_utils.h"
@@ -28,10 +26,39 @@ void TEST_matrix_init() {
 	matrix_free(mat);
 }
 
+void TEST_matrix_add_row() {
+	matrix* mat;
+	vector* v;
+	vector* tmp;
+	int n = 7;
+	int x = 9;
+	int i;
+
+	mat = matrix_init(n, 0);
+	v = vector_init_zero(n);
+	for (i=0; i<n; i++) {
+		v->values[i] = i;
+	}
+
+	for (i=0; i<x; i++) {
+		tmp = vector_copy(v);
+		matrix_add_row(mat, v);
+		v = tmp;
+		assertf(mat->rows[i] != NULL, "new row is NULL");
+	}
+
+	assertf(mat->m == x, "wrong number of rows");
+
+	vector_free(tmp);
+	matrix_free(mat);
+
+}
+
 int main() {
 	start_test(TEST);
 
 	TEST_matrix_init();
+	TEST_matrix_add_row();
 
 	end_test(TEST);
 }

@@ -22,4 +22,6 @@ vector* vector_copy(vector* v);
 /*Euclidean distance between vectors*/
 double vector_dist(vector* v1, vector* v2);
 
+void vector_print(vector* v);
+
 #endif

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <math.h>
@@ -20,6 +21,7 @@ vector* vector_init_zero(int size) {
 	v = (vector*)malloc(sizeof(vector));
 	assert(v != NULL);
 	v->values = (double*) calloc(size, sizeof(double));
+	v->size = size;
 	return v;
 }
 
@@ -61,4 +63,16 @@ double vector_dist(vector* v1, vector* v2) {
 	}
 
 	return sqrt(sum);
+}
+
+void vector_print(vector* v) {
+	int n;
+	int i;
+	assert(v != NULL);
+
+	n = v->size;
+	for (i = 0; i < n-1; i++){
+		printf("%.4f, ", v->values[i]);
+	}
+	printf("%.4f\n", v->values[n-1]);
 }
