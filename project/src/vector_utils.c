@@ -45,6 +45,7 @@ vector* vector_copy(vector* v) {
 	assert(v != NULL);
 
 	vals_cpy = (double*) malloc(sizeof(double) * v->size);
+	assert(vals_cpy != NULL);
 	memcpy(vals_cpy, v->values, sizeof(double) * v->size);
 
 	return vector_init(vals_cpy, v->size);

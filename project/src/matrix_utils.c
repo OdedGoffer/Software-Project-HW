@@ -16,10 +16,6 @@ matrix* matrix_init(int n, int m) {
 	mat->n = n;
 	mat->m = m;
 
-	if (m == 0) {
-		m = 1;
-	}
-
 	rows = (vector**) malloc(m * sizeof(vector*));
 	assert(rows != NULL);
 	mat->rows = rows;
@@ -51,14 +47,17 @@ void matrix_add_row(matrix* mat, vector* row) {
 	m = mat->m;
 
 	if (mat->row_cap == m) {
+		if (m == 0) {
+			m = 1;
+		}
 		new_rows = (vector**) calloc((m * 2), sizeof(vector*));
 		assert(new_rows != NULL);
-		memcpy(new_rows, mat->rows, m * sizeof(vector*));
+		memcpy(new_rows, mat->rows, (mat->m) * sizeof(vector*));
 		mat->rows = new_rows;
 		mat->row_cap = 2 * m;
 	}
 
-	mat->rows[m] = row;
+	mat->rows[mat->m] = row;
 	mat->m++;
 }
 
