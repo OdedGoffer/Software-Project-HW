@@ -23,4 +23,16 @@ matrix* matrix_copy(matrix* mat);
 
 void matrix_print(matrix* mat);
 
+/*Raises the value of the diagonal of mat by the power of a*/
+void matrix_diagonal_pow(matrix* mat, double a);
+
+/*Returns a pointer to the Identity matrix of size n*/
+matrix* matrix_eye(int n);
+
+/*Returns A - B*/
+matrix* matrix_subtract(matrix* A, matrix* B);
+
+/*Returns A * B*/
+matrix* matrix_mult(matrix* A, matrix* B);
+
 #endif

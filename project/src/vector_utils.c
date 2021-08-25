@@ -77,3 +77,14 @@ void vector_print(vector* v) {
 	}
 	printf("%.4f\n", v->values[n-1]);
 }
+
+double vector_values_sum(vector* v) {
+	double sum;
+	int i;
+
+	for (i=0; i<v->size; i++) {
+		sum += v->values[i];
+	}
+
+	return sum;
+}

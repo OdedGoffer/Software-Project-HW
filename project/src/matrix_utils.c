@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../include/matrix_utils.h"
 #include "../include/vector_utils.h"
 
@@ -91,3 +92,67 @@ void matrix_print(matrix* mat) {
 	printf("]\n");
 }
 
+/*mat diagonal must be positive, mat->m == mat->n, a = -0.5*/
+void matrix_diagonal_pow(matrix* mat, double a) {
+	double* val;
+	int i;
+
+	for (i=0; i<mat->m; i++) {
+		val = mat->rows[i]->values[i];
+		mat->rows[i]->values[i] = pow(val, a);
+	}
+}
+
+matrix* matrix_eye(int n) {
+	matrix* mat;
+	int i;
+	assert(!(n <= 0));
+
+	mat = matrix_init(n, n);
+	assert(mat != NULL);
+
+	for (i = 0; i < m; i++) {
+		mat->rows[i]->values[i] = 1;
+	}
+
+	return mat;
+}
+
+matrix* matrix_subtract(matrix* A, matrix* B) {
+	matrix* ret;
+	int i;
+	int j;
+	int n;
+
+	n = A->n;
+	ret = matrix_init(n, n);
+	for (i=0; i<n; i++) {
+		for (j=0; j<n; j++) {
+			ret->rows[i]->values[j] = A->rows[i]->values[j] - B->rows[i]->values[j];
+		}
+	}
+
+	return ret;
+}
+
+matrix* matrix_mult(matrix* A, matrix* B) {
+	matrix* ret;
+	int i;
+	int j;
+	double sum = 0;
+	int n;
+
+	n = A->n;
+	ret = matrix_init(n, n);
+	for (i=0; i<n; i++) {
+		for (j=0; j<n; j++) {
+			for (k=0; k<n; k++) {
+				sum += A->rows[i]->values[k] * B->rows[k]->values[j];
+			}
+			ret->rows[i]->values[j] = sum;
+			sum = 0;
+		}
+	}
+
+	return ret;
+}
