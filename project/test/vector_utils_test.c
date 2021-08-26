@@ -111,6 +111,24 @@ void TEST_vector_dist() {
 	vector_free(v2);
 }
 
+void TEST_vector_values_sum() {
+	double nums[] = {1, 2, 3, 4};
+	double* vals;
+	int N = 4;
+	vector* v;
+	double result;
+
+	vals = (double*) malloc(N * sizeof(double));
+	memcpy(vals, nums, N * sizeof(double));
+	v = vector_init(vals, N);
+
+	result = vector_values_sum(v);
+
+	assertf(result == 10, "sum is incorrect");
+
+	vector_free(v);
+}
+
 int main() {
 	start_test(TEST);
 
