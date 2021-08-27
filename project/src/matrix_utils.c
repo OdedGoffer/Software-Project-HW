@@ -174,7 +174,7 @@ double matrix_off(matrix* mat) {
 			if (i == j) {
 				continue;
 			}
-			sum += pow(mat->rows[m]->values[n], 2);
+			sum += pow(mat->rows[j]->values[i], 2);
 		}
 	}
 	return sum;

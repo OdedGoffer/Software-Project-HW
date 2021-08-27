@@ -171,7 +171,7 @@ void TEST_matirx_off(){
 	 */
 
 	off = matrix_off(mat);
-	assertf(off == 3.0, "Wrong value for matrix_off");
+	assertf(off == 5.0, "Wrong value for matrix_off");
 
 	matrix_free(mat);
 
@@ -185,6 +185,7 @@ int main() {
 	TEST_matrix_diagonal_pow();
 	TEST_matrix_subtract();
 	TEST_matrix_mult();
+	TEST_matirx_off();
 
 	end_test(TEST);
 }
