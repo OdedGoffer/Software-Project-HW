@@ -1,6 +1,7 @@
 #include "test_utils/test_utils.h"
 #include <assert.h>
 #include <stdio.h>
+#include <math.h>
 #include "../include/jacobi_utils.h"
 #include "../include/matrix_utils.h"
 
@@ -30,6 +31,7 @@ void TEST_get_largest_off_i_j() {
 void TEST_get_P() {
 	matrix* mat;
 	matrix* P;
+	double expected = 1.0 / sqrt(2);
 
 	mat = matrix_eye(2);
 	matrix_set(0, 1, mat, 1);
@@ -37,7 +39,10 @@ void TEST_get_P() {
 
 	P = get_P(mat);
 
-	matrix_print(P);
+	assertf(matrix_get(0, 0, mat) == expected, "Wrong value at A(0,0)");
+	assertf(matrix_get(0, 1, mat) == expected, "Wrong value at A(0,1)");
+	assertf(matrix_get(1, 0, mat) == -expected, "Wrong value at A(1,0)");
+	assertf(matrix_get(0, 1, mat) == expected, "Wrong value at A(0,1)");
 
 	matrix_free(P);
 	matrix_free(mat);

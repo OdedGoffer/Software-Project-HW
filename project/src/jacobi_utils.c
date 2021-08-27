@@ -91,8 +91,8 @@ matrix* get_P(matrix* A) {
 	j = ij.j;
 
 	theta = get_theta(A, i, j);
-	c = get_c(theta);
-	t = get_t(c);
+	t = get_t(theta);
+	c = get_c(t);
 	s = get_s(c, t);
 
 	matrix_set(i, i, P, c);
