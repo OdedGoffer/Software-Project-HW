@@ -54,6 +54,27 @@ void TEST_matrix_add_row() {
 
 }
 
+void TEST_matirx_off(){
+	matrix* mat;
+	double off;
+
+	mat = matrix_init(2, 2);
+	mat->rows[0]->values[0] = 4;
+	mat->rows[0]->values[1] = 2;
+	mat->rows[1]->values[0] = 1;
+	mat->rows[1]->values[1] = 0;
+	/* mat =
+	 * [ 4, 2
+	 * 	 1, 0 ]
+	 */
+
+	off = matrix_off(mat);
+	assertf(off == 3.0, "Wrong value for matrix_off");
+
+	matrix_free(mat);
+
+}
+
 int main() {
 	start_test(TEST);
 

@@ -23,4 +23,6 @@ matrix* matrix_copy(matrix* mat);
 
 void matrix_print(matrix* mat);
 
+double matrix_off(matrix* mat);
+
 #endif

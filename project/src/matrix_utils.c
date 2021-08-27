@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../include/matrix_utils.h"
 #include "../include/vector_utils.h"
 
@@ -92,3 +93,22 @@ void matrix_print(matrix* mat) {
 	printf("]\n");
 }
 
+double matrix_off(matrix* mat) {
+	int n, m, i, j;
+	double sum = 0;
+	assert(mat != NULL);
+
+	n = mat->n;
+	m = mat->m;
+	assert(m == n);
+
+	for (i=0; i<n; i++) {
+		for (j=0; j<m; j++) {
+			if (i == j) {
+				continue;
+			}
+			sum += pow(mat->rows[m]->values[n], 2);
+		}
+	}
+	return sum;
+}
