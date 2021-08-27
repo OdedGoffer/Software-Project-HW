@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "../include/Eigengap_Heuristic.h"
+#include "../include/eigengap.h"
 
 
 #define TEST "Eigengap_Heuristic"
