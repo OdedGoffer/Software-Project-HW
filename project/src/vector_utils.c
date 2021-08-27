@@ -45,6 +45,7 @@ vector* vector_copy(vector* v) {
 	assert(v != NULL);
 
 	vals_cpy = (double*) malloc(sizeof(double) * v->size);
+	assert(vals_cpy != NULL);
 	memcpy(vals_cpy, v->values, sizeof(double) * v->size);
 
 	return vector_init(vals_cpy, v->size);
@@ -75,4 +76,15 @@ void vector_print(vector* v) {
 		printf("%.4f, ", v->values[i]);
 	}
 	printf("%.4f\n", v->values[n-1]);
+}
+
+double vector_values_sum(vector* v) {
+	double sum = 0;
+	int i;
+
+	for (i=0; i<v->size; i++) {
+		sum += v->values[i];
+	}
+
+	return sum;
 }
