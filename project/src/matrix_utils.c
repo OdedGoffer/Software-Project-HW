@@ -12,13 +12,15 @@ matrix* matrix_init(int n, int m) {
 	int i;
 	assert(!(n<0 || m<0));
 
+	rows = NULL;
 	mat = (matrix*) malloc(sizeof(matrix));
 	assert(mat != NULL);
+	if (m != 0) {
+		rows = (vector**) malloc(m * sizeof(vector*));
+		assert(rows != NULL);
+	}
 	mat->n = n;
 	mat->m = m;
-
-	rows = (vector**) malloc(m * sizeof(vector*));
-	assert(rows != NULL);
 	mat->rows = rows;
 	mat->row_cap = m;
 
@@ -94,12 +96,18 @@ void matrix_print(matrix* mat) {
 
 /*mat diagonal must be positive, mat->m == mat->n, a = -0.5*/
 void matrix_diagonal_pow(matrix* mat, double a) {
-	double* val;
+	double val;
 	int i;
+	assert(mat->m == mat->n);
 
 	for (i=0; i<mat->m; i++) {
 		val = mat->rows[i]->values[i];
-		mat->rows[i]->values[i] = pow(val, a);
+		assert(val > 0);
+		val = pow(val, fabs(a));
+		if (a < 0) {
+			val = 1.0/val;
+		}
+		mat->rows[i]->values[i] = val;
 	}
 }
 
@@ -111,7 +119,7 @@ matrix* matrix_eye(int n) {
 	mat = matrix_init(n, n);
 	assert(mat != NULL);
 
-	for (i = 0; i < m; i++) {
+	for (i = 0; i < n; i++) {
 		mat->rows[i]->values[i] = 1;
 	}
 
@@ -120,9 +128,7 @@ matrix* matrix_eye(int n) {
 
 matrix* matrix_subtract(matrix* A, matrix* B) {
 	matrix* ret;
-	int i;
-	int j;
-	int n;
+	int i, j, n;
 
 	n = A->n;
 	ret = matrix_init(n, n);
@@ -136,11 +142,9 @@ matrix* matrix_subtract(matrix* A, matrix* B) {
 }
 
 matrix* matrix_mult(matrix* A, matrix* B) {
-	matrix* ret;
-	int i;
-	int j;
+	int i, j, k, n;
 	double sum = 0;
-	int n;
+	matrix* ret;
 
 	n = A->n;
 	ret = matrix_init(n, n);

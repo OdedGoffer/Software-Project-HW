@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "../include/vector_utils.h"
 #include "../include/matrix_utils.h"
+#include "../include/WAM.h"
 
 #define TEST "WAM"
 
@@ -14,7 +15,7 @@ void TEST_WAM_1() {
 	vector* tmp;
 	int n = 7;
 	int m = 9;
-	int i;
+	int i, j;
 
 	mat = matrix_init(n, 0);
 	v = vector_init_zero(n);
@@ -33,9 +34,9 @@ void TEST_WAM_1() {
 	for (i=0; i<m; i++) {
 		for (j=0; j<n; j++) {
 			if (i == j) {
-				assertf(mat->rows[i]->values[j] != 0, "wrong value on diagonal")
+				assertf(mat->rows[i]->values[j] == 0, "wrong value on diagonal");
 			} else {
-				assertf(mat->rows[i]->values[j] != 1, "wrong value")
+				assertf(mat->rows[i]->values[j] == 1, "wrong value");
 			}
 		}
 	}

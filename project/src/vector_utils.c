@@ -79,7 +79,7 @@ void vector_print(vector* v) {
 }
 
 double vector_values_sum(vector* v) {
-	double sum;
+	double sum = 0;
 	int i;
 
 	for (i=0; i<v->size; i++) {

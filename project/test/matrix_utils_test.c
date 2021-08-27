@@ -57,26 +57,23 @@ void TEST_matrix_add_row() {
 void TEST_matrix_diagonal_pow() {
 	matrix* mat;
 	vector* v;
-	vector* tmp;
 	int n = 10;
 	int i;
 
 	mat = matrix_init(n, 0);
 
 	for (i=0; i<n; i++) {
+		v = vector_init_zero(n);
 		v->values[i] = 4;
-		tmp = vector_copy(v);
 		matrix_add_row(mat, v);
-		v = tmp;
 	}
 
-	matrix_diagonal_pow(mat, -2);
+	matrix_diagonal_pow(mat, -0.5);
 
 	for (i=0; i<n; i++) {
-		assertf(mat->row[i]->values[i] == 0.5, "wrong number on diagonal");
+		assertf(mat->rows[i]->values[i] == 0.5, "wrong number on diagonal");
 	}
 
-	vector_free(tmp);
 	matrix_free(mat);
 
 }

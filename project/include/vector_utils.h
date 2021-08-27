@@ -25,6 +25,6 @@ double vector_dist(vector* v1, vector* v2);
 void vector_print(vector* v);
 
 /*Returns the sum of all values in vector->values*/
-double vector_values_sum(vector* v)
+double vector_values_sum(vector* v);
 
 #endif

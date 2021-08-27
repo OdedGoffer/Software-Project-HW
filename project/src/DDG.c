@@ -8,21 +8,20 @@
 
 matrix* DDG(matrix* W) {
 	matrix* ret;
-	int n;
+	int m, i;
 	double* vals;
 	double sum;
-	int i = 0;		
 	vector* vec;
 
-	n = W->n;
-	ret = matrix_init(n, 0);
+	m = W->m;
+	ret = matrix_init(m, 0);
 
-	for (i=0; i<n; i++) {
-		vals = (double*)calloc(n * sizeof(double));
+	for (i=0; i<m; i++) {
+		vals = (double*)calloc(m, sizeof(double));
 		assert(vals);
 		sum = vector_values_sum(W->rows[i]);
 		vals[i] = sum;
-		vec = vector_init(vals, n);
+		vec = vector_init(vals, m);
 		matrix_add_row(ret, vec);
 	}
 
