@@ -1,6 +1,7 @@
 CC = gcc
 CFLAGS = -g -ansi -Wall -Wextra -Werror -pedantic-errors
-LDFLAGS = -g -lm -Wno-unused-command-line-argument
+LDFLAGS = -g -Wno-unused-command-line-argument
+LMFLAG = -lm
 SRCDIR = src
 OBJDIR = build
 MAINDIR = main
@@ -28,7 +29,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS) $(TARGETOBJ)
 	$(info linking $(TARGET)...)
-	@$(CC) $(LDFLAGS) -o $@ $^
+	@$(CC) $(LDFLAGS) -o $@ $^ $(LMFLAG)
 
 $(TARGETOBJ): $(MAINDIR)/$(TARGET).c
 	-@mkdir -p $(OBJDIR)
@@ -54,7 +55,7 @@ test: $(TESTTARGETS)
 	-@rm -rf $(TESTDIR)/$(OBJDIR)
 
 $(TESTDIR)/$(OBJDIR)/%: $(TESTDIR)/$(OBJDIR)/%_test.o $(OBJS)
-	@$(CC) $(LDFLAGS) -o $@  $^
+	@$(CC) $(LDFLAGS) -o $@  $^ $(LMFLAG)
 	-@./$@
 
 $(OBJDIR)/%.o: $(TESTDIR)/$(OBJDIR)/%_test.o
