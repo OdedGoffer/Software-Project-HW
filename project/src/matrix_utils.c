@@ -86,12 +86,13 @@ void matrix_print(matrix* mat) {
 	int i;
 	assert(mat != NULL);
 
+
 	printf("[\n");
 	for (i=0; i<mat->m; i++) {
 		printf("\t");
 		vector_print(mat->rows[i]);
 	}
-	printf("]\n");
+	printf("] (%d x %d)\n", mat->m, mat->n);
 }
 
 /*mat diagonal must be positive, mat->m == mat->n, a = -0.5*/
@@ -178,4 +179,16 @@ double matrix_off(matrix* mat) {
 		}
 	}
 	return sum;
+}
+
+void matrix_set(int i, int j, matrix* mat, double val) {
+	assert(i >= 0 && i < mat->m);
+	assert(j >= 0 && i < mat->n);
+	mat->rows[i]->values[j] = val;
+}
+
+double matrix_get(int i, int j, matrix* mat) {
+	assert(i >= 0 && i < mat->m);
+	assert(j >= 0 && i < mat->n);
+	return mat->rows[i]->values[j];
 }

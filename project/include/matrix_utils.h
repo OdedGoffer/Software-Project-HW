@@ -37,4 +37,8 @@ matrix* matrix_mult(matrix* A, matrix* B);
 
 double matrix_off(matrix* mat);
 
+void matrix_set(int i, int j, matrix* mat, double val);
+
+double matrix_get(int i, int j, matrix* mat);
+
 #endif
