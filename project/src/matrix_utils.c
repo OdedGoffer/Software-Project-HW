@@ -12,17 +12,15 @@ matrix* matrix_init(int n, int m) {
 	int i;
 	assert(!(n<0 || m<0));
 
+	rows = NULL;
 	mat = (matrix*) malloc(sizeof(matrix));
 	assert(mat != NULL);
+	if (m != 0) {
+		rows = (vector**) malloc(m * sizeof(vector*));
+		assert(rows != NULL);
+	}
 	mat->n = n;
 	mat->m = m;
-
-	if (m == 0) {
-		m = 1;
-	}
-
-	rows = (vector**) malloc(m * sizeof(vector*));
-	assert(rows != NULL);
 	mat->rows = rows;
 	mat->row_cap = m;
 
@@ -52,14 +50,17 @@ void matrix_add_row(matrix* mat, vector* row) {
 	m = mat->m;
 
 	if (mat->row_cap == m) {
+		if (m == 0) {
+			m = 1;
+		}
 		new_rows = (vector**) calloc((m * 2), sizeof(vector*));
 		assert(new_rows != NULL);
-		memcpy(new_rows, mat->rows, m * sizeof(vector*));
+		memcpy(new_rows, mat->rows, (mat->m) * sizeof(vector*));
 		mat->rows = new_rows;
 		mat->row_cap = 2 * m;
 	}
 
-	mat->rows[m] = row;
+	mat->rows[mat->m] = row;
 	mat->m++;
 }
 
@@ -93,6 +94,72 @@ void matrix_print(matrix* mat) {
 	printf("]\n");
 }
 
+/*mat diagonal must be positive, mat->m == mat->n, a = -0.5*/
+void matrix_diagonal_pow(matrix* mat, double a) {
+	double val;
+	int i;
+	assert(mat->m == mat->n);
+
+	for (i=0; i<mat->m; i++) {
+		val = mat->rows[i]->values[i];
+		assert(val > 0);
+		val = pow(val, fabs(a));
+		if (a < 0) {
+			val = 1.0/val;
+		}
+		mat->rows[i]->values[i] = val;
+	}
+}
+
+matrix* matrix_eye(int n) {
+	matrix* mat;
+	int i;
+	assert(!(n <= 0));
+
+	mat = matrix_init(n, n);
+	assert(mat != NULL);
+
+	for (i = 0; i < n; i++) {
+		mat->rows[i]->values[i] = 1;
+	}
+
+	return mat;
+}
+
+matrix* matrix_subtract(matrix* A, matrix* B) {
+	matrix* ret;
+	int i, j, n;
+
+	n = A->n;
+	ret = matrix_init(n, n);
+	for (i=0; i<n; i++) {
+		for (j=0; j<n; j++) {
+			ret->rows[i]->values[j] = A->rows[i]->values[j] - B->rows[i]->values[j];
+		}
+	}
+
+	return ret;
+}
+
+matrix* matrix_mult(matrix* A, matrix* B) {
+	int i, j, k, n;
+	double sum = 0;
+	matrix* ret;
+
+	n = A->n;
+	ret = matrix_init(n, n);
+	for (i=0; i<n; i++) {
+		for (j=0; j<n; j++) {
+			for (k=0; k<n; k++) {
+				sum += A->rows[i]->values[k] * B->rows[k]->values[j];
+			}
+			ret->rows[i]->values[j] = sum;
+			sum = 0;
+		}
+	}
+
+	return ret;
+}
 double matrix_off(matrix* mat) {
 	int n, m, i, j;
 	double sum = 0;
