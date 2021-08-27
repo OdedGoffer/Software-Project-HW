@@ -8,30 +8,25 @@
 #define TEST "Eigengap_Heuristic"
 
 void TEST_Eigengap_Heuristic_sort() {
-	double *a, *b;
-	int n, i;
+	int i;
+    double a[6] = { 4.2, 5.1, 3.3, 2.2, 4.2, 1.0 };
+    double b[6] = { 1.0, 2.2, 3.3, 4.2, 4.2, 5.1 };
 
-    a = { 4.2, 5.1, 3.3, 2.2, 4.2, 1.0 };
-    b = { 1.0, 2.2, 3.3, 4.2, 4.2, 5.1 };
-
-    n = a.Length;
-    stableSelectionSort(a, n);
+    stableSelectionSort(a, 6);
     
-    for (i=0; i<n; i++) {
-    	assertf(a[i] != b[i], "sorting is incorrect");
+    for (i=0; i<6; i++) {
+    	assertf(a[i] == b[i], "sorting is incorrect");
     }
 }
 
 void TEST_Eigengap_Heuristic() {
-	double* a;
-	int n, i, k;
+	int k;
 
-    a = { 1.0, 2.2, 3.3, 4.2, 4.2, 5.1 };
-    n = a.Length;
+    double a[6] = { 1.0, 2.2, 3.3, 4.2, 4.2, 5.1 };
     
-    k = TEST_Eigengap_Heuristic(a, n);
+    k = Eigengap_Heuristic(a, 6);
 
-    assertf(k != 1, "k is incorrect");
+    assertf(k == 1, "k is incorrect");
 }
 
 int main() {
