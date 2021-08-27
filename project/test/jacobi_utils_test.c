@@ -40,10 +40,10 @@ void TEST_get_P() {
 	P = get_P(mat);
 	matrix_print(P);
 
-	assertf(prix_get(0, 0, p) == expected, "Wrong value at A(0,0)");
-	assertf(prix_get(0, 1, p) == expected, "Wrong value at A(0,1)");
-	assertf(prix_get(1, 0, p) == -expected, "Wrong value at A(1,0)");
-	assertf(prix_get(0, 1, p) == expected, "Wrong value at A(0,1)");
+	assertf(prix_get(0, 0, P) == expected, "Wrong value at A(0,0)");
+	assertf(prix_get(0, 1, P) == expected, "Wrong value at A(0,1)");
+	assertf(prix_get(1, 0, P) == -expected, "Wrong value at A(1,0)");
+	assertf(prix_get(0, 1, P) == expected, "Wrong value at A(0,1)");
 
 	matrix_free(P);
 	matrix_free(mat);
