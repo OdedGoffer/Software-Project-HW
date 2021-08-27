@@ -39,7 +39,7 @@ int Eigengap_Heuristic(double* Eigenvalues, int n) {
 		delta = Eigenvalues[i+1] - Eigenvalues[i];
 		if (delta > max_diff) {
 			max_diff = delta;
-			index = i;
+			index = i+1;
 		}
 	}
 
