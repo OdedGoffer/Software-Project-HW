@@ -5,30 +5,26 @@
 
 matrix* WAM(matrix* X) {
 	matrix* ret;
-	int n;
-	int size;
+	int n, i, j;
 	double* vals;
-	int i = 0;		
-	int j = 0;
 	double dist;
 	vector* new_vec;
 
 	n = X->m;
-	size = X->n;
-	ret = matrix_init(size, 0);
+	ret = matrix_init(n, 0);
 
-	for (i=0; i<n; i++) {
-		vals = (double*)malloc(size * sizeof(double));
+	for (i = 0; i < n; i++) {
+		vals = (double*) malloc(n * sizeof(double));
 		assert(vals);
-		for (j=0; j<n; j++) {
+		for (j = 0; j < n; j++) {
 			if (i == j) {
 				vals[j] = 0;
-			} else { 
+			} else {
 				dist = vector_dist(X->rows[i], X->rows[j]) / (-2);
 				vals[j] = exp(dist);
 			}
 		}
-		new_vec = vector_init(vals, size);
+		new_vec = vector_init(vals, n);
 		matrix_add_row(ret, new_vec);
 	}
 
