@@ -34,15 +34,9 @@ void TEST_WAM_1() {
 	for (i=0; i<m; i++) {
 		for (j=0; j<n; j++) {
 			if (i == j) {
-<<<<<<< HEAD
-				assertf(mat->rows[i]->values[j] == 0, "wrong value on diagonal");
-			} else {
-				assertf(mat->rows[i]->values[j] == 1, "wrong value");
-=======
 				assertf(mat->rows[i]->values[j] == 0, "wrong value on diagonal")
 			} else {
 				assertf(mat->rows[i]->values[j] == 1, "wrong value")
->>>>>>> LNORM test
 			}
 		}
 	}
