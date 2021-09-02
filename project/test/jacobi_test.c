@@ -1,4 +1,4 @@
-#include "../test/test_utils/test_utils.h"
+#include "test_utils/test_utils.h"
 #include <assert.h>
 #include <stdio.h>
 #include <math.h>
@@ -56,4 +56,3 @@ int main() {
 
 	end_test(TEST);
 }
-

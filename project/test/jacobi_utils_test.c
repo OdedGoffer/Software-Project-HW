@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "../include/jacobi_utils.h"
-#include "../include/matrix_utils.h"
 
 #define TEST "jacobi_utils"
 

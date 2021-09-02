@@ -34,6 +34,8 @@ matrix* matrix_init(int n, int m) {
 void matrix_free(matrix* mat) {
 	int i;
 
+	if (mat == NULL) return;
+
 	for (i=0; i<mat->m; i++) {
 		free(mat->rows[i]);
 	}
