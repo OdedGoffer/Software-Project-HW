@@ -192,3 +192,26 @@ double matrix_get(int i, int j, matrix* mat) {
 	assert(j >= 0 && i < mat->n);
 	return mat->rows[i]->values[j];
 }
+
+matrix* matrix_transpose(matrix* mat) {
+	matrix* mat_transpose;
+	int n_old, m_old, n_new, m_new, i, j;
+	double val;
+	assert(mat);
+
+	n_old = mat->n;
+	m_old = mat->m;
+
+	n_new = m_old;
+	m_new = n_old;
+
+	mat_transpose = matrix_init(n_new, m_new);
+
+	for (i = 0; i < n_old; i++) {
+		for (j = 0; j < m_old; j++) {
+			val = mat->rows[j]->values[i];
+			mat_transpose->rows[i]->values[j] = val;
+		}
+	}
+	return mat_transpose;
+}

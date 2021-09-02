@@ -41,4 +41,6 @@ void matrix_set(int i, int j, matrix* mat, double val);
 
 double matrix_get(int i, int j, matrix* mat);
 
+matrix* matrix_transpose(matrix* mat);
+
 #endif

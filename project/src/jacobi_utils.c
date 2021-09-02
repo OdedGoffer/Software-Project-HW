@@ -102,3 +102,16 @@ matrix* get_P(matrix* A) {
 
 	return P;
 }
+
+matrix* get_A_tag(matrix* A, matrix* P) {
+	matrix* A_tag;
+	matrix* P_transpose;
+
+	P_transpose = matrix_transpose(P);
+	A_tag = matrix_mult(P_transpose, A);
+	A_tag = matrix_mult(A_tag, P);
+
+	matrix_free(P_transpose);
+
+	return A_tag;
+}

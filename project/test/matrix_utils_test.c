@@ -18,7 +18,7 @@ void TEST_matrix_init() {
 
 	assertf(mat != NULL, "matrix is NULL");
 	assertf(mat->m == m && mat->n == n, "wrong matrix dimension");
-	for (i=0; i<m; i++) {
+	for (i = 0; i < m; i++) {
 		v = mat->rows[i];
 		assertf(v != NULL, "rows not initialized");
 	}
@@ -36,11 +36,11 @@ void TEST_matrix_add_row() {
 
 	mat = matrix_init(n, 0);
 	v = vector_init_zero(n);
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		v->values[i] = i;
 	}
 
-	for (i=0; i<x; i++) {
+	for (i = 0; i < x; i++) {
 		tmp = vector_copy(v);
 		matrix_add_row(mat, v);
 		v = tmp;
@@ -62,7 +62,7 @@ void TEST_matrix_diagonal_pow() {
 
 	mat = matrix_init(n, 0);
 
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		v = vector_init_zero(n);
 		v->values[i] = 4;
 		matrix_add_row(mat, v);
@@ -70,7 +70,7 @@ void TEST_matrix_diagonal_pow() {
 
 	matrix_diagonal_pow(mat, -0.5);
 
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		assertf(mat->rows[i]->values[i] == 0.5, "wrong number on diagonal");
 	}
 
@@ -90,11 +90,11 @@ void TEST_matrix_subtract() {
 	mat1 = matrix_init(n, 0);
 	mat2 = matrix_init(n, 0);
 	v = vector_init_zero(n);
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		v->values[i] = i;
 	}
 
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		tmp = vector_copy(v);
 		matrix_add_row(mat1, v);
 		v = tmp;
@@ -105,8 +105,8 @@ void TEST_matrix_subtract() {
 
 	mat1 = matrix_subtract(mat1, mat2);
 
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
 			assertf(mat1->rows[i]->values[j] == 0, "problema amigo");
 		}
 	}
@@ -130,11 +130,11 @@ void TEST_matrix_mult() {
 	mat2 = matrix_init(n, 0);
 	v1 = vector_init_zero(n);
 	v2 = vector_init_zero(n);
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		v1->values[i] = i;
 	}
 
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		tmp = vector_copy(v1);
 		matrix_add_row(mat1, v1);
 		v1 = tmp;
@@ -145,8 +145,8 @@ void TEST_matrix_mult() {
 
 	mat1 = matrix_mult(mat1, mat2);
 
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
 			assertf(mat1->rows[i]->values[j] == 0, "problema amigo");
 		}
 	}
@@ -156,7 +156,7 @@ void TEST_matrix_mult() {
 	matrix_free(mat2);
 }
 
-void TEST_matirx_off(){
+void TEST_matirx_off() {
 	matrix* mat;
 	double off;
 
@@ -177,6 +177,27 @@ void TEST_matirx_off(){
 
 }
 
+void TEST_matrix_transpose() {
+	matrix *mat, *mat_transpose;
+
+	mat = matrix_init(2, 2);
+	matrix_set(0, 0, mat, 4);
+	matrix_set(0, 1, mat, 2);
+	matrix_set(1, 0, mat, 1);
+	matrix_set(1, 1, mat, 0);
+	/* mat =
+	 * [ 4, 2
+	 * 	 1, 0 ]
+	 */
+
+	mat_transpose = matrix_transpose(mat);
+
+	assertf(mat_transpose->rows[0]->values[1] == 1, "wrong transpose value");
+	assertf(mat_transpose->rows[1]->values[0] == 2, "wrong transpose value");
+
+	matrix_free(mat);
+}
+
 int main() {
 	start_test(TEST);
 
@@ -186,6 +207,7 @@ int main() {
 	TEST_matrix_subtract();
 	TEST_matrix_mult();
 	TEST_matirx_off();
+	TEST_matrix_transpose();
 
 	end_test(TEST);
 }
