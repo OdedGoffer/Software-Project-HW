@@ -1,6 +1,12 @@
 #ifndef PROJECT_VECTOR_UTILS_H
 #define PROJECT_VECTOR_UTILS_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include <math.h>
+
 typedef struct vector {
 	double* values;
 	int size;

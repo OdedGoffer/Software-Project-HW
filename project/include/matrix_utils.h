@@ -2,6 +2,11 @@
 #define PROJECT_MATRIX_UTILS_H
 
 #include "vector_utils.h"
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
 typedef struct matrix {
 	vector** rows;

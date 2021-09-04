@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <math.h>
 #include "../include/vector_utils.h"
 
 vector* vector_init(double* values, int size) {
