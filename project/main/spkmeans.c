@@ -54,23 +54,24 @@ args parse_cmd(int argc, char* argv[]) {
 }
 
 void do_spkmeans(matrix* input, int K) {
-
+	K = 0;
+	matrix_print(input);
 }
 
 void do_wam(matrix* input) {
-
+	matrix_print(input);
 }
 
 void do_ddg(matrix* input) {
-
+	matrix_print(input);
 }
 
 void do_lnorm(matrix* input) {
-
+	matrix_print(input);
 }
 
 void do_jacobi(matrix* input) {
-
+	matrix_print(input);
 }
 
 int main(int argc, char* argv[]) {
