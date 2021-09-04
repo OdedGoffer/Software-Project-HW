@@ -24,7 +24,7 @@ void TEST_Eigengap_Heuristic() {
 
     double a[6] = { 1.0, 2.2, 3.3, 4.2, 4.2, 5.1 };
     
-    k = Eigengap_Heuristic(a, 6);
+    k = eigengap_heuristic(a, 6);
 
     assertf(k == 1, "k is incorrect");
 }
