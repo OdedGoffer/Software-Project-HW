@@ -7,6 +7,7 @@ OBJDIR = build
 MAINDIR = main
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+ARGS ?= ddg 3 filelele
 
 #TEST
 TESTDIR = test
@@ -48,7 +49,8 @@ clean:
 
 run: $(TARGET)
 	$(info Running...)
-	@./$(TARGET)
+	$(info )
+	@./$(TARGET) $(ARGS)
 
 #TEST
 test: $(TESTTARGETS)

@@ -1,11 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include "../include/matrix_utils.h"
 #include "../include/kmeans.h"
 
-#define MAX_ITER 200
+#define KMEANS_MAX_ITER 200
 
 struct vector_list;
 struct S;
@@ -18,7 +13,7 @@ struct S {
 	struct vector* center;
 };
 
-/*Vector-list struct. Each list element holds a pointer to a vector as well as the associated set, S.*/
+/*Vector-list struct. Each list element holds a pointer to a vector as well as the associated set, 'S'.*/
 struct vector_list {
 	vector* vector;
 	struct S* S;
@@ -49,7 +44,7 @@ vector_list* vectors_init(matrix* inpt) {
 	return vectors;
 }
 
-/* Initiate a centroid with a center at vector element e.*/
+/* Initiate a centroid with a center at vector-element 'e'.*/
 void S_init(vector_list* e, S* S) {
 	assert(e);
 	assert(S);
@@ -99,7 +94,7 @@ void recenter(S* S) {
 	vector_divide(S->center, n);
 }
 
-/*Detach vector element e from its current centroid.*/
+/*Detach vector-element 'e' from its current centroid.*/
 void remove_S(vector_list* e) {
 	vector_list *next, *prev;
 	S* S;
@@ -127,7 +122,7 @@ void remove_S(vector_list* e) {
 	e->prev = NULL;
 }
 
-/*Add vector element e to cluster. This DOES NOT update the center of the cluster.*/
+/*Add vector-element 'e' to cluster 'S'. This DOES NOT update the center of the cluster.*/
 void add_S(S* S, vector_list* e) {
 	assert(S);
 	assert(e);
@@ -141,7 +136,7 @@ void add_S(S* S, vector_list* e) {
 	S->vectors = e;
 }
 
-/*Returns the closest cluster to vector v.*/
+/*Returns the closest cluster to vector 'v'.*/
 S* closest_clust(vector* v, S* clusters, int K) {
 	S* closest_clust;
 	double min_dist;
@@ -176,7 +171,7 @@ matrix* kmeans(matrix* inpt, int K) {
 	n = inpt->n;
 	m = inpt->m;
 
-	while (iter < MAX_ITER) {
+	while (iter < KMEANS_MAX_ITER) {
 		iter++;
 		change = 0;
 		for (i = 0; i < m; i++) {
