@@ -40,6 +40,25 @@ void vector_add(vector* v1, vector* v2) {
 	}
 }
 
+void vector_divide(vector* v, double c) {
+	int i;
+	assert (v);
+	assert(c);
+
+	for (i=0; i<v->size; i++) {
+		v->values[i] = v->values[i]/c;
+	}
+}
+
+void vector_zero(vector* v) {
+	int i;
+	assert(v);
+
+	for(i=0; i<v->size; i++) {
+		v->values[i] = 0.0;
+	}
+}
+
 vector* vector_copy(vector* v) {
 	double* vals_cpy;
 	assert(v != NULL);

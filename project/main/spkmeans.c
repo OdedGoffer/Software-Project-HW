@@ -56,4 +56,3 @@ int main() {
 
 	end_test(TEST);
 }
-

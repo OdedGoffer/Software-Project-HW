@@ -42,13 +42,13 @@ double* diagonal_to_array(matrix* A) {
 	assert(n == m);
 
 	res = (double*)malloc(n*sizeof(double));
+	assert(res);
 	for (i = 0; i < n; i++) {
 		res[i] = A->rows[i]->values[i];
 	}
 	return res;
 }
 
-/* Oded!!! Please go over this!!!! Notice that we change 'A' but do not free!*/
 vector_values_pair jacobi(matrix* A) {
 	int i;
 	int done = 0;

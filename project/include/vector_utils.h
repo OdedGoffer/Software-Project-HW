@@ -16,6 +16,12 @@ void vector_free(vector* v);
 /*Adds v2 to v1 in place.*/
 void vector_add(vector* v1, vector* v2);
 
+/*Divide all values of v by c in place.*/
+void vector_divide(vector* v, double c);
+
+/*Make v equal to zero vector in place.*/
+void vector_zero(vector* v);
+
 /*Creates a deep copy of v.*/
 vector* vector_copy(vector* v);
 

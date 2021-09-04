@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdio.h>
 #include "../include/jacobi_utils.h"
-#include "../include/matrix_utils.h"
 
 ituple get_largest_off_i_j(matrix* mat) {
 	double val = 0.0;
@@ -16,7 +15,7 @@ ituple get_largest_off_i_j(matrix* mat) {
 
 	n = mat->n;
 	assert(n == mat->m);
-	assert(n > 1); /* If n==1 then Aij is not well-defined. */
+	assert(n > 1);
 
 	for (i = 0; i < n; i++) {
 		for (j = i + 1; j < n; j++) {
@@ -58,7 +57,7 @@ double get_t(double theta) {
 
 	return (sign_theta) / (abs_theta + sqrt(1 + theta_sqrd));
 
-	/* 		sign(theta)
+	/* 		    sign(theta)
 	* 	----------------------------
 	* 	abs(theta) + sqrt(1 + theta^2)
 	*/
@@ -86,9 +85,15 @@ matrix* get_P(matrix* A) {
 	assert(n == A->m);
 	P = matrix_eye(n);
 
+	/* Special case: n == 1, there is nothing to do, and so we return I. */
+	if (n == 1) return P;
+
 	ij = get_largest_off_i_j(A);
 	i = ij.i;
 	j = ij.j;
+
+	/* Special case: Aij == 0, meaning A is diagonal, and so we return I. */
+	if (!matrix_get(i, j, A)) return P;
 
 	theta = get_theta(A, i, j);
 	t = get_t(theta);

@@ -30,7 +30,6 @@ matrix* create_matrix() {
 	return mat;
 }
 
-
 void TEST_jacobi() {
 	matrix* A;
 	vector_values_pair res;
@@ -45,9 +44,6 @@ void TEST_jacobi() {
 
 	eigenvectors_free(res);
 }
-
-
-
 
 int main() {
 	start_test(TEST);

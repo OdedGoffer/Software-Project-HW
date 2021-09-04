@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "../include/matrix_utils.h"
-#include "../include/vector_utils.h"
 
 matrix* matrix_init(int n, int m) {
 	matrix* mat;
