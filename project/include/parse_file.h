@@ -2,6 +2,7 @@
 #define PROJECT_PARSE_FILE_H
 
 #include "matrix_utils.h"
+#include "logger.h"
 #include <stdio.h>
 #include <assert.h>
 

@@ -5,6 +5,7 @@
 #include "../include/LNORM.h"
 #include "../include/parse_file.h"
 #include "../include/WAM.h"
+#include "../include/logger.h"
 
 typedef enum {
 	_SPK,
@@ -25,10 +26,7 @@ args parse_cmd(int argc, char* argv[]) {
 	char* goal_str;
 	int K;
 
-	if (argc != 4) {
-		printf("Wrong number of arguments. Correct format is: ./spkeams <goal> <K> <filename>\n");
-		exit(EXIT_FAILURE);
-	}
+	if (argc != 4) log_err("Wrong number of arguments. Correct format is: ./spkeams <goal> <K> <filename>\n");
 
 	goal_str = argv[1];
 
@@ -42,17 +40,11 @@ args parse_cmd(int argc, char* argv[]) {
 		args.goal = _LNORM;
 	} else if (strcmp(goal_str, "jacobi") == 0) {
 		args.goal = _JACOBI;
-	} else {
-		printf("BAD GOAL: %s\n", goal_str);
-		exit(EXIT_FAILURE);
-	}
+	} else log_err("BAD GOAL: %s\n", goal_str);
 
 	K = atoi(argv[2]);
 
-	if (K < 0) {
-		printf("BAD K: %d; K must be non-negative.\n", K);
-		exit(EXIT_FAILURE);
-	}
+	if (K < 0) log_err("BAD K: %d; K must be non-negative.\n", K);
 
 	args.K = K;
 
@@ -61,8 +53,51 @@ args parse_cmd(int argc, char* argv[]) {
 	return args;
 }
 
+void do_spkmeans(matrix* input, int K) {
+
+}
+
+void do_wam(matrix* input) {
+
+}
+
+void do_ddg(matrix* input) {
+
+}
+
+void do_lnorm(matrix* input) {
+
+}
+
+void do_jacobi(matrix* input) {
+
+}
+
 int main(int argc, char* argv[]) {
-	parse_cmd(argc, argv);
+	args args;
+	matrix* input;
+
+	args = parse_cmd(argc, argv);
+
+	input = read_csv(args.filename);
+
+	switch (args.goal) {
+		case _SPK:
+			do_spkmeans(input, args.K);
+			break;
+		case _WAM:
+			do_wam(input);
+			break;
+		case _DDG:
+			do_ddg(input);
+			break;
+		case _LNORM:
+			do_lnorm(input);
+			break;
+		case _JACOBI:
+			do_jacobi(input);
+			break;
+	}
 
 	return 0;
 }

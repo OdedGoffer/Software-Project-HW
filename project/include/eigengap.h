@@ -3,6 +3,6 @@
 
 void stableSelectionSort(double* a, int n);
 
-int Eigengap_Heuristic(double* Eigenvalues, int n);
+int eigengap_heuristic(double* Eigenvalues, int n);
 
 #endif

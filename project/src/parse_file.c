@@ -9,7 +9,7 @@ matrix* read_csv(char* filename) {
 	matrix* res;
 
 	fp = fopen(filename, "r");
-	assert(fp);
+	if (!fp) log_err("Could not open file: %s\n", filename);
 
 	while(fscanf(fp, "%lf%c", &val, &c) == 2) {
 		n++;
