@@ -5,7 +5,7 @@
 #define TEST "parse_file"
 #define EPSILON 0.001
 
-void TEST_parse_file() {
+void TEST_read_csv() {
 	char filename[] = "test/test_utils/output_1.txt";
 	matrix* res;
 
@@ -20,7 +20,7 @@ void TEST_parse_file() {
 int main() {
 	start_test(TEST);
 
-	TEST_parse_file();
+	TEST_read_csv();
 
 	end_test(TEST);
 }

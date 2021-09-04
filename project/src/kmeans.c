@@ -156,7 +156,7 @@ S* closest_clust(vector* v, S* clusters, int K) {
 	for (i = 1; i < K; i++) {
 		center = clusters[i].center;
 		if (min_dist > vector_dist(v, center)) {
-			closest_clust = clusters;
+			closest_clust = &clusters[i];
 			min_dist = vector_dist(v, center);
 		}
 	}
