@@ -198,6 +198,54 @@ void TEST_matrix_transpose() {
 	matrix_free(mat);
 }
 
+void TEST_matrix_swap() {
+	matrix *mat;
+
+	mat = matrix_init(2, 2);
+	matrix_set(0, 0, mat, 4);
+	matrix_set(0, 1, mat, 2);
+	matrix_set(1, 0, mat, 1);
+	matrix_set(1, 1, mat, 0);
+	/* mat =
+	 * [ 4, 2
+	 * 	 1, 0 ]
+	 */
+
+	matrix_swap(mat, 0, 1);
+
+	assertf(mat->rows[0]->values[0] == 1, "wrong 0,0 value");
+	assertf(mat->rows[0]->values[1] == 0, "wrong 0,1 value");
+	assertf(mat->rows[1]->values[0] == 4, "wrong 1,0 value");
+	assertf(mat->rows[1]->values[1] == 2, "wrong 1,1 value");
+
+	matrix_free(mat);
+}
+
+void TEST_matrix_slice() {
+	matrix *mat;
+
+	mat = matrix_init(2, 3);
+	matrix_set(0, 0, mat, 4);
+	matrix_set(0, 1, mat, 2);
+	matrix_set(1, 0, mat, 1);
+	matrix_set(1, 1, mat, 0);
+	matrix_set(2, 0, mat, 5);
+	matrix_set(2, 1, mat, 3);
+	/* mat =
+	 * [ 4, 2
+	 * 	 1, 0 
+	 	 5, 3 ]
+	 */
+
+	matrix_slice(mat, 1);
+
+	assertf(mat->rows[0]->values[0] == 4, "wrong 0,0 value");
+	assertf(mat->rows[0]->values[1] == 2, "wrong 0,1 value");
+	assertf(mat->row_cap == 1, "wrong raw_cap value");
+
+	matrix_free(mat);
+}
+
 int main() {
 	start_test(TEST);
 
@@ -208,6 +256,8 @@ int main() {
 	TEST_matrix_mult();
 	TEST_matirx_off();
 	TEST_matrix_transpose();
+	TEST_matrix_swap();
+	TEST_matrix_slice();
 
 	end_test(TEST);
 }

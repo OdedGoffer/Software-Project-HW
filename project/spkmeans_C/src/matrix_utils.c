@@ -179,7 +179,7 @@ double matrix_off(matrix* mat) {
 
 void matrix_set(int i, int j, matrix* mat, double val) {
 	assert(i >= 0 && i < mat->m);
-	assert(j >= 0 && i < mat->n);
+	assert(j >= 0 && j < mat->n);
 	mat->rows[i]->values[j] = val;
 }
 
@@ -210,4 +210,32 @@ matrix* matrix_transpose(matrix* mat) {
 		}
 	}
 	return mat_transpose;
+}
+
+void matrix_swap(matrix* mat, int i, int j) {
+	vector* tmp;
+
+	tmp = mat->rows[i];
+	mat->rows[i] = mat->rows[j];
+	mat->rows[j] = tmp; 
+}
+
+void matrix_slice(matrix* mat, int k) {
+	int i, m;
+	vector** new_rows;
+	vector** old_rows;
+
+	old_rows = mat->rows;
+	m = mat->m; 
+	for (i=k; i<m; i++) {
+		vector_free(mat->rows[i]);
+	}
+
+	new_rows = (vector**) malloc(sizeof(vector*) * k);
+	assert(new_rows != NULL);
+	memcpy(new_rows, old_rows, sizeof(vector*) * k);
+	mat->rows = new_rows;
+	mat->m = k;
+	mat->row_cap = k; 
+	free(old_rows);
 }
