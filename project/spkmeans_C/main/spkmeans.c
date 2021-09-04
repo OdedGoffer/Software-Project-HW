@@ -55,6 +55,7 @@ args parse_cmd(int argc, char* argv[]) {
 
 void do_spkmeans(matrix* input, int K) {
 	K = 0;
+	K++;
 	matrix_print(input);
 }
 

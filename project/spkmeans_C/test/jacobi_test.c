@@ -38,8 +38,6 @@ void TEST_jacobi() {
 
 	res = jacobi(A);
 
-	matrix_print(res.eigenvectors);
-
 	assertf(fabs(res.eigenvalues[0] - (-1.0)) < EPSILON, "wrong eigenvalue");
 	assertf(fabs(res.eigenvalues[1] - (-1.0)) < EPSILON, "wrong eigenvalue");
 	assertf(fabs(res.eigenvalues[2] - 8.0) < EPSILON, "wrong eigenvalue");

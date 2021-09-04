@@ -48,4 +48,8 @@ double matrix_get(int i, int j, matrix* mat);
 
 matrix* matrix_transpose(matrix* mat);
 
+void matrix_swap(matrix* mat, int i, int j);
+
+void matrix_slice(matrix* mat, int k);
+
 #endif
