@@ -232,7 +232,7 @@ void matrix_slice(matrix* mat, int k) {
 	}
 
 	new_rows = (vector**) malloc(sizeof(vector*) * k);
-	assert(new_rows != NULL);
+	assert(new_rows);
 	memcpy(new_rows, old_rows, sizeof(vector*) * k);
 	mat->rows = new_rows;
 	mat->m = k;
