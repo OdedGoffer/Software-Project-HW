@@ -170,8 +170,9 @@ int* kmeans(matrix* inpt, int K) {
 	clusters = clusters_init(vectors, K);
 	m = inpt->m;
 
-	centroid_indices = (int*) malloc(m * sizeof(int));
+	centroid_indices = (int*) calloc(m, sizeof(int));
 	assert(centroid_indices);
+	for (i = 0; i < K; i++) centroid_indices[i] = i;
 
 	while (iter < KMEANS_MAX_ITER) {
 		iter++;

@@ -102,3 +102,11 @@ double vector_values_sum(vector* v) {
 
 	return sum;
 }
+
+double vector_length(vector* v) {
+	vector* zero;
+	assert(v);
+
+	zero = vector_init_zero(v->size);
+	return vector_dist(v, zero);
+}

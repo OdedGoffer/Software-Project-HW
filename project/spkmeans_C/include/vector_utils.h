@@ -39,4 +39,5 @@ void vector_print(vector* v);
 /*Returns the sum of all values in vector->values*/
 double vector_values_sum(vector* v);
 
+double vector_length (vector* v);
 #endif

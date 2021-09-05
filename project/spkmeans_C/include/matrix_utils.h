@@ -52,4 +52,6 @@ void matrix_swap(matrix* mat, int i, int j);
 
 void matrix_slice(matrix* mat, int k);
 
+void matrix_normalize_rows (matrix* mat);
+
 #endif

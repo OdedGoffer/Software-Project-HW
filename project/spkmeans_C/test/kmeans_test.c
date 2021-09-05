@@ -1,5 +1,6 @@
 #include "test_utils/test_utils.h"
 #include "../include/parse_file.h"
+#include "../include/calculate_centroids.h"
 #include "../include/kmeans.h"
 
 #define TEST "kmeans"
@@ -9,14 +10,16 @@ void TEST_kmeans() {
 	char input_filename[] = "test/test_utils/input_1.txt";
 	char expected_filename[] = "test/test_utils/output_1.txt";
 	matrix *input, *expected, *res;
-	int i;
+	int* centroids;
+	int i, K = 3;
 
 	input = read_csv(input_filename);
 	expected = read_csv(expected_filename);
 
-	res = kmeans(input, 3);
+	centroids = kmeans(input, K);
+	res = calculate_centroids(input, centroids, K);
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < K; i++) {
 		assertf(vector_dist(res->rows[i], expected->rows[i]) < EPSILON, "wrong output value");
 	}
 
