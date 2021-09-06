@@ -1,11 +1,4 @@
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include "../include/matrix_utils.h"
-#include "../include/jacobi.h"
-
+#include "../include/eigengap.h"
 
 void stableSelectionSort(matrix* mat, double* a, int n) {
 	int i, j, min; 

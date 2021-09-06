@@ -2,19 +2,14 @@
 #define PROJECT_MATRIX_UTILS_H
 
 #include "vector_utils.h"
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
 
 typedef struct matrix {
 	vector** rows;
-	/*cols*/
+	/*Number of columns.*/
 	int n;
-	/*rows*/
+	/*Number of rows.*/
 	int m;
-	/*size of rows array*/
+	/*Size of rows array.*/
 	int row_cap;
 } matrix;
 

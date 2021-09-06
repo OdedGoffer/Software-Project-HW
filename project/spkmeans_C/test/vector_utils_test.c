@@ -1,9 +1,4 @@
 #include "test_utils/test_utils.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <assert.h>
 #include "../include/vector_utils.h"
 
 #define TEST "vector_utils"

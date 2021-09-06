@@ -1,9 +1,5 @@
 #include "test_utils/test_utils.h"
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "../include/eigengap.h"
-#include "../include/matrix_utils.h"
 
 
 #define TEST "Eigengap_Heuristic"

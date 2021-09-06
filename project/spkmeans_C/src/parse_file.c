@@ -1,4 +1,8 @@
 #include "../include/parse_file.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include "../include/logger.h"
 
 matrix* read_csv(char* filename) {
 	FILE* fp;

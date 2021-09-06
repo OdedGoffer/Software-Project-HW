@@ -1,11 +1,11 @@
+#include "../include/jacobi.h"
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../include/jacobi.h"
 #include "../include/jacobi_utils.h"
 
-#define KMEANS_MAX_ITER 100
+#define JACOBI_MAX_ITER 100
 #define EPSILON 0.01
 
 int check_convergence(matrix* A, matrix* A_tag) {
@@ -58,7 +58,7 @@ vector_values_pair jacobi(matrix* A) {
 	assert(A);
 	P_mult = NULL;
 
-	for (i = 0; i < KMEANS_MAX_ITER; i++) {
+	for (i = 0; i < JACOBI_MAX_ITER; i++) {
 		P = get_P(A);
 		A_tag = get_A_tag(A, P);
 		P_mult = multiply_P(P, P_mult);
@@ -68,7 +68,6 @@ vector_values_pair jacobi(matrix* A) {
 		}
 
 		matrix_free(P);
-		matrix_free(A);
 		A = A_tag;
 
 		if (done == 1) break;
@@ -76,7 +75,6 @@ vector_values_pair jacobi(matrix* A) {
 
 	if (done != 1) {
 		matrix_free(P_mult);
-		matrix_free(A);
 		res.eigenvectors = NULL;
 		res.eigenvalues = NULL;
 		return res;
@@ -87,7 +85,6 @@ vector_values_pair jacobi(matrix* A) {
 	res.n = A->n;
 
 	matrix_free(P_mult);
-	matrix_free(A);
 
 	return res;
 }

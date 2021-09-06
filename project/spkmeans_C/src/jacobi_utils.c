@@ -1,7 +1,7 @@
+#include "../include/jacobi_utils.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
-#include "../include/jacobi_utils.h"
 
 ituple get_largest_off_i_j(matrix* mat) {
 	double val = 0.0;

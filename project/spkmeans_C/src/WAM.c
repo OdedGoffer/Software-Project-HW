@@ -1,7 +1,7 @@
+#include "../include/WAM.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../include/matrix_utils.h"
 
 matrix* WAM(matrix* X) {
 	matrix* ret;

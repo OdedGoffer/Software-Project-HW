@@ -1,4 +1,8 @@
 #include "../include/kmeans.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 #define KMEANS_MAX_ITER 200
 
@@ -158,11 +162,11 @@ int closest_clust(vector* v, S* clusters, int K) {
 	return closest_clust;
 }
 
-/* Classic K-means algorithm.*/
+/*Classic K-means algorithm.*/
 int* kmeans(matrix* inpt, int K) {
 	S* clusters;
 	vector_list* vectors;
-	int iter = 0, change = 0, i, S_idx, m;
+	int iter = 0, change, i, S_idx, m;
 	int* centroid_indices;
 	assert(inpt);
 

@@ -1,7 +1,4 @@
 #include "test_utils/test_utils.h"
-#include <assert.h>
-#include <stdio.h>
-#include <math.h>
 #include "../include/jacobi.h"
 
 #define TEST "jacobi"
@@ -42,6 +39,8 @@ void TEST_jacobi() {
 	assertf(fabs(res.eigenvalues[1] - (-1.0)) < EPSILON, "wrong eigenvalue");
 	assertf(fabs(res.eigenvalues[2] - 8.0) < EPSILON, "wrong eigenvalue");
 
+
+	matrix_free(A);
 	eigenvectors_free(res);
 }
 

@@ -1,5 +1,4 @@
 #include "test_utils/test_utils.h"
-#include <stdio.h>
 #include "../include/parse_file.h"
 
 #define TEST "parse_file"

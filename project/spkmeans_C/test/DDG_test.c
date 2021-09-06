@@ -1,9 +1,4 @@
 #include "test_utils/test_utils.h"
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "../include/vector_utils.h"
-#include "../include/matrix_utils.h"
 #include "../include/DDG.h"
 
 #define TEST "DDG"

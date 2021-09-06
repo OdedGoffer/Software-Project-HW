@@ -1,7 +1,4 @@
 #include "test_utils/test_utils.h"
-#include <assert.h>
-#include <stdio.h>
-#include <math.h>
 #include "../include/jacobi_utils.h"
 
 #define TEST "jacobi_utils"

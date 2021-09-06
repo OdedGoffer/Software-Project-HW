@@ -1,4 +1,9 @@
 #include "../include/vector_utils.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include <math.h>
 
 vector* vector_init(double* values, int size) {
 	vector* v;

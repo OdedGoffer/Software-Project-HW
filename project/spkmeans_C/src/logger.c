@@ -1,7 +1,7 @@
+#include "../include/logger.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/logger.h"
 
 void log_err(char* msg, ...) {
 	va_list args;

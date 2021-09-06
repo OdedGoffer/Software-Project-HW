@@ -1,10 +1,6 @@
+#include "../include/DDG.h"
 #include <assert.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <math.h>
-#include "../include/matrix_utils.h"
-#include "../include/vector_utils.h"
 
 matrix* DDG(matrix* W) {
 	matrix* ret;
