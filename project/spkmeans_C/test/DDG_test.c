@@ -25,6 +25,7 @@ void TEST_DDG_1() {
 	}
 
 	mat = DDG(mat);
+	matrix_diagonal_pow(mat, -0.5);
 
 	for (i=0; i<m; i++) {
 		assertf(mat->rows[i]->values[i] != 3, "wrong value");
