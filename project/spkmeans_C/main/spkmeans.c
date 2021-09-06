@@ -1,3 +1,7 @@
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "../include/DDG.h"
 #include "../include/eigengap.h"
 #include "../include/jacobi.h"
@@ -6,6 +10,7 @@
 #include "../include/parse_file.h"
 #include "../include/WAM.h"
 #include "../include/logger.h"
+#include "../include/calculate_centroids.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -56,25 +61,71 @@ args parse_cmd(int argc, char* argv[]) {
 }
 
 void do_spkmeans(matrix* input, int K) {
-	K = 0;
-	K++;
-	matrix_print(input);
+	matrix *W, *D, *Lnorm, *T, *centroids;
+	vector_values_pair pair;
+	int* centroids_arr;
+	int new_k;
+
+	W = WAM(input);
+	D = DDG(W);
+	Lnorm = LNORM(W, D);
+	pair = jacobi(Lnorm);
+	T = eigengap_heuristic(pair, K);
+	new_k = T->n;
+	centroids_arr = kmeans(T, new_k);
+	centroids = calculate_centroids(input, centroids_arr, new_k);
+	matrix_print(centroids);
+
+	matrix_free(W);
+	matrix_free(D);
+	matrix_free(Lnorm);
+	matrix_free(pair.eigenvectors);
+	matrix_free(T);
+	matrix_free(centroids);
+	free(pair.eigenvalues);
+	free(centroids_arr);
 }
 
 void do_wam(matrix* input) {
-	matrix_print(input);
+	matrix* res;
+
+	res = WAM(input);
+	matrix_print(res);
+	matrix_free(res);
 }
 
 void do_ddg(matrix* input) {
-	matrix_print(input);
+	matrix *W, *res;
+
+	W = WAM(input);
+	res = DDG(W);
+	matrix_print(res);
+	matrix_free(W);
+	matrix_free(res);
 }
 
 void do_lnorm(matrix* input) {
-	matrix_print(input);
+	matrix *res, *W, *D;
+
+	W = WAM(input);
+	D = DDG(W);
+	res = LNORM(W, D);
+	matrix_print(res);
+	matrix_free(W);
+	matrix_free(D);
+	matrix_free(res);
 }
 
 void do_jacobi(matrix* input) {
-	matrix_print(input);
+	matrix* res;
+	vector_values_pair pair;
+
+	pair = jacobi(input);
+	res = matrix_transpose(pair.eigenvectors);
+	matrix_print(res);
+	matrix_free(res);
+	matrix_free(pair.eigenvectors);
+	free(pair.eigenvalues);
 }
 
 int main(int argc, char* argv[]) {
@@ -82,8 +133,9 @@ int main(int argc, char* argv[]) {
 	matrix* input;
 
 	args = parse_cmd(argc, argv);
-
 	input = read_csv(args.filename);
+	if (args.K >= input->m) log_err(
+		"BAD K: %d; K must be less than vectors count.\n", args.K);
 
 	switch (args.goal) {
 		case _SPK:
@@ -103,5 +155,6 @@ int main(int argc, char* argv[]) {
 			break;
 	}
 
+	matrix_free(input);
 	return 0;
 }

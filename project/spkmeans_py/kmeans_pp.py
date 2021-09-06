@@ -28,8 +28,9 @@ def parse_arguments():
 
 #############
 # Utils
-def print_matrix(mat):
-	for row in mat:
+def print_matrix(mat, dim, vec_num):
+	matrix = [mat[i:i+dim] for i in range(0,vec_num,dim)]
+	for row in matrix:
 		print(row)
 
 ###################
@@ -94,39 +95,34 @@ def fit_and_print_centroids(num_arr, N, d, k, MAX_ITER):
 		centroid = np.round(centroid, decimals=4)
 		print(str(centroid.tolist()).strip("[]").replace(" ", ""))
 
-def do_wam(mat):
-	W = fit_wam(mat)
-	print_matrix(W)
+def do_wam(mat, dim, vec_num):
+	W = fit_wam(mat, dim, vec_num)
+	print_matrix(W, vec_num, vec_num)
 
-def do_ddg(mat):
-	D = fit_ddg(mat)
-	print_matrix(D)
+def do_ddg(mat, dim, vec_num):
+	W = fit_wam(mat, dim, vec_num)
+	D = fit_ddg(W, vec_num)
+	print_matrix(D, vec_num, vec_num)
 
-def do_Lnorm(mat):
-	L = fit_Lnorm(mat)
-	print_matrix(L)
+def do_Lnorm(mat, dim, vec_num):
+	W = fit_wam(mat, dim, vec_num)
+	D = fit_ddg(W, vec_num)
+	L = fit_Lnorm(W, D, vec_num)
+	print_matrix(L, vec_num, vec_num)
 
-def do_jacobi(mat):
-	U = fit_jacobi(mat)
-	print_matrix(U)
+def do_jacobi(mat, dim, vec_num):
+	if dim != vec_num:
+		print("Jacobi matrix input should be symetrical.\n")
+		sys.exit()
 
-def do_spk(mat, k, MAX_ITER):
-	W = fit_wam(mat)
-	Lnorm = fit_lnorm(W)
-	if k == 0:
-		k = fit_eigen(Lnorm)
-	mat = Lnorm[:k]
-	data = pd.DataFrame(mat)
-	U = data.transpose()
-	for i in range(len(U)):
-		norm = (U.iloc[i] ** 2).sum()
-		for j in range(U.columns.size):
-			U[j][i] = U[j][i] / norm
+	eigenvectors = fit_jacobi(mat, dim) # transpose :(
+	print_matrix(eigenvectors, dim, dim)
 
-	num_arr = U.to_numpy().flatten()
-	N = len(U)
-	d = U.columns.size
-	fit_and_print_centroids(num_arr, N, d, k, MAX_ITER)
+def do_spk(mat, dim, vec_num, k):
+	W = fit_wam(mat, dim, vec_num)
+	D = fit_ddg(W, vec_num)
+	L = fit_Lnorm(W, D, vec_num)
+	T = fit_eigengap(L, vec_num, k)
 
 ###################
 # Main:
@@ -136,14 +132,21 @@ if __name__ == "__main__":
 	k, MAX_ITER, GOAL, FILENAME = parse_arguments()
 
 	data = pd.read_csv(FILENAME)
+	dim = data.columns.size
+	vec_num = data.size
 	mat = data.values.tolist()
+
+	if k >= vec_num:
+		print(f"BAD K: {k}; K must be less than vectors count.\n")
+		sys.exit()
+
 	if GOAL == 'wam':
-		do_wam(mat)
+		do_wam(mat, dim, vec_num)
 	if GOAL == 'ddg':
-		do_ddg(mat)
+		do_ddg(mat, dim, vec_num)
 	if GOAL == 'lnorm':
-		do_Lnorm(mat)
+		do_Lnorm(mat, dim, vec_num)
 	if GOAL == 'jacobi':
-		do_jacobi(mat)
+		do_jacobi(mat, dim, vec_num)
 	if GOAL == 'spk':
-		do_spk(mat, k, MAX_ITER)
+		do_spk(mat, dim, vec_num, k)
