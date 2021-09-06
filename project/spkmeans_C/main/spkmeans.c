@@ -6,6 +6,8 @@
 #include "../include/parse_file.h"
 #include "../include/WAM.h"
 #include "../include/logger.h"
+#include <string.h>
+#include <stdlib.h>
 
 typedef enum {
 	_SPK,
