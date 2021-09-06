@@ -96,7 +96,7 @@ void matrix_print(matrix* mat) {
 	printf("] (%d x %d)\n", mat->m, mat->n);
 }
 
-/*mat diagonal must be positive, mat->m == mat->n, a = -0.5*/
+/*'mat' must be a square matrix with positive diagonal values.*/
 void matrix_diagonal_pow(matrix* mat, double a) {
 	double val;
 	int i;

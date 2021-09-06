@@ -4,7 +4,7 @@
 #include <string.h>
 #include <assert.h>
 
-#define KMEANS_MAX_ITER 200
+#define KMEANS_MAX_ITER 300
 
 struct vector_list;
 struct S;
