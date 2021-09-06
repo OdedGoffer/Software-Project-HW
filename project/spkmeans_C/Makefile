@@ -4,6 +4,7 @@ LDFLAGS = -g -Wno-unused-command-line-argument
 LMFLAG = -lm
 SRCDIR = src
 OBJDIR = build
+PYDIR = python
 MAINDIR = main
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
@@ -23,7 +24,7 @@ TESTOBJS:= $(ALLTESTS:$(TESTDIR)/%.c=$(TESTDIR)/$(OBJDIR)/%.o)
 TARGET = spkmeans
 TARGETOBJ = $(OBJDIR)/$(TARGET).o
 
-.PHONY: all clean run test
+.PHONY: all clean run test python
 
 all: $(TARGET)
 	$(info ****** SPKMEANS COMPILED SUCCESFULLY! ******)

@@ -3,3 +3,5 @@ test/build/*
 spkmeans
 ../.idea
 .idea
+python/build
+python/*.so
