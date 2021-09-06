@@ -21,7 +21,5 @@ matrix* DDG(matrix* W) {
 		matrix_add_row(ret, vec);
 	}
 
-	matrix_diagonal_pow(ret, -0.5);
-
 	return ret;
 }

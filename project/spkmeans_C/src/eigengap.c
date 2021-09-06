@@ -48,30 +48,12 @@ int get_k(double* eigenvalues, int k, int n) {
 	return index;
 }
 
-matrix* eigengap_heuristic(vector_values_pair pair, int k) {
-	int n;
-	matrix* mat;
-	double* eigenvalues;
-
-	n = pair.n;
-	mat = pair.eigenvectors;
-	eigenvalues = pair.eigenvalues;
-
-	stableSelectionSort(mat, eigenvalues, n);
-
-	k = get_k(eigenvalues, k, n);
-	matrix_slice(mat, k);
-
-	return mat;
-}
-
-matrix* get_T(matrix* mat) {
-	matrix *U, *T;
+matrix* get_T(matrix* U) {
+	matrix* T;
 	int i, j, n, m;
 	double norm, val;
 	vector* zero;
 
-	U = matrix_transpose(mat);
 	n = U->n;
 	m = U->m;
 	T = matrix_init(n, m);
@@ -85,5 +67,27 @@ matrix* get_T(matrix* mat) {
 		}
 	}
 
+	vector_free(zero);
 	return T;
+}
+
+matrix* eigengap_heuristic(vector_values_pair pair, int k) {
+	int n;
+	matrix *mat, *U;
+	double* eigenvalues;
+
+	n = pair.n;
+	mat = pair.eigenvectors;
+	eigenvalues = pair.eigenvalues;
+
+	stableSelectionSort(mat, eigenvalues, n);
+
+	k = get_k(eigenvalues, k, n);
+	matrix_slice(mat, k);
+	U = matrix_transpose(mat);
+
+	mat = get_T(U);
+
+	matrix_free(U);
+	return mat;
 }
