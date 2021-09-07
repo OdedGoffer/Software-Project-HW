@@ -1,3 +1,7 @@
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "../include/eigengap.h"
 
 void stableSelectionSort(matrix* mat, double* a, int n) {
@@ -71,13 +75,14 @@ matrix* get_T(matrix* U) {
 	return T;
 }
 
-matrix* eigengap_heuristic(vector_values_pair pair, int k) {
+verctors_k_pair eigengap_heuristic(vector_values_pair pair, int k) {
+	verctors_k_pair verctors_pair;
 	int n;
 	matrix *mat, *U;
 	double* eigenvalues;
 
 	n = pair.n;
-	mat = pair.eigenvectors;
+	mat = matrix_transpose(pair.eigenvectors);
 	eigenvalues = pair.eigenvalues;
 
 	stableSelectionSort(mat, eigenvalues, n);
@@ -86,8 +91,12 @@ matrix* eigengap_heuristic(vector_values_pair pair, int k) {
 	matrix_slice(mat, k);
 	U = matrix_transpose(mat);
 
-	mat = get_T(U);
+	verctors_pair.vectors = get_T(U);
+	verctors_pair.k = k;
 
+	matrix_free(pair.eigenvectors);
+	matrix_free(mat);
 	matrix_free(U);
-	return mat;
+	free(eigenvalues);
+	return verctors_pair;
 }
