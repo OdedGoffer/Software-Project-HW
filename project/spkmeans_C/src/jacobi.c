@@ -68,6 +68,7 @@ vector_values_pair jacobi(matrix* A) {
 		}
 
 		matrix_free(P);
+		matrix_free(A);
 		A = A_tag;
 
 		if (done == 1) break;
@@ -75,6 +76,7 @@ vector_values_pair jacobi(matrix* A) {
 
 	if (done != 1) {
 		matrix_free(P_mult);
+		matrix_free(A);
 		res.eigenvectors = NULL;
 		res.eigenvalues = NULL;
 		return res;
@@ -83,6 +85,7 @@ vector_values_pair jacobi(matrix* A) {
 	res.eigenvectors = P_mult;
 	res.eigenvalues = diagonal_to_array(A);
 	res.n = A->n;
+	matrix_free(A);
 
 	return res;
 }
