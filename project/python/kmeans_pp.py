@@ -1,19 +1,19 @@
-import argparse
-import sys
+import argparse, sys, os
+import spkmeans as c_api
 import numpy as np
 import pandas as pd
 
 np.random.seed(0)
 
-#############
-# Parse command line arguments:
+###############################
+# Parse command line arguments
+###############################
 
 def parse_arguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('k', type=int, help="Number of clusters to create")
 	parser.add_argument('goal', type=str, help="requested algorithm to preform")
 	parser.add_argument('file_name', type=str, help="File name")
-	max_iter = 300
 
 	args = parser.parse_args()
 	if args.k < 0:
@@ -24,17 +24,20 @@ def parse_arguments():
 		print("Please enter a valid goal")
 		sys.exit()
 
-	return (args.k, max_iter, args.goal, args.file_name)
+	return (args.k, args.goal, args.file_name)
 
-#############
+########
 # Utils
+########
+
 def print_matrix(mat, dim, vec_num):
 	matrix = [mat[i:i+dim] for i in range(0,vec_num,dim)]
 	for row in matrix:
 		print(row)
 
-###################
-# Algo 1.1:
+##########################
+# Algo 1.1 from Exercise 2
+##########################
 
 def dist(vec1, vec2):  # returns distance between two vectors
 	return sum(np.square(vec1 - vec2))
@@ -61,8 +64,8 @@ def format_vectors(centroids, vectors):  # return a single python list of all ve
 	return vectors.to_numpy().flatten().tolist()
 
 
-def smart_centroids(vectors, K):  # Algo 1.1
-
+# Algo 1.1
+def smart_centroids(vectors, K):
 	N, d = vectors.shape
 	if N <= K:
 		return (None, None, None)
@@ -85,9 +88,9 @@ def smart_centroids(vectors, K):  # Algo 1.1
 	num_arr = format_vectors(centroids, vectors)
 	return (num_arr, N, d)
 
-
-###################
-# fit and print
+########
+# C API
+########
 
 def fit_and_print_centroids(num_arr, N, d, k, MAX_ITER):
 	centroids = np.split(np.array(fit(num_arr, N, d, k, MAX_ITER)), k)
@@ -95,60 +98,68 @@ def fit_and_print_centroids(num_arr, N, d, k, MAX_ITER):
 		centroid = np.round(centroid, decimals=4)
 		print(str(centroid.tolist()).strip("[]").replace(" ", ""))
 
+
 def do_wam(mat, dim, vec_num):
-	W = fit_wam(mat, dim, vec_num)
+	W = c_api.fit_WAM(mat, dim, vec_num)
 	print_matrix(W, vec_num, vec_num)
 
+
 def do_ddg(mat, dim, vec_num):
-	W = fit_wam(mat, dim, vec_num)
-	D = fit_ddg(W, vec_num)
+	W = c_api.fit_WAM(mat, dim, vec_num)
+	D = c_api.fit_DDG(W, vec_num)
 	print_matrix(D, vec_num, vec_num)
 
+
 def do_Lnorm(mat, dim, vec_num):
-	W = fit_wam(mat, dim, vec_num)
-	D = fit_ddg(W, vec_num)
-	L = fit_Lnorm(W, D, vec_num)
+	W = c_api.fit_WAM(mat, dim, vec_num)
+	D = c_api.fit_DDG(W, vec_num)
+	L = c_api.fit_LNORM(W, D, vec_num)
 	print_matrix(L, vec_num, vec_num)
+
 
 def do_jacobi(mat, dim, vec_num):
 	if dim != vec_num:
 		print("Jacobi matrix input should be symetrical.\n")
 		sys.exit()
 
-	eigenvectors, eigenvalues = fit_jacobi(mat, dim) # transpose :(
+	eigenvectors, eigenvalues = c_api.fit_jacobi(mat, dim) # transpose :(
 	print_matrix(eigenvectors, dim, dim)
 
-def do_spk(mat, dim, vec_num, k, MAX_ITER):
-	W = fit_wam(mat, dim, vec_num)
-	D = fit_ddg(W, vec_num)
-	L = fit_Lnorm(W, D, vec_num)
-	eigenvectors, eigenvalues = fit_jacobi(L, vec_num)
-	T, new_k = fit_eigengap(eigenvectors, eigenvalues, k)
-	fit_and_print_centroids(T, vec_num, new_k, new_k, MAX_ITER)
 
-###################
-# Main:
+def do_spk(mat, dim, vec_num, k, MAX_ITER):
+	W = c_api.fit_WAM(mat, dim, vec_num)
+	D = c_api.fit_DDG(W, vec_num)
+	L = c_api.fit_LNORM(W, D, vec_num)
+	eigenvectors, eigenvalues = c_api.fit_jacobi(L, vec_num)
+	# T, new_k = fit_eigengap(eigenvectors, eigenvalues, k)
+	# fit_kmeans(T, vec_num, new_k, new_k)
+
+#######
+# Main
+#######
 
 if __name__ == "__main__":
 
-	k, MAX_ITER, GOAL, FILENAME = parse_arguments()
+	k, GOAL, FILENAME = parse_arguments()
 
-	data = pd.read_csv(FILENAME)
+	if not os.path.isfile(FILENAME):
+		raise FileNotFoundError(f"No such file: {FILENAME}")
+
+	data = pd.read_csv(FILENAME, header=None)
 	dim = data.columns.size
-	vec_num = data.size
-	mat = data.values.tolist()
+	vec_num = data.shape[0]
+	mat = data.to_numpy().flatten().tolist()
 
 	if k >= vec_num:
-		print(f"BAD K: {k}; K must be less than vectors count.\n")
-		sys.exit()
+		raise ValueError(f"BAD K: {k}; must be less than vectors count.")
 
 	if GOAL == 'wam':
 		do_wam(mat, dim, vec_num)
-	if GOAL == 'ddg':
+	elif GOAL == 'ddg':
 		do_ddg(mat, dim, vec_num)
-	if GOAL == 'lnorm':
+	elif GOAL == 'lnorm':
 		do_Lnorm(mat, dim, vec_num)
-	if GOAL == 'jacobi':
+	elif GOAL == 'jacobi':
 		do_jacobi(mat, dim, vec_num)
-	if GOAL == 'spk':
-		do_spk(mat, dim, vec_num, k, MAX_ITER)
+	elif GOAL == 'spk':
+		do_spk(mat, dim, vec_num, k)

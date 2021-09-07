@@ -47,7 +47,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 	-@rm -rf $(OBJDIR) $(TARGET)
-	-@rm *.so
+	-@rm python/*.so
 
 run: $(TARGET)
 	$(info Running...)
@@ -56,6 +56,7 @@ run: $(TARGET)
 
 #PYTHON
 python: %.so
+	-@ mv *.so python/
 
 %.so: $(PYDIR)/setup.py
 	@python3 $< build_ext --inplace
