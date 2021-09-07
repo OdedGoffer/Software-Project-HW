@@ -11,6 +11,8 @@
 #include "../include/WAM.h"
 #include "../include/logger.h"
 #include "../include/calculate_centroids.h"
+#include <string.h>
+#include <stdlib.h>
 
 typedef enum {
 	_SPK,

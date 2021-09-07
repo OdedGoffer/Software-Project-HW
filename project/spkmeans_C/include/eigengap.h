@@ -4,7 +4,7 @@
 #include "matrix_utils.h"
 #include "jacobi.h"
 
-/* Type 'verctors_k_pair' holds a matrix of normalized vectors and the 
+/* Type 'verctors_k_pair' holds a matrix of normalized vectors and the
  * updates value of k (after eigengap algorithm if required).*/
 typedef struct verctors_k_pair {
 	matrix* vectors;
