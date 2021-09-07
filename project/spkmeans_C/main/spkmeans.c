@@ -63,6 +63,7 @@ args parse_cmd(int argc, char* argv[]) {
 void do_spkmeans(matrix* input, int K) {
 	matrix *W, *D, *Lnorm, *T, *centroids;
 	vector_values_pair pair;
+	verctors_k_pair verctors_pair;
 	int* centroids_arr;
 	int new_k;
 
@@ -70,8 +71,9 @@ void do_spkmeans(matrix* input, int K) {
 	D = DDG(W);
 	Lnorm = LNORM(W, D);
 	pair = jacobi(Lnorm);
-	T = eigengap_heuristic(pair, K);
-	new_k = T->n;
+	verctors_pair = eigengap_heuristic(pair, K);
+	T = verctors_pair.vectors;
+	new_k = verctors_pair.k;
 	centroids_arr = kmeans(T, new_k);
 	centroids = calculate_centroids(input, centroids_arr, new_k);
 	matrix_print(centroids);
@@ -117,13 +119,12 @@ void do_lnorm(matrix* input) {
 }
 
 void do_jacobi(matrix* input) {
-	matrix* res;
 	vector_values_pair pair;
+	if (input->n != input->m) log_err(
+		"Jacobi matrix input should be symetrical.\n");
 
 	pair = jacobi(input);
-	res = matrix_transpose(pair.eigenvectors);
-	matrix_print(res);
-	matrix_free(res);
+	matrix_print(pair.eigenvectors);
 	matrix_free(pair.eigenvectors);
 	free(pair.eigenvalues);
 }
