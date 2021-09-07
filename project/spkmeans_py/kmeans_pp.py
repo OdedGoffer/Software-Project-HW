@@ -115,14 +115,16 @@ def do_jacobi(mat, dim, vec_num):
 		print("Jacobi matrix input should be symetrical.\n")
 		sys.exit()
 
-	eigenvectors = fit_jacobi(mat, dim) # transpose :(
+	eigenvectors, eigenvalues = fit_jacobi(mat, dim) # transpose :(
 	print_matrix(eigenvectors, dim, dim)
 
-def do_spk(mat, dim, vec_num, k):
+def do_spk(mat, dim, vec_num, k, MAX_ITER):
 	W = fit_wam(mat, dim, vec_num)
 	D = fit_ddg(W, vec_num)
 	L = fit_Lnorm(W, D, vec_num)
-	T = fit_eigengap(L, vec_num, k)
+	eigenvectors, eigenvalues = fit_jacobi(L, vec_num)
+	T, new_k = fit_eigengap(eigenvectors, eigenvalues, k)
+	fit_and_print_centroids(T, vec_num, new_k, new_k, MAX_ITER)
 
 ###################
 # Main:
@@ -149,4 +151,4 @@ if __name__ == "__main__":
 	if GOAL == 'jacobi':
 		do_jacobi(mat, dim, vec_num)
 	if GOAL == 'spk':
-		do_spk(mat, dim, vec_num, k)
+		do_spk(mat, dim, vec_num, k, MAX_ITER)
