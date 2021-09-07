@@ -4,4 +4,4 @@ spkmeans
 ../.idea
 .idea
 python/build
-python/*.so
+*.so

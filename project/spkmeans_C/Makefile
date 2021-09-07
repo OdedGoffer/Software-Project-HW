@@ -46,12 +46,20 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(info ok)
 
 clean:
-	@rm -rf $(OBJDIR)/* $(TARGET)
+	-@rm -rf $(OBJDIR) $(TARGET)
+	-@rm *.so
 
 run: $(TARGET)
 	$(info Running...)
 	$(info )
 	@./$(TARGET) $(ARGS)
+
+#PYTHON
+python: %.so
+
+%.so: $(PYDIR)/setup.py
+	@python3 $< build_ext --inplace
+	-@rm -rf $(OBJDIR)/temp* $(OBJDIR)/lib*
 
 #TEST
 test: $(TESTTARGETS)
