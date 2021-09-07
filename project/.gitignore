@@ -1,0 +1,7 @@
+.DS_*
+.idea
+build/*
+python/build/*
+python/*so
+spkmeans
+*.o

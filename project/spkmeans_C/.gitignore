@@ -1,7 +1,0 @@
-build/*
-test/build/*
-spkmeans
-../.idea
-.idea
-python/build
-*.so

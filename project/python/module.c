@@ -5,6 +5,7 @@
 #include "../include/DDG.h"
 #include "../include/LNORM.h"
 #include "../include/jacobi.h"
+#include "../include/kmeans.h"
 
 matrix* list_to_matrix(PyObject* pList, int n, int m) {
 	int i, j;
@@ -66,6 +67,24 @@ PyObject* double_array_to_list(double* arr, int n) {
 	pList = PyList_New(n);
 	for (i = 0; i < n; i++) {
 		pFloat = Py_BuildValue("d", arr[i]);
+		PyList_SetItem(pList, i, pFloat);
+	}
+
+	if (PyErr_Occurred()) {
+		return NULL;
+	}
+
+	return pList;
+}
+
+PyObject* int_array_to_list(int* arr, int n) {
+	PyObject* pList;
+	PyObject* pFloat;
+	int i;
+
+	pList = PyList_New(n);
+	for (i = 0; i < n; i++) {
+		pFloat = Py_BuildValue("i", arr[i]);
 		PyList_SetItem(pList, i, pFloat);
 	}
 
@@ -162,6 +181,22 @@ static PyObject* api_jacobi(PyObject* self, PyObject* args) {
 	return pTuple;
 }
 
+static PyObject* api_kmeans(PyObject* self, PyObject* args) {
+	int n, m, k;
+	matrix* input;
+	int* output;
+	PyObject *pListIn, *pListOut;
+
+	if (!PyArg_ParseTuple(args, "O!i", &PyList_Type, &pListIn, &n, &m, &k)) return NULL;
+
+	input = list_to_matrix(pListIn, n, m);
+	output = kmeans(input, k);
+
+	pListOut = int_array_to_list(output, m);
+
+	return pListOut;
+}
+
 
 static PyMethodDef spkmeansMethods[] = {
 	{
@@ -173,12 +208,16 @@ static PyMethodDef spkmeansMethods[] = {
 		PyDoc_STR("Diagonal Degree Matrix. Usage: fit_DDG(mat A, int n)")
 	},
 	{
-			"fit_LNORM", (PyCFunction) api_LNORM, METH_VARARGS,
-			PyDoc_STR("Calculate L-Norm matrix. Usage: fit_DDG(mat W, mat D, int n)")
+		 "fit_LNORM", (PyCFunction) api_LNORM, METH_VARARGS,
+		 PyDoc_STR("Calculate L-Norm matrix. Usage: fit_DDG(mat W, mat D, int n)")
 	},
 	{
-			"fit_jacobi", (PyCFunction) api_jacobi, METH_VARARGS,
-			PyDoc_STR("Use Jacobi method to calculate eigenvectors. Output is transposed so that vectors are rows. Usage: fit_DDG(mat A, int n)")
+		 "fit_jacobi", (PyCFunction) api_jacobi, METH_VARARGS,
+		 PyDoc_STR("Use Jacobi method to calculate eigenvectors. Output is transposed so that vectors are rows. Usage: fit_DDG(mat A, int n)")
+	},
+	{
+		 "fit_kmeans", (PyCFunction) api_kmeans, METH_VARARGS,
+		 PyDoc_STR("Classic K-Means algorithm. Output in a list of integers, indicating to which cluster each vector belongs. Usage: fit_kmeans(mat V, int dimension, int num_of_vectors, int k")
 	},
 	{NULL, NULL, 0, NULL}
 };
