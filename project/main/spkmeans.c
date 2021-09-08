@@ -1,18 +1,13 @@
-#include <assert.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../include/DDG.h"
 #include "../include/eigengap.h"
-#include "../include/jacobi.h"
 #include "../include/kmeans.h"
 #include "../include/LNORM.h"
 #include "../include/parse_file.h"
 #include "../include/WAM.h"
 #include "../include/logger.h"
 #include "../include/calculate_centroids.h"
-#include <string.h>
-#include <stdlib.h>
 
 typedef enum {
 	_SPK,
