@@ -116,7 +116,9 @@ void do_lnorm(matrix* input) {
 	W = WAM(input);
 	D = DDG(W);
 	res = LNORM(W, D);
+
 	matrix_print(res);
+
 	matrix_free(W);
 	matrix_free(D);
 	matrix_free(res);
@@ -125,7 +127,7 @@ void do_lnorm(matrix* input) {
 void do_jacobi(matrix* input) {
 	vectors_values_pair pair;
 	if (input->n != input->m) log_err(
-			"Jacobi matrix input should be symetrical.\n"); //TODO: make this better.
+			"Jacobi matrix input should be symetrical.\n");
 
 	pair = jacobi(input);
 

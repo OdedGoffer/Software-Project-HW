@@ -244,14 +244,3 @@ void matrix_slice(matrix* mat, int k) {
 	mat->row_cap = k; 
 	free(old_rows);
 }
-
-void matrix_normalize_rows (matrix* mat) {
-	int i;
-	double length;
-	assert(mat);
-
-	for (i = 0; i < mat->m; i++) {
-		length = vector_length(mat->rows[i]);
-		vector_divide(mat->rows[i], length);
-	}
-}
