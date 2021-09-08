@@ -3,5 +3,5 @@
 build/*
 python/build/*
 python/*so
-spkmeans
+python/spkmeans
 *.o

@@ -26,12 +26,12 @@ TARGETOBJ = $(OBJDIR)/$(TARGET).o
 
 .PHONY: all clean run test python
 
-all: $(TARGET)
+all: $(TARGET) python
 	$(info ****** SPKMEANS COMPILED SUCCESFULLY! ******)
 
 $(TARGET): $(OBJS) $(TARGETOBJ)
 	$(info linking $(TARGET)...)
-	@$(CC) $(LDFLAGS) -o $@ $^ $(LMFLAG)
+	@$(CC) $(LDFLAGS) -o $(PYDIR)/$@ $^ $(LMFLAG)
 
 $(TARGETOBJ): $(MAINDIR)/$(TARGET).c
 	-@mkdir -p $(OBJDIR)
@@ -48,6 +48,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 clean:
 	-@rm -rf $(OBJDIR) $(TARGET)
 	-@rm python/*.so
+	-@rm python/$(TARGET)
 
 run: $(TARGET)
 	$(info Running...)

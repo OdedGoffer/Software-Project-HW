@@ -30,7 +30,7 @@ args parse_cmd(int argc, char* argv[]) {
 
 	if (argc != 4) log_err("Wrong number of arguments. Correct format is: ./spkeams <goal> <K> <filename>\n");
 
-	goal_str = argv[1];
+	goal_str = argv[2];
 
 	if (strcmp(goal_str, "spk") == 0) {
 		args.goal = _SPK;
@@ -44,7 +44,7 @@ args parse_cmd(int argc, char* argv[]) {
 		args.goal = _JACOBI;
 	} else log_err("BAD GOAL: %s\n", goal_str);
 
-	K = atoi(argv[2]);
+	K = atoi(argv[1]);
 
 	if (K < 0) log_err("BAD K: %d; K must be non-negative.\n", K);
 
@@ -59,17 +59,27 @@ void do_spkmeans(matrix* input, int K) {
 	matrix *W, *D, *Lnorm, *T, *centroids;
 	vectors_values_pair pair;
 	vectors_k_pair verctors_pair;
-	int* centroids_arr;
+	int* centroids_arr, i;
 	int new_k;
 
 	W = WAM(input);
 	D = DDG(W);
 	Lnorm = LNORM(W, D);
+	log_info("W:\n");
+	matrix_print(W);
 	matrix_free(W);
+	log_info("D:\n");
+	matrix_print(D);
 	matrix_free(D);
+	log_info("LNORM:\n");
+	matrix_print(Lnorm);
 
 	pair = jacobi(Lnorm);
 	if (!pair.eigenvectors) log_err("Jacobi algorithm did not converge after maximum iterations.");
+	log_info("Jacobi:\n");
+	matrix_print(pair.eigenvectors);
+	for (i = 0; i < pair.n; i++) log_info("%.4f, ",pair.eigenvalues[i]);
+	log_info("\n");
 
 	verctors_pair = eigengap_heuristic(pair, K);
 	eigenvectors_free(pair);
@@ -138,8 +148,9 @@ int main(int argc, char* argv[]) {
 
 	args = parse_cmd(argc, argv);
 	input = read_csv(args.filename);
+	matrix_print(input);
 	if (args.K >= input->m) log_err(
-		"BAD K: %d; K must be less than vectors count.\n", args.K);
+		"BAD K: %d; K must be less than vectors count: %d\n", args.K, input->m);
 
 	switch (args.goal) {
 		case _SPK:

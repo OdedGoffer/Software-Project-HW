@@ -249,7 +249,7 @@ static PyObject* api_kmeans(PyObject* self, PyObject* args) {
 	int* output;
 	PyObject *pListIn, *pListOut;
 
-	if (!PyArg_ParseTuple(args, "O!i", &PyList_Type, &pListIn, &n, &m, &k)) return NULL;
+	if (!PyArg_ParseTuple(args, "O!iii", &PyList_Type, &pListIn, &n, &m, &k)) return NULL;
 
 	input = list_to_matrix(pListIn, n, m);
 	if (!input) return NULL;
@@ -267,7 +267,7 @@ static PyObject* api_calculate_centroids(PyObject* self, PyObject* args) {
 	matrix *vectors, *centroids;
 	PyObject *pListVectors, *pListCentroidsArr, *pListCentroids;
 
-	if (!PyArg_ParseTuple(args, "O!O!i", &PyList_Type, &pListCentroidsArr, &PyList_Type, &pListVectors, &n, &m, &k)) return NULL;
+	if (!PyArg_ParseTuple(args, "O!O!iii", &PyList_Type, &pListCentroidsArr, &PyList_Type, &pListVectors, &n, &m, &k)) return NULL;
 
 	vectors = list_to_matrix(pListVectors, n ,m);
 	if (!vectors) return NULL;

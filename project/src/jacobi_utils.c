@@ -38,7 +38,7 @@ double get_theta(matrix* mat, int i, int j) {
 	Aii = matrix_get(i, i, mat);
 	Ajj = matrix_get(j, j, mat);
 
-	return (Aii - Ajj) / (2 * Aij);
+	return (Ajj - Aii) / (2 * Aij);
 }
 
 double sign(double x) {

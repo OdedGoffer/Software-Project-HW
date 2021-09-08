@@ -17,7 +17,7 @@ matrix* read_csv(char* filename) {
 
 	while(fscanf(fp, "%lf%c", &val, &c) == 2) {
 		n++;
-		if (c == '\n') break;
+		if (c == '\n' || c == '\r') break;
 	}
 
 	res = matrix_init(n, 0);
@@ -27,7 +27,7 @@ matrix* read_csv(char* filename) {
 		if (c == ',') {
 			values[i] = val;
 			i++;
-		} else if (c == '\n') {
+		} else if (c == '\n' || c == '\r') {
 			values[i] = val;
 			v = vector_init(values, n);
 			v_new = vector_copy(v);

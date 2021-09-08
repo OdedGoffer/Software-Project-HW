@@ -3,4 +3,6 @@
 
 void log_err(char* msg, ...);
 
+void log_info(char* msg, ...);
+
 #endif

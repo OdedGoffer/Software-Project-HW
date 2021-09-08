@@ -30,9 +30,14 @@ def parse_arguments():
 # Utils
 ########
 
+def print_val(val, end = "\n"):
+	if abs(val) < 0.00005:
+		val = 0
+	print(f"{val:.4f}", end=end)
+
 def print_vector(vec):
-	[print(f"{np.round(val, 4)}, ", end='') for val in vec[:-1]]
-	print(np.round(vec[-1],4))
+	[print_val(val, end=',') for val in vec[:-1]]
+	print_val(vec[-1])
 
 
 def print_matrix(mat, dim, vec_num):
@@ -94,7 +99,7 @@ def smart_centroids(vectors, K):
 
 	print_chosen_centroids(centroids)
 	num_arr = format_vectors(centroids, vectors)
-	return (num_arr, N, d)
+	return num_arr
 
 ########
 # C API
@@ -155,24 +160,30 @@ def do_jacobi(mat, dim):
 	print_matrix(eigenvectors, dim, dim)
 
 
-def do_spk(mat, dim, vec_num, k, MAX_ITER):
+def do_spk(mat, dim, vec_num, k):
 	try:
 		func_name = 'WAM'
 		W = c_api.WAM(mat, dim, vec_num)
+		print('W')
+		print_matrix(W, vec_num, vec_num)
 		func_name = 'DDG'
 		D = c_api.DDG(W, vec_num)
 		func_name = 'LNORM'
 		L = c_api.LNORM(W, D, vec_num)
+		print('L')
+		print_matrix(L, vec_num, vec_num)
 		func_name = 'jacobi'
-		eigenvectors, eigenvalues = c_api.jacobi(L, dim)
+		eigenvectors, eigenvalues = c_api.jacobi(L, vec_num)
+		print("Eigenvalues:")
+		print_vector(eigenvalues)
 		func_name = 'eigengap'
-		T, new_k = c_api.eigengap(eigenvectors, eigenvalues, k)
+		T, new_k = c_api.eigengap_heuristic(eigenvectors, eigenvalues, k)
 		matrix = [T[i:i + new_k] for i in range(0, vec_num * new_k, new_k)]
 		data = pd.DataFrame(matrix)
 		func_name = 'smart_centroids'
-		num_arr, N, d = smart_centroids(data, new_k)
+		T = smart_centroids(data, new_k)
 		func_name = 'kmeans'
-		index_list = c_api.kmeans(num_arr, N, d, new_k)
+		index_list = c_api.kmeans(T, new_k, vec_num, new_k)
 		func_name = 'calculate_centroids'
 		centroids = c_api.calculate_centroids(index_list, mat, dim, vec_num, new_k)
 
