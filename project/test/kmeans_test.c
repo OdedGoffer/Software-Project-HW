@@ -17,7 +17,7 @@ void TEST_kmeans() {
 	expected = read_csv(expected_filename);
 
 	centroids = kmeans(input, K);
-	res = calculate_centroids(input, centroids, K);
+	res = calculate_centroids(centroids, input, K);
 
 	for (i = 0; i < K; i++) {
 		assertf(vector_dist(res->rows[i], expected->rows[i]) < EPSILON, "wrong output value");

@@ -33,7 +33,7 @@ void TEST_calculate_centroids() {
 
 	mat = create_matrix();
 
-	res = calculate_centroids(mat, centroids, 3);
+	res = calculate_centroids(centroids, mat, 3);
 
 	assertf(fabs(res->rows[0]->values[0] - 2.5) < EPSILON, "wrong centroid value");
 	assertf(vector_dist(mat->rows[2], res->rows[1]) < EPSILON, "wrong centroid value");
