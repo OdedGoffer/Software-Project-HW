@@ -92,7 +92,7 @@ void vector_print(vector* v) {
 
 	n = v->size;
 	for (i = 0; i < n-1; i++){
-		printf("%.4f, ", v->values[i]);
+		printf("%.4f,", v->values[i]);
 	}
 	printf("%.4f\n", v->values[n-1]);
 }

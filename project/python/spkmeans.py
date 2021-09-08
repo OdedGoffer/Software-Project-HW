@@ -69,37 +69,46 @@ def print_chosen_centroids(centroids):
 
 
 # Returns a single python list of all vectors, where k centroids are first.
-def format_vectors(centroids, vectors):
-	vectors = vectors.drop(['Dist', 'Prob'], axis=1)
+def format_T(centroids, T):
+	T = T.drop(['Dist', 'Prob'], axis=1)
 	centroids = centroids.drop(['Dist', 'Prob'], axis=1)
-	vectors = vectors.drop([i for i in centroids.index])
-	vectors = pd.concat([centroids, vectors])
+	T = T.drop([i for i in centroids.index])
+	T = pd.concat([centroids, T])
+	return T.to_numpy().flatten().tolist()
+
+def format_vectors(new_vectors, vectors):
+	vectors = vectors.drop([i for i in new_vectors.index])
+	vectors = pd.concat([new_vectors, vectors])
 	return vectors.to_numpy().flatten().tolist()
 
 
 # Algo 1.1
-def smart_centroids(vectors, K):
-	N, d = vectors.shape
+def smart_centroids(T, vectors, K):
+	N, d = T.shape
 	if N <= K:
 		return (None, None, None)
 
-	vectors['Dist'] = vectors['Prob'] = 0.0
-	centroids = vectors.iloc[[np.random.choice(N)]]
+	T['Dist'] = T['Prob'] = 0.0
+	idx = np.random.choice(N)
+	centroids = T.iloc[[idx]]
+	new_vectors = vectors.iloc[[idx]]
 
 	Z = 1
 	while (Z < K):
 		for i in range(N):
-			vectors['Dist'][i] = closest_dist(centroids, vectors.iloc[i].to_numpy())
-		sumd = sum(vectors['Dist'])
+			T['Dist'][i] = closest_dist(centroids, T.iloc[i].to_numpy())
+		sumd = sum(T['Dist'])
 		for i in range(N):
-			vectors['Prob'][i] = vectors['Dist'][i] / sumd
+			T['Prob'][i] = T['Dist'][i] / sumd
 		Z += 1
-		row_num = np.random.choice(N, p=vectors['Prob'])
-		centroids = centroids.append(vectors.iloc[row_num])
+		row_num = np.random.choice(N, p=T['Prob'])
+		centroids = centroids.append(T.iloc[row_num])
+		new_vectors = new_vectors.append(vectors.iloc[row_num])
 
 	print_chosen_centroids(centroids)
-	num_arr = format_vectors(centroids, vectors)
-	return num_arr
+	centroids_arr = format_T(centroids, T)
+	vectors_arr = format_vectors(new_vectors, vectors)
+	return centroids_arr, vectors_arr
 
 ########
 # C API
@@ -164,29 +173,25 @@ def do_spk(mat, dim, vec_num, k):
 	try:
 		func_name = 'WAM'
 		W = c_api.WAM(mat, dim, vec_num)
-		print('W')
-		print_matrix(W, vec_num, vec_num)
 
 		func_name = 'DDG'
 		D = c_api.DDG(W, vec_num)
 
 		func_name = 'LNORM'
 		L = c_api.LNORM(W, D, vec_num)
-		print('L')
-		print_matrix(L, vec_num, vec_num)
 
 		func_name = 'jacobi'
 		eigenvectors, eigenvalues = c_api.jacobi(L, vec_num)
-		print("Eigenvalues:")
-		print_vector(eigenvalues)
 
 		func_name = 'eigengap'
 		T, k = c_api.eigengap_heuristic(eigenvectors, eigenvalues, k)
-		matrix = [T[i:i + k] for i in range(0, vec_num * k, k)]
-		data = pd.DataFrame(matrix)
+		T = [T[i:i + k] for i in range(0, vec_num * k, k)]
+		T = pd.DataFrame(T)
 
 		func_name = 'smart_centroids'
-		T = smart_centroids(data, k)
+		vectors = [mat[i:i + dim] for i in range(0, dim * vec_num, dim)]
+		vectors = pd.DataFrame(vectors)
+		T, mat = smart_centroids(T, vectors, k)
 
 		func_name = 'kmeans'
 		index_list = c_api.kmeans(T, k, vec_num, k)
@@ -198,7 +203,7 @@ def do_spk(mat, dim, vec_num, k):
 		print(f"{func_name} method returned an error: {e}")
 		sys.exit()
 
-	print_matrix(centroids, dim,k)
+	print_matrix(centroids, dim, k)
 
 #######
 # Main

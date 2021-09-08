@@ -87,13 +87,9 @@ void matrix_print(matrix* mat) {
 	int i;
 	assert(mat != NULL);
 
-
-	printf("[\n");
 	for (i=0; i<mat->m; i++) {
-		printf("\t");
 		vector_print(mat->rows[i]);
 	}
-	printf("] (%d x %d)\n", mat->m, mat->n);
 }
 
 /*'mat' must be a square matrix with positive diagonal values.*/

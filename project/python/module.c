@@ -290,18 +290,15 @@ static PyObject* api_eigengap(PyObject* self, PyObject* args) {
 
 	n = PyList_Size(pListValues);
 
-	vvp.eigenvectors = list_to_matrix(pListVectors, n , n);
+	vvp.eigenvectors = list_to_matrix(pListVectors, n, n);
 	if (!vvp.eigenvectors) return NULL;
 	vvp.eigenvalues = list_to_double_array(pListValues, n);
 	if (!vvp.eigenvalues) return NULL;
 	vvp.n = n;
 
 	vkp = eigengap_heuristic(vvp, k);
-
 	pListRes = matrix_to_list(vkp.vectors);
-
 	pTuple = Py_BuildValue("Oi", pListRes, vkp.k);
-	Py_DECREF(pListRes);
 
 	eigenvectors_free(vvp);
 	matrix_free(vkp.vectors);

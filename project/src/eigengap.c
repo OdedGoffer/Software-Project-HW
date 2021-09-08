@@ -50,7 +50,7 @@ int get_k(double* eigenvalues, int k, int n) {
 }
 
 matrix* get_T(matrix* U) {
-	matrix* T;
+	matrix *T, *M;
 	int i, j, n, m;
 	double norm, val;
 	vector* zero;
@@ -69,7 +69,9 @@ matrix* get_T(matrix* U) {
 	}
 
 	vector_free(zero);
-	return T;
+	M = matrix_transpose(T);
+	matrix_free(T);
+	return M;
 }
 
 vectors_k_pair eigengap_heuristic(vectors_values_pair pair, int k) {

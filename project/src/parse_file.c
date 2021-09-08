@@ -6,7 +6,7 @@
 
 matrix* read_csv(char* filename) {
 	FILE* fp;
-	int result, i = 0, n = 0;
+	int result, i = 0, n = 0, done = 0;
 	double val, values[256];
 	char c;
 	vector *v=NULL, *v_new;
@@ -25,6 +25,7 @@ matrix* read_csv(char* filename) {
 
 	while (fscanf(fp, "%lf%c", &val, &c) == 2) {
 		if (c == ',') {
+			done = 0;
 			values[i] = val;
 			i++;
 		} else if (c == '\n' || c == '\r') {
@@ -32,13 +33,21 @@ matrix* read_csv(char* filename) {
 			v = vector_init(values, n);
 			v_new = vector_copy(v);
 			matrix_add_row(res, v_new);
+			done = 1;
 			i = 0;
 		}
+	}
+
+	if (!done) {
+		values[i] = val;
+		v = vector_init(values, n);
+		v_new = vector_copy(v);
+		matrix_add_row(res, v_new);
 	}
 
 	result = fclose(fp);
 	assert(result != EOF);
 	if (v) free(v);
-	
+
 	return res;
 }

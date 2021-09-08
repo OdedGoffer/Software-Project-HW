@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "../include/DDG.h"
 #include "../include/eigengap.h"
 #include "../include/kmeans.h"
@@ -22,6 +23,15 @@ typedef struct {
 	int K;
 	char* filename;
 } args;
+
+void print_eigenvalues(vectors_values_pair vvp) {
+	int i;
+
+	for (i = 0; i < vvp.n - 1; i++) {
+		printf("%.4f,", vvp.eigenvalues[i]);
+	}
+	printf("%.4f\n", vvp.eigenvalues[vvp.n]);
+}
 
 args parse_cmd(int argc, char* argv[]) {
 	args args;
@@ -59,40 +69,36 @@ void do_spkmeans(matrix* input, int K) {
 	matrix *W, *D, *Lnorm, *T, *centroids;
 	vectors_values_pair pair;
 	vectors_k_pair vectors_pair;
-	int* centroids_arr, i;
+	int* centroids_arr;
 
 	W = WAM(input);
+
 	D = DDG(W);
+
 	Lnorm = LNORM(W, D);
-	log_info("W:\n");
-	matrix_print(W);
-	matrix_free(W);
-	log_info("D:\n");
-	matrix_print(D);
-	matrix_free(D);
-	log_info("LNORM:\n");
-	matrix_print(Lnorm);
+
 
 	pair = jacobi(Lnorm);
-	matrix_free(Lnorm);
-	log_info("Jacobi:\n");
-	matrix_print(pair.eigenvectors);
-	for (i = 0; i < pair.n; i++) log_info("%.4f, ",pair.eigenvalues[i]);
-	log_info("\n");
 
 	vectors_pair = eigengap_heuristic(pair, K);
-	eigenvectors_free(pair);
+
 
 	T = vectors_pair.vectors;
 	K = vectors_pair.k;
+
 	centroids_arr = kmeans(T, K);
-	matrix_free(T);
 
 	centroids = calculate_centroids(centroids_arr, input, K);
+
+	matrix_free(W);
+	matrix_free(D);
+	matrix_free(T);
+	eigenvectors_free(pair);
 	free(centroids_arr);
 
 	matrix_print(centroids);
 	matrix_free(centroids);
+	matrix_free(input);
 }
 
 void do_wam(matrix* input) {
@@ -101,6 +107,7 @@ void do_wam(matrix* input) {
 	res = WAM(input);
 	matrix_print(res);
 	matrix_free(res);
+	matrix_free(input);
 }
 
 void do_ddg(matrix* input) {
@@ -111,6 +118,7 @@ void do_ddg(matrix* input) {
 	matrix_print(res);
 	matrix_free(W);
 	matrix_free(res);
+	matrix_free(input);
 }
 
 void do_lnorm(matrix* input) {
@@ -125,6 +133,7 @@ void do_lnorm(matrix* input) {
 	matrix_free(W);
 	matrix_free(D);
 	matrix_free(res);
+	matrix_free(input);
 }
 
 void do_jacobi(matrix* input) {
@@ -136,6 +145,7 @@ void do_jacobi(matrix* input) {
 
 	if (!pair.eigenvectors) log_err("Jacobi algorithm did not converge after maximum iterations.");
 
+	print_eigenvalues(pair);
 	matrix_print(pair.eigenvectors);
 	eigenvectors_free(pair);
 }
@@ -168,6 +178,5 @@ int main(int argc, char* argv[]) {
 			break;
 	}
 
-	matrix_free(input);
 	return 0;
 }
