@@ -49,11 +49,11 @@ double* diagonal_to_array(matrix* A) {
 	return res;
 }
 
-vector_values_pair jacobi(matrix* A) {
+vectors_values_pair jacobi(matrix* A) {
 	int i;
 	int done = 0;
 	matrix* A_tag, *P, *P_mult;
-	vector_values_pair res;
+	vectors_values_pair res;
 
 	assert(A);
 	P_mult = NULL;
@@ -90,7 +90,7 @@ vector_values_pair jacobi(matrix* A) {
 	return res;
 }
 
-void eigenvectors_free(vector_values_pair vvp) {
+void eigenvectors_free(vectors_values_pair vvp) {
 	matrix_free(vvp.eigenvectors);
 	free(vvp.eigenvalues);
 }

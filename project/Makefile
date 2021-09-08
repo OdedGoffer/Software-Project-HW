@@ -10,7 +10,7 @@ SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 ARGS ?= ddg 3 filelele
 
-#TEST
+#TEST VARS
 TESTDIR = test
 ALLTESTS := $(wildcard test/*.c)
 INT = $(TEST:%=$(TESTDIR)/$(OBJDIR)/%)
@@ -54,6 +54,7 @@ run: $(TARGET)
 	$(info )
 	@./$(TARGET) $(ARGS)
 
+
 #PYTHON
 python: %.so
 	-@ mv *.so python/
@@ -61,6 +62,7 @@ python: %.so
 %.so: $(PYDIR)/setup.py
 	@python3 $< build_ext --inplace
 	-@rm -rf $(OBJDIR)/temp* $(OBJDIR)/lib*
+
 
 #TEST
 test: $(TESTTARGETS)

@@ -101,26 +101,26 @@ def smart_centroids(vectors, K):
 ########
 
 def do_wam(mat, dim, vec_num):
-	W = c_api.fit_WAM(mat, dim, vec_num)
+	W = c_api.WAM(mat, dim, vec_num)
 	print_matrix(W, vec_num, vec_num)
 
 
 def do_ddg(mat, dim, vec_num):
-	W = c_api.fit_WAM(mat, dim)
-	D = c_api.fit_DDG(W, vec_num)
+	W = c_api.WAM(mat, dim)
+	D = c_api.DDG(W, vec_num)
 	print_matrix(D, vec_num, vec_num)
 
 
 def do_Lnorm(mat, dim, vec_num):
-	W = c_api.fit_WAM(mat, dim, vec_num)
-	D = c_api.fit_DDG(W, vec_num)
-	L = c_api.fit_LNORM(W, D, vec_num)
+	W = c_api.WAM(mat, dim, vec_num)
+	D = c_api.DDG(W, vec_num)
+	L = c_api.LNORM(W, D, vec_num)
 	print_matrix(L, vec_num, vec_num)
 
 
 def do_jacobi(mat, dim):
 	try:
-		eigenvectors, eigenvalues = c_api.fit_jacobi(mat, dim)
+		eigenvectors, eigenvalues = c_api.jacobi(mat, dim)
 	except TimeoutError:
 		print("Jacobi method reached maximum iterations with no convergence.")
 		sys.exit()
@@ -133,12 +133,12 @@ def do_jacobi(mat, dim):
 
 
 def do_spk(mat, dim, vec_num, k, MAX_ITER):
-	# W = c_api.fit_WAM(mat, dim, vec_num)
-	# D = c_api.fit_DDG(W, vec_num)
-	# L = c_api.fit_LNORM(W, D, vec_num)
-	# eigenvectors, eigenvalues = c_api.fit_jacobi(L, vec_num)
-	# T, new_k = fit_eigengap(eigenvectors, eigenvalues, k)
-	# fit_kmeans(T, vec_num, new_k, new_k)
+	# W = c_api.WAM(mat, dim, vec_num)
+	# D = c_api.DDG(W, vec_num)
+	# L = c_api.LNORM(W, D, vec_num)
+	# eigenvectors, eigenvalues = c_api.jacobi(L, vec_num)
+	# T, new_k = eigengap(eigenvectors, eigenvalues, k)
+	# kmeans(T, vec_num, new_k, new_k)
 	pass
 
 #######

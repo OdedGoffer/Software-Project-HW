@@ -29,7 +29,7 @@ matrix* create_matrix() {
 
 void TEST_jacobi() {
 	matrix* A;
-	vector_values_pair res;
+	vectors_values_pair res;
 
 	A = create_matrix();
 

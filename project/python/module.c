@@ -6,6 +6,8 @@
 #include "../include/LNORM.h"
 #include "../include/jacobi.h"
 #include "../include/kmeans.h"
+#include "../include/calculate_centroids.h"
+#include "../include/eigengap.h"
 
 matrix* list_to_matrix(PyObject* pList, int n, int m) {
 	int i, j;
@@ -33,6 +35,61 @@ matrix* list_to_matrix(PyObject* pList, int n, int m) {
 	}
 
 	return mat;
+}
+
+int* list_to_int_array(PyObject* pList, int m) {
+	int i, val;
+	int *res;
+	PyObject* pItem;
+
+	if (m != PyList_Size(pList)) {
+		PyErr_SetString(PyExc_ValueError, "bad list size");
+		return NULL;
+	}
+
+	res = (int*) malloc(m * sizeof(int));
+	assert(res);
+
+	for (i = 0; i < m; i++) {
+		pItem = PyList_GetItem(pList, i);
+		val = (int) PyLong_AsLong(pItem);
+		res[i] = val;
+	}
+
+	if (PyErr_Occurred()) {
+		free(res);
+		return NULL;
+	}
+
+	return res;
+}
+
+double* list_to_double_array(PyObject* pList, int m) {
+	int i;
+	double val;
+	double* res;
+	PyObject* pItem;
+
+	if (m != PyList_Size(pList)) {
+		PyErr_SetString(PyExc_ValueError, "bad list size");
+		return NULL;
+	}
+
+	res = (double*) malloc(m * sizeof(double));
+	assert(res);
+
+	for (i = 0; i < m; i++) {
+		pItem = PyList_GetItem(pList, i);
+		val = PyFloat_AsDouble(pItem);
+		res[i] = val;
+	}
+
+	if (PyErr_Occurred()) {
+		free(res);
+		return NULL;
+	}
+
+	return res;
 }
 
 PyObject* matrix_to_list(matrix* mat) {
@@ -159,7 +216,7 @@ static PyObject* api_LNORM(PyObject* self, PyObject* args) {
 static PyObject* api_jacobi(PyObject* self, PyObject* args) {
 	int n;
 	matrix* input;
-	vector_values_pair output;
+	vectors_values_pair output;
 	PyObject *pListIn, *pListVectors, *pListValues,  *pTuple;
 
 	if (!PyArg_ParseTuple(args, "O!i", &PyList_Type, &pListIn, &n)) return NULL;
@@ -195,6 +252,8 @@ static PyObject* api_kmeans(PyObject* self, PyObject* args) {
 	if (!PyArg_ParseTuple(args, "O!i", &PyList_Type, &pListIn, &n, &m, &k)) return NULL;
 
 	input = list_to_matrix(pListIn, n, m);
+	if (!input) return NULL;
+
 	output = kmeans(input, k);
 
 	pListOut = int_array_to_list(output, m);
@@ -202,27 +261,93 @@ static PyObject* api_kmeans(PyObject* self, PyObject* args) {
 	return pListOut;
 }
 
+static PyObject* api_calculate_centroids(PyObject* self, PyObject* args) {
+	int n, m, k;
+	int* centroids_arr;
+	matrix *vectors, *centroids;
+	PyObject *pListVectors, *pListCentroidsArr, *pListCentroids;
+
+	if (!PyArg_ParseTuple(args, "O!O!i", &PyList_Type, &pListCentroidsArr, &PyList_Type, &pListVectors, &n, &m, &k)) return NULL;
+
+	vectors = list_to_matrix(pListVectors, n ,m);
+	if (!vectors) return NULL;
+	centroids_arr = list_to_int_array(pListCentroidsArr, m);
+	if (!centroids_arr) return NULL;
+
+	centroids = calculate_centroids(centroids_arr, vectors, k);
+
+	pListCentroids = matrix_to_list(centroids);
+
+	matrix_free(vectors);
+	matrix_free(centroids);
+	free(centroids_arr);
+
+	return pListCentroids;
+}
+
+static PyObject* api_eigengap(PyObject* self, PyObject* args) {
+	int n, k;
+	vectors_values_pair vvp;
+	vectors_k_pair vkp;
+	PyObject *pListVectors, *pListValues, *pListRes, *pTuple;
+
+	if (!PyArg_ParseTuple(args, "O!O!i", &PyList_Type, &pListVectors, &PyList_Type, &pListValues, &k)) return NULL;
+
+	n = PyList_Size(pListValues);
+
+	vvp.eigenvectors = list_to_matrix(pListVectors, n , n);
+	if (!vvp.eigenvectors) return NULL;
+	vvp.eigenvalues = list_to_double_array(pListValues, n);
+	if (!vvp.eigenvalues) return NULL;
+	vvp.n = n;
+
+	vkp = eigengap_heuristic(vvp, k);
+
+	pListRes = matrix_to_list(vkp.vectors);
+
+	pTuple = Py_BuildValue("Oi", pListRes, vkp.k);
+	Py_DECREF(pListRes);
+
+	eigenvectors_free(vvp);
+	matrix_free(vkp.vectors);
+
+	return pTuple;
+}
+
 
 static PyMethodDef spkmeansMethods[] = {
 	{
-		"fit_WAM", (PyCFunction) api_WAM, METH_VARARGS,
-		PyDoc_STR("Weighted Adjacency Matrix. Usage: fit_WAM(mat A, int n, int m)")
+		"WAM", (PyCFunction) api_WAM, METH_VARARGS,
+		PyDoc_STR("Weighted Adjacency Matrix. Usage: WAM(mat A, int n, int m)")
 	},
 	{
-		"fit_DDG", (PyCFunction) api_DDG, METH_VARARGS,
-		PyDoc_STR("Diagonal Degree Matrix. Usage: fit_DDG(mat A, int n)")
+		"DDG", (PyCFunction) api_DDG, METH_VARARGS,
+		PyDoc_STR("Diagonal Degree Matrix. Usage: DDG(mat A, int n)")
 	},
 	{
-		 "fit_LNORM", (PyCFunction) api_LNORM, METH_VARARGS,
-		 PyDoc_STR("Calculate L-Norm matrix. Usage: fit_DDG(mat W, mat D, int n)")
+		 "LNORM", (PyCFunction) api_LNORM, METH_VARARGS,
+		 PyDoc_STR("Calculate L-Norm matrix. Usage: DDG(mat W, mat D, int n)")
 	},
 	{
-		 "fit_jacobi", (PyCFunction) api_jacobi, METH_VARARGS,
-		 PyDoc_STR("Use Jacobi method to calculate eigenvectors. Output is transposed so that vectors are rows. Usage: fit_DDG(mat A, int n)")
+		 "jacobi", (PyCFunction) api_jacobi, METH_VARARGS,
+		 PyDoc_STR("Use Jacobi method to calculate eigenvectors. Output is transposed so that vectors are rows.\n"
+				   "Usage: DDG(mat A, int n)")
 	},
 	{
-		 "fit_kmeans", (PyCFunction) api_kmeans, METH_VARARGS,
-		 PyDoc_STR("Classic K-Means algorithm. Output in a list of integers, indicating to which cluster each vector belongs. Usage: fit_kmeans(mat V, int dimension, int num_of_vectors, int k")
+		 "kmeans", (PyCFunction) api_kmeans, METH_VARARGS,
+		 PyDoc_STR("Classic K-Means algorithm. Output in a list of integers, indicating to which cluster each vector belongs.\n"
+				   "Usage: kmeans(mat V, int dimension, int num_of_vectors, int k)")
+	},
+	{
+			"calculate_centroids", (PyCFunction) api_calculate_centroids, METH_VARARGS,
+					PyDoc_STR("Calculate actual cluster centroids given a list of vectors and a list indicating to which "
+							  "cluster each vector belongs.\n"
+							  "Usage: calculate_centroids(list centroids_array, mat vectors, int dimension, int num_of_vectors, int k)")
+	},
+	{
+			"eigengap_heuristic", (PyCFunction) api_eigengap, METH_VARARGS,
+					PyDoc_STR("Eigengap Heuristic algorithm.\n"
+							  "Usage: eigengap_heuristic(mat eigenvectors, list eigenvalues, int k)")
 	},
 	{NULL, NULL, 0, NULL}
 };

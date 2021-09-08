@@ -62,8 +62,8 @@ args parse_cmd(int argc, char* argv[]) {
 
 void do_spkmeans(matrix* input, int K) {
 	matrix *W, *D, *Lnorm, *T, *centroids;
-	vector_values_pair pair;
-	verctors_k_pair verctors_pair;
+	vectors_values_pair pair;
+	vectors_k_pair verctors_pair;
 	int* centroids_arr;
 	int new_k;
 
@@ -75,12 +75,11 @@ void do_spkmeans(matrix* input, int K) {
 	T = verctors_pair.vectors;
 	new_k = verctors_pair.k;
 	centroids_arr = kmeans(T, new_k);
-	centroids = calculate_centroids(input, centroids_arr, new_k);
+	centroids = calculate_centroids(centroids_arr, input, new_k);
 	matrix_print(centroids);
 
 	matrix_free(W);
 	matrix_free(D);
-	matrix_free(Lnorm);
 	matrix_free(pair.eigenvectors);
 	matrix_free(T);
 	matrix_free(centroids);
@@ -119,14 +118,19 @@ void do_lnorm(matrix* input) {
 }
 
 void do_jacobi(matrix* input) {
-	vector_values_pair pair;
+	vectors_values_pair pair;
 	if (input->n != input->m) log_err(
-		"Jacobi matrix input should be symetrical.\n");
+			"Jacobi matrix input should be symetrical.\n"); //TODO: make this better.
 
 	pair = jacobi(input);
+
+	if (!pair.eigenvectors) {
+		printf("Jacobi algorithm did not converge after maximum iterations.");
+		return;
+	}
+
 	matrix_print(pair.eigenvectors);
-	matrix_free(pair.eigenvectors);
-	free(pair.eigenvalues);
+	eigenvectors_free(pair);
 }
 
 int main(int argc, char* argv[]) {

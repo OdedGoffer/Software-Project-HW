@@ -7,6 +7,6 @@
  * represents to what cluster each vector in 'vectors' belongs. For example, if
  * vectors[4] == 2, this represents that row 4 in 'vectors' belongs to cluster number
  * 2.*/
-matrix* calculate_centroids(matrix* vectors, int* centroids_arr, int K);
+matrix* calculate_centroids(int* centroids_arr, matrix* vectors, int K);
 
 #endif
