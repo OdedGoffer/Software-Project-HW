@@ -9,7 +9,7 @@ matrix* read_csv(char* filename) {
 	int result, i = 0, n = 0;
 	double val, values[256];
 	char c;
-	vector *v, *v_new;
+	vector *v=NULL, *v_new;
 	matrix* res;
 
 	fp = fopen(filename, "r");
@@ -38,7 +38,7 @@ matrix* read_csv(char* filename) {
 
 	result = fclose(fp);
 	assert(result != EOF);
-	free(v);
-
+	if (v) free(v);
+	
 	return res;
 }

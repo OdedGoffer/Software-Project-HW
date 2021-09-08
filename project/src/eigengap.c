@@ -32,7 +32,7 @@ void stableSelectionSort(matrix* mat, double* a, int n) {
 int get_k(double* eigenvalues, int k, int n) {
 	double delta;
 	double max_diff = 0;
-	int i, index;
+	int i, index = 0;
 
 	if (k != 0) {
 		return k;

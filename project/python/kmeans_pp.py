@@ -101,20 +101,43 @@ def smart_centroids(vectors, K):
 ########
 
 def do_wam(mat, dim, vec_num):
-	W = c_api.WAM(mat, dim, vec_num)
+	try:
+		func_name = 'WAM'
+		W = c_api.WAM(mat, dim, vec_num)
+	except ValueError as e:
+		print(f"{func_name} method returned an error: {e}")
+		sys.exit()
+	
 	print_matrix(W, vec_num, vec_num)
 
 
 def do_ddg(mat, dim, vec_num):
-	W = c_api.WAM(mat, dim)
-	D = c_api.DDG(W, vec_num)
+	try:
+		func_name = 'WAM'
+		W = c_api.WAM(mat, dim, vec_num)
+		func_name = 'DDG'
+		D = c_api.DDG(W, vec_num)
+
+	except ValueError as e:
+		print(f"{func_name} method returned an error: {e}")
+		sys.exit()
+
 	print_matrix(D, vec_num, vec_num)
 
 
 def do_Lnorm(mat, dim, vec_num):
-	W = c_api.WAM(mat, dim, vec_num)
-	D = c_api.DDG(W, vec_num)
-	L = c_api.LNORM(W, D, vec_num)
+	try:
+		func_name = 'WAM'
+		W = c_api.WAM(mat, dim, vec_num)
+		func_name = 'DDG'
+		D = c_api.DDG(W, vec_num)
+		func_name = 'LNORM'
+		L = c_api.LNORM(W, D, vec_num)
+
+	except ValueError as e:
+		print(f"{func_name} method returned an error: {e}")
+		sys.exit()
+
 	print_matrix(L, vec_num, vec_num)
 
 
@@ -133,13 +156,34 @@ def do_jacobi(mat, dim):
 
 
 def do_spk(mat, dim, vec_num, k, MAX_ITER):
-	# W = c_api.WAM(mat, dim, vec_num)
-	# D = c_api.DDG(W, vec_num)
-	# L = c_api.LNORM(W, D, vec_num)
-	# eigenvectors, eigenvalues = c_api.jacobi(L, vec_num)
-	# T, new_k = eigengap(eigenvectors, eigenvalues, k)
-	# kmeans(T, vec_num, new_k, new_k)
-	pass
+	try:
+		func_name = 'WAM'
+		W = c_api.WAM(mat, dim, vec_num)
+		func_name = 'DDG'
+		D = c_api.DDG(W, vec_num)
+		func_name = 'LNORM'
+		L = c_api.LNORM(W, D, vec_num)
+		func_name = 'jacobi'
+		eigenvectors, eigenvalues = c_api.jacobi(L, dim)
+		func_name = 'eigengap'
+		T, new_k = c_api.eigengap(eigenvectors, eigenvalues, k)
+		matrix = [T[i:i + new_k] for i in range(0, vec_num * new_k, new_k)]
+		data = pd.DataFrame(matrix)
+		func_name = 'smart_centroids'
+		num_arr, N, d = smart_centroids(data, new_k)
+		func_name = 'kmeans'
+		index_list = c_api.kmeans(num_arr, N, d, new_k)
+		func_name = 'calculate_centroids'
+		centroids = c_api.calculate_centroids(index_list, mat, dim, vec_num, new_k)
+
+	except TimeoutError:
+		print("Jacobi method reached maximum iterations with no convergence.")
+		sys.exit()
+	except ValueError as e:
+		print(f"{func_name} method returned an error: {e}")
+		sys.exit()
+	
+	print_matrix(centroids, dim, new_k)
 
 #######
 # Main
