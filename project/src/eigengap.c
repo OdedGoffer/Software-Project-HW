@@ -75,25 +75,16 @@ matrix* get_T(matrix* U) {
 vectors_k_pair eigengap_heuristic(vectors_values_pair pair, int k) {
 	vectors_k_pair verctors_pair;
 	int n;
-	matrix *mat, *U;
-	double* eigenvalues;
 
 	n = pair.n;
-	mat = matrix_transpose(pair.eigenvectors);
-	eigenvalues = pair.eigenvalues;
 
-	stableSelectionSort(mat, eigenvalues, n);
+	stableSelectionSort(pair.eigenvectors, pair.eigenvalues, n);
 
-	k = get_k(eigenvalues, k, n);
-	matrix_slice(mat, k);
-	U = matrix_transpose(mat);
+	k = get_k(pair.eigenvalues, k, n);
+	matrix_slice(pair.eigenvectors, k);
 
-	verctors_pair.vectors = get_T(U);
+	verctors_pair.vectors = get_T(pair.eigenvectors);
 	verctors_pair.k = k;
 
-	matrix_free(pair.eigenvectors);
-	matrix_free(mat);
-	matrix_free(U);
-	free(eigenvalues);
 	return verctors_pair;
 }

@@ -1,18 +1,13 @@
-#include <assert.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../include/DDG.h"
 #include "../include/eigengap.h"
-#include "../include/jacobi.h"
 #include "../include/kmeans.h"
 #include "../include/LNORM.h"
 #include "../include/parse_file.h"
 #include "../include/WAM.h"
 #include "../include/logger.h"
 #include "../include/calculate_centroids.h"
-#include <string.h>
-#include <stdlib.h>
 
 typedef enum {
 	_SPK,
@@ -70,21 +65,26 @@ void do_spkmeans(matrix* input, int K) {
 	W = WAM(input);
 	D = DDG(W);
 	Lnorm = LNORM(W, D);
+	matrix_free(W);
+	matrix_free(D);
+
 	pair = jacobi(Lnorm);
+	if (!pair.eigenvectors) log_err("Jacobi algorithm did not converge after maximum iterations.");
+
 	verctors_pair = eigengap_heuristic(pair, K);
+	eigenvectors_free(pair);
+
 	T = verctors_pair.vectors;
 	new_k = verctors_pair.k;
 	centroids_arr = kmeans(T, new_k);
+	matrix_free(T);
+
 	centroids = calculate_centroids(centroids_arr, input, new_k);
+	free(centroids_arr);
+
 	matrix_print(centroids);
 
-	matrix_free(W);
-	matrix_free(D);
-	matrix_free(pair.eigenvectors);
-	matrix_free(T);
 	matrix_free(centroids);
-	free(pair.eigenvalues);
-	free(centroids_arr);
 }
 
 void do_wam(matrix* input) {
@@ -111,7 +111,9 @@ void do_lnorm(matrix* input) {
 	W = WAM(input);
 	D = DDG(W);
 	res = LNORM(W, D);
+
 	matrix_print(res);
+
 	matrix_free(W);
 	matrix_free(D);
 	matrix_free(res);
@@ -120,14 +122,11 @@ void do_lnorm(matrix* input) {
 void do_jacobi(matrix* input) {
 	vectors_values_pair pair;
 	if (input->n != input->m) log_err(
-			"Jacobi matrix input should be symetrical.\n"); //TODO: make this better.
+			"Jacobi matrix input should be symetrical.\n");
 
 	pair = jacobi(input);
 
-	if (!pair.eigenvectors) {
-		printf("Jacobi algorithm did not converge after maximum iterations.");
-		return;
-	}
+	if (!pair.eigenvectors) log_err("Jacobi algorithm did not converge after maximum iterations.");
 
 	matrix_print(pair.eigenvectors);
 	eigenvectors_free(pair);

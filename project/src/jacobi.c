@@ -82,9 +82,10 @@ vectors_values_pair jacobi(matrix* A) {
 		return res;
 	}
 
-	res.eigenvectors = P_mult;
+	res.eigenvectors = matrix_transpose(P_mult);
 	res.eigenvalues = diagonal_to_array(A);
 	res.n = A->n;
+	matrix_free(P_mult);
 	matrix_free(A);
 
 	return res;
