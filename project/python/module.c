@@ -226,11 +226,6 @@ static PyObject* api_jacobi(PyObject* self, PyObject* args) {
 
 	output = jacobi(input);
 
-	if (!output.eigenvectors) {
-		PyErr_SetString(PyExc_TimeoutError, "jacobi algorithm did not converge");
-		return NULL;
-	}
-
 	pListVectors = matrix_to_list(output.eigenvectors);
 	pListValues = double_array_to_list(output.eigenvalues, output.n);
 

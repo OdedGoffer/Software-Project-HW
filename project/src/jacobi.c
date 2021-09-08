@@ -63,23 +63,13 @@ vectors_values_pair jacobi(matrix* A) {
 		A_tag = get_A_tag(A, P);
 		P_mult = multiply_P(P, P_mult);
 
-		if (check_convergence(A, A_tag)) {
-			done = 1;
-		}
+		if (check_convergence(A, A_tag)) done = 1;
 
 		matrix_free(P);
 		matrix_free(A);
 		A = A_tag;
 
 		if (done == 1) break;
-	}
-
-	if (!done) {
-		matrix_free(P_mult);
-		matrix_free(A);
-		res.eigenvectors = NULL;
-		res.eigenvalues = NULL;
-		return res;
 	}
 
 	res.eigenvectors = matrix_transpose(P_mult);
