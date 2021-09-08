@@ -30,7 +30,7 @@ void print_eigenvalues(vectors_values_pair vvp) {
 	for (i = 0; i < vvp.n - 1; i++) {
 		printf("%.4f,", vvp.eigenvalues[i]);
 	}
-	printf("%.4f\n", vvp.eigenvalues[vvp.n]);
+	printf("%.4f\n", vvp.eigenvalues[vvp.n - 1]);
 }
 
 args parse_cmd(int argc, char* argv[]) {
@@ -156,7 +156,6 @@ int main(int argc, char* argv[]) {
 
 	args = parse_cmd(argc, argv);
 	input = read_csv(args.filename);
-	matrix_print(input);
 	if (args.K >= input->m) log_err(
 		"BAD K: %d; K must be less than vectors count: %d\n", args.K, input->m);
 
