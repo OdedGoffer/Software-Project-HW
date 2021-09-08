@@ -58,9 +58,8 @@ args parse_cmd(int argc, char* argv[]) {
 void do_spkmeans(matrix* input, int K) {
 	matrix *W, *D, *Lnorm, *T, *centroids;
 	vectors_values_pair pair;
-	vectors_k_pair verctors_pair;
+	vectors_k_pair vectors_pair;
 	int* centroids_arr, i;
-	int new_k;
 
 	W = WAM(input);
 	D = DDG(W);
@@ -75,25 +74,24 @@ void do_spkmeans(matrix* input, int K) {
 	matrix_print(Lnorm);
 
 	pair = jacobi(Lnorm);
-	if (!pair.eigenvectors) log_err("Jacobi algorithm did not converge after maximum iterations.");
+	matrix_free(Lnorm);
 	log_info("Jacobi:\n");
 	matrix_print(pair.eigenvectors);
 	for (i = 0; i < pair.n; i++) log_info("%.4f, ",pair.eigenvalues[i]);
 	log_info("\n");
 
-	verctors_pair = eigengap_heuristic(pair, K);
+	vectors_pair = eigengap_heuristic(pair, K);
 	eigenvectors_free(pair);
 
-	T = verctors_pair.vectors;
-	new_k = verctors_pair.k;
-	centroids_arr = kmeans(T, new_k);
+	T = vectors_pair.vectors;
+	K = vectors_pair.k;
+	centroids_arr = kmeans(T, K);
 	matrix_free(T);
 
-	centroids = calculate_centroids(centroids_arr, input, new_k);
+	centroids = calculate_centroids(centroids_arr, input, K);
 	free(centroids_arr);
 
 	matrix_print(centroids);
-
 	matrix_free(centroids);
 }
 
