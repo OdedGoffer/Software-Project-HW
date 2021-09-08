@@ -74,7 +74,7 @@ vector_values_pair jacobi(matrix* A) {
 		if (done == 1) break;
 	}
 
-	if (done != 1) {
+	if (!done) {
 		matrix_free(P_mult);
 		matrix_free(A);
 		res.eigenvectors = NULL;

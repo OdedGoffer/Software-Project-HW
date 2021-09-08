@@ -30,20 +30,27 @@ def parse_arguments():
 # Utils
 ########
 
+def print_vector(vec):
+	[print(f"{np.round(val, 4)}, ", end='') for val in vec[:-1]]
+	print(np.round(vec[-1],4))
+
+
 def print_matrix(mat, dim, vec_num):
-	matrix = [mat[i:i+dim] for i in range(0,vec_num,dim)]
+	matrix = [mat[i:i + dim] for i in range(0, vec_num * dim, dim)]
 	for row in matrix:
-		print(row)
+		print_vector(row)
 
 ##########################
 # Algo 1.1 from Exercise 2
 ##########################
 
-def dist(vec1, vec2):  # returns distance between two vectors
+# Returns the distance between two vectors.
+def dist(vec1, vec2):
 	return sum(np.square(vec1 - vec2))
 
 
-def closest_dist(centroids, vector):  # returns distance from vector to closest centroid
+# Returns the distance from vector to closest centroid.
+def closest_dist(centroids, vector):
 	D = dist(vector[:-2], centroids.iloc[0].to_numpy()[:-2])
 	for index, centroid in centroids.iterrows():
 		tmp_val = dist(vector[:-2], centroid.to_numpy()[:-2])
@@ -56,7 +63,8 @@ def print_chosen_centroids(centroids):
 	print(str(centroids.index.tolist()).strip("[]").replace(" ", ""))
 
 
-def format_vectors(centroids, vectors):  # return a single python list of all vectors, where k centroids are first
+# Returns a single python list of all vectors, where k centroids are first.
+def format_vectors(centroids, vectors):
 	vectors = vectors.drop(['Dist', 'Prob'], axis=1)
 	centroids = centroids.drop(['Dist', 'Prob'], axis=1)
 	vectors = vectors.drop([i for i in centroids.index])
@@ -92,20 +100,13 @@ def smart_centroids(vectors, K):
 # C API
 ########
 
-def fit_and_print_centroids(num_arr, N, d, k, MAX_ITER):
-	centroids = np.split(np.array(fit(num_arr, N, d, k, MAX_ITER)), k)
-	for centroid in centroids:
-		centroid = np.round(centroid, decimals=4)
-		print(str(centroid.tolist()).strip("[]").replace(" ", ""))
-
-
 def do_wam(mat, dim, vec_num):
 	W = c_api.fit_WAM(mat, dim, vec_num)
 	print_matrix(W, vec_num, vec_num)
 
 
 def do_ddg(mat, dim, vec_num):
-	W = c_api.fit_WAM(mat, dim, vec_num)
+	W = c_api.fit_WAM(mat, dim)
 	D = c_api.fit_DDG(W, vec_num)
 	print_matrix(D, vec_num, vec_num)
 
@@ -117,22 +118,28 @@ def do_Lnorm(mat, dim, vec_num):
 	print_matrix(L, vec_num, vec_num)
 
 
-def do_jacobi(mat, dim, vec_num):
-	if dim != vec_num:
-		print("Jacobi matrix input should be symetrical.\n")
+def do_jacobi(mat, dim):
+	try:
+		eigenvectors, eigenvalues = c_api.fit_jacobi(mat, dim)
+	except TimeoutError:
+		print("Jacobi method reached maximum iterations with no convergence.")
+		sys.exit()
+	except ValueError as e:
+		print(f"Jacobi method returned an error: {e}")
 		sys.exit()
 
-	eigenvectors, eigenvalues = c_api.fit_jacobi(mat, dim) # transpose :(
+	print_vector(eigenvalues)
 	print_matrix(eigenvectors, dim, dim)
 
 
 def do_spk(mat, dim, vec_num, k, MAX_ITER):
-	W = c_api.fit_WAM(mat, dim, vec_num)
-	D = c_api.fit_DDG(W, vec_num)
-	L = c_api.fit_LNORM(W, D, vec_num)
-	eigenvectors, eigenvalues = c_api.fit_jacobi(L, vec_num)
+	# W = c_api.fit_WAM(mat, dim, vec_num)
+	# D = c_api.fit_DDG(W, vec_num)
+	# L = c_api.fit_LNORM(W, D, vec_num)
+	# eigenvectors, eigenvalues = c_api.fit_jacobi(L, vec_num)
 	# T, new_k = fit_eigengap(eigenvectors, eigenvalues, k)
 	# fit_kmeans(T, vec_num, new_k, new_k)
+	pass
 
 #######
 # Main
@@ -160,6 +167,6 @@ if __name__ == "__main__":
 	elif GOAL == 'lnorm':
 		do_Lnorm(mat, dim, vec_num)
 	elif GOAL == 'jacobi':
-		do_jacobi(mat, dim, vec_num)
+		do_jacobi(mat, dim)
 	elif GOAL == 'spk':
 		do_spk(mat, dim, vec_num, k)

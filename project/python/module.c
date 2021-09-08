@@ -15,7 +15,7 @@ matrix* list_to_matrix(PyObject* pList, int n, int m) {
 
 
 	if ((n * m) != PyList_Size(pList)) {
-		PyErr_SetString(PyExc_IndexError, "bad matrix size");
+		PyErr_SetString(PyExc_ValueError, "bad matrix size");
 		return NULL;
 	}
 	mat = matrix_init(n, m);
@@ -168,6 +168,11 @@ static PyObject* api_jacobi(PyObject* self, PyObject* args) {
 	if (!input) return NULL;
 
 	output = jacobi(input);
+
+	if (!output.eigenvectors) {
+		PyErr_SetString(PyExc_TimeoutError, "jacobi algorithm did not converge");
+		return NULL;
+	}
 
 	pListVectors = matrix_to_list(output.eigenvectors);
 	pListValues = double_array_to_list(output.eigenvalues, output.n);
