@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <math.h>
 
+/*
+ *
+ * MATRIX UTILS
+ *
+ */
+
 matrix* matrix_init(int n, int m) {
 	matrix* mat;
 	vector** rows;

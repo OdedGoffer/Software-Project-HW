@@ -15,7 +15,4 @@ ituple get_largest_off_i_j(matrix* mat);
 /*Returns 'P'; transition matrix of A*/
 matrix* get_P(matrix* A);
 
-/*Returns A'; next iteration of A in Jacobi algorithm.*/
-matrix* get_A_tag(matrix* A, matrix* P);
-
 #endif

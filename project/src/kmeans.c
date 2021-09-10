@@ -4,6 +4,12 @@
 #include <string.h>
 #include <assert.h>
 
+/*
+ *
+ * KMEANS
+ *
+ */
+
 #define KMEANS_MAX_ITER 300
 
 struct vector_list;

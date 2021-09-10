@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <math.h>
 
+/*
+ *
+ * WAM
+ *
+ */
+
 matrix* WAM(matrix* X) {
 	matrix* ret;
 	int n, i, j;

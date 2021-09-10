@@ -1,9 +1,7 @@
 from os import listdir
 from setuptools import setup, Extension
 
-src = listdir('./src')
-sources = ['./src/' + f for f in src]
-sources.append('python/spkmeansmodule.c')
+sources = ['spkmeans.c', 'spkmeansmodule.c']
 
 module = Extension('spkmeans',
                    sources=sources)

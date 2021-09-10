@@ -3,6 +3,12 @@
 #include <math.h>
 #include <stdio.h>
 
+/*
+ *
+ * JACOBI UTILS
+ *
+ */
+
 ituple get_largest_off_i_j(matrix* mat) {
 	double val = 0.0;
 	double curr;
@@ -75,10 +81,10 @@ double get_s(double t, double c) {
 }
 
 matrix* get_P(matrix* A) {
-	double theta, c, t, s;
+	double theta, c, t, s, val;
 	ituple ij;
-	int n, i, j;
-	matrix* P;
+	int n, i, j, p;
+	matrix *P, *A_tmp;
 	assert(A != NULL);
 
 	n = A->n;
@@ -105,18 +111,30 @@ matrix* get_P(matrix* A) {
 	matrix_set(i, j, P, s);
 	matrix_set(j, i, P, -s);
 
+	A_tmp = matrix_copy(A);
+
+	for (p = 0; p < n; p++) {
+		if (p == i || p == j) continue;
+
+		val = (c * matrix_get(p, i, A_tmp)) - (s * matrix_get(p, j, A_tmp));
+		matrix_set(p, i, A, val);
+		matrix_set(i, p, A, val);
+
+		val = (c * matrix_get(p, j, A_tmp)) + (s * matrix_get(p, i, A_tmp));
+		matrix_set(p, j, A, val);
+		matrix_set(j, p, A, val);
+	}
+
+	val = (pow(c, 2) * matrix_get(i, i, A_tmp)) + (pow(s, 2) * matrix_get(j, j, A_tmp)) - (2 * s * c * matrix_get(i, j, A_tmp));
+	matrix_set(i, i, A, val);
+
+	val = (pow(s, 2) * matrix_get(i, i, A_tmp)) + (pow(c, 2) * matrix_get(j, j, A_tmp)) + (2 * s * c * matrix_get(i, j, A_tmp));
+	matrix_set(j, j, A, val);
+
+	matrix_set(i, j, A, 0);
+	matrix_set(j, i, A, 0);
+
+	matrix_free(A_tmp);
+
 	return P;
-}
-
-matrix* get_A_tag(matrix* A, matrix* P) {
-	matrix* A_tag;
-	matrix* P_transpose;
-
-	P_transpose = matrix_transpose(P);
-	A_tag = matrix_mult(P_transpose, A);
-	A_tag = matrix_mult(A_tag, P);
-
-	matrix_free(P_transpose);
-
-	return A_tag;
 }

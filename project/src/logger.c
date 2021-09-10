@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ *
+ * LOGGER
+ *
+ */
+
 void invalid_input() {
 	printf("Invalid Input!");
 	exit(EXIT_FAILURE);

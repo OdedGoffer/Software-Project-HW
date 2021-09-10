@@ -5,6 +5,12 @@
 #include <math.h>
 #include "../include/jacobi_utils.h"
 
+/*
+ *
+ * JACOBI
+ *
+ */
+
 #define JACOBI_MAX_ITER 100
 #define EPSILON 0.1
 
@@ -59,15 +65,14 @@ vectors_values_pair jacobi(matrix* A) {
 	P_mult = NULL;
 
 	for (i = 0; i < JACOBI_MAX_ITER; i++) {
+		A_tag = matrix_copy(A);
 		P = get_P(A);
-		A_tag = get_A_tag(A, P);
 		P_mult = multiply_P(P, P_mult);
 
 		if (check_convergence(A, A_tag)) done = 1;
 
 		matrix_free(P);
-		matrix_free(A);
-		A = A_tag;
+		matrix_free(A_tag);
 
 		if (done == 1) break;
 	}

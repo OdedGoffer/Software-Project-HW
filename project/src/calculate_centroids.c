@@ -2,6 +2,12 @@
 #include <assert.h>
 #include <stdlib.h>
 
+/*
+ *
+ * CALCULATE CENTROIDS
+ *
+ */
+
 /*Calculates the center of matrix 'cluster' as defined in K-means algorithm.*/
 vector* calculate_center(matrix* cluster) {
 	vector* center;

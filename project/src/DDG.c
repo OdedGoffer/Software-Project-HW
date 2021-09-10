@@ -2,6 +2,12 @@
 #include <assert.h>
 #include <stdlib.h>
 
+/*
+ *
+ * DDG
+ *
+ */
+
 matrix* DDG(matrix* W) {
 	matrix* ret;
 	int m, i;

@@ -9,6 +9,12 @@
 #include "../include/calculate_centroids.h"
 #include "../include/eigengap.h"
 
+/*
+ *
+ * PYTHON-C-API
+ *
+ */
+
 matrix* list_to_matrix(PyObject* pList, int n, int m) {
 	int i, j;
 	double val;

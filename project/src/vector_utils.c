@@ -5,6 +5,12 @@
 #include <string.h>
 #include <math.h>
 
+/*
+ *
+ * VECTOR UTILS
+ *
+ */
+
 vector* vector_init(double* values, int size) {
 	vector* v;
 

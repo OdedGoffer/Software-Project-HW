@@ -1,5 +1,11 @@
 #include "../include/eigengap.h"
 
+/*
+ *
+ * EIGENGAP HEURISTIC
+ *
+ */
+
 void stableSelectionSort(matrix* mat, double* a, int n) {
 	int i, j, min; 
 	double key;

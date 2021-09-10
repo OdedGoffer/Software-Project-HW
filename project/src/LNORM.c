@@ -1,5 +1,11 @@
 #include "../include/LNORM.h"
 
+/*
+ *
+ * LNORM
+ *
+ */
+
 matrix* LNORM(matrix* W, matrix* D) {
 	matrix *ret1, *ret2, *ret3, *eye;
 	int n;

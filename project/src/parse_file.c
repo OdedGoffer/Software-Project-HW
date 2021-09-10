@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include "../include/logger.h"
 
+/*
+ *
+ * PARSE FILE
+ *
+ */
+
 matrix* read_csv(char* filename) {
 	FILE* fp;
 	int result, i = 0, n = 0;

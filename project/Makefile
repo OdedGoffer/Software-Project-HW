@@ -1,12 +1,15 @@
 CC = gcc
-CFLAGS = -g -ansi -Wall -Wextra -Werror -pedantic-errors
-LDFLAGS = -g -Wno-unused-command-line-argument
+CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
+LDFLAGS = -Wno-unused-command-line-argument
 LMFLAG = -lm
 SRCDIR = src
+INCLDIR = include
 OBJDIR = build
 PYDIR = python
 MAINDIR = main
-SRCS := $(wildcard src/*.c)
+RELEASEDIR = release
+SRCNAMES := logger vector_utils matrix_utils parse_file WAM DDG LNORM jacobi_utils jacobi eigengap kmeans calculate_centroids
+SRCS := $(SRCNAMES:%=$(SRCDIR)/%.c)
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 ARGS ?= ddg 3 filelele
 
@@ -24,7 +27,7 @@ TESTOBJS:= $(ALLTESTS:$(TESTDIR)/%.c=$(TESTDIR)/$(OBJDIR)/%.o)
 TARGET = spkmeans
 TARGETOBJ = $(OBJDIR)/$(TARGET).o
 
-.PHONY: all clean run test python
+.PHONY: all clean run test python release build_release create_release_files
 
 all: $(TARGET) python
 	$(info ****** SPKMEANS COMPILED SUCCESFULLY! ******)
@@ -46,7 +49,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(info ok)
 
 clean:
-	-@rm -rf $(OBJDIR) $(TARGET)
+	-@rm -rf $(OBJDIR) $(TARGET) $(RELEASEDIR)
 	-@rm python/*.so
 	-@rm python/$(TARGET)
 
@@ -80,3 +83,26 @@ $(OBJDIR)/%.o: $(TESTDIR)/$(OBJDIR)/%_test.o
 $(TESTDIR)/$(OBJDIR)%.o: $(TESTDIR)/%.c
 	-@mkdir -p $(TESTDIR)/$(OBJDIR)
 	@$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $<
+
+#RELEASE
+release: build_release
+	$(info ****** RELEASE BUILD SUCCESSFUL! ******)
+
+build_release: create_release_files
+	@$(CC) $(CFLAGS) $(RELEASEDIR)/$(TARGET).c $(LMFLAG) -o $(RELEASEDIR)/$(TARGET)
+	@cd $(RELEASEDIR) && python3 setup.py build_ext --inplace && rm -rf build
+
+create_release_files: $(SRCS) $(MAINDIR)/$(TARGET).c
+	@mkdir -p $(RELEASEDIR)
+	@touch $(RELEASEDIR)/temp1
+	@touch $(RELEASEDIR)/temp2
+	@touch $(RELEASEDIR)/$(TARGET).c
+	@cat $^ > $(RELEASEDIR)/temp1
+	@sed "/^#/d" $(RELEASEDIR)/temp1 > $(RELEASEDIR)/temp2
+	@cat $(INCLDIR)/project_includes.h $(RELEASEDIR)/temp2 > $(RELEASEDIR)/$(TARGET).c
+	-@rm $(RELEASEDIR)/temp*
+	@cp $(PYDIR)/setup_release.py $(RELEASEDIR)
+	@mv $(RELEASEDIR)/setup_release.py $(RELEASEDIR)/setup.py
+	@cp $(PYDIR)/spkmeans.py $(RELEASEDIR)
+	@cp $(PYDIR)/spkmeansmodule.c $(RELEASEDIR)
+
