@@ -38,7 +38,7 @@ args parse_cmd(int argc, char* argv[]) {
 	char* goal_str;
 	int K;
 
-	if (argc != 4) log_err("Wrong number of arguments. Correct format is: ./spkeams <goal> <K> <filename>\n");
+	if (argc != 4) invalid_input();
 
 	goal_str = argv[2];
 
@@ -52,11 +52,11 @@ args parse_cmd(int argc, char* argv[]) {
 		args.goal = _LNORM;
 	} else if (strcmp(goal_str, "jacobi") == 0) {
 		args.goal = _JACOBI;
-	} else log_err("BAD GOAL: %s\n", goal_str);
+	} else invalid_input();
 
 	K = atoi(argv[1]);
 
-	if (K < 0) log_err("BAD K: %d; K must be non-negative.\n", K);
+	if (K < 0) invalid_input();
 
 	args.K = K;
 
@@ -138,15 +138,14 @@ void do_lnorm(matrix* input) {
 
 void do_jacobi(matrix* input) {
 	vectors_values_pair pair;
-	if (input->n != input->m) log_err(
-			"Jacobi matrix input should be symetrical.\n");
+
+	if (input->n != input->m) invalid_input();
 
 	pair = jacobi(input);
 
-	if (!pair.eigenvectors) log_err("Jacobi algorithm did not converge after maximum iterations.");
-
 	print_eigenvalues(pair);
 	matrix_print(pair.eigenvectors);
+
 	eigenvectors_free(pair);
 }
 
@@ -156,8 +155,8 @@ int main(int argc, char* argv[]) {
 
 	args = parse_cmd(argc, argv);
 	input = read_csv(args.filename);
-	if (args.K >= input->m) log_err(
-		"BAD K: %d; K must be less than vectors count: %d\n", args.K, input->m);
+
+	if (args.K >= input->m) invalid_input();
 
 	switch (args.goal) {
 		case _SPK:

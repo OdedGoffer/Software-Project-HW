@@ -1,52 +1,44 @@
 #include "../include/parse_file.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include "../include/logger.h"
 
 matrix* read_csv(char* filename) {
 	FILE* fp;
-	int result, i = 0, n = 0, done = 0;
+	int result, i = 0, n = 0;
 	double val, values[256];
 	char c;
 	vector *v=NULL, *v_new;
 	matrix* res;
 
 	fp = fopen(filename, "r");
-	if (!fp) log_err("Could not open file: %s\n", filename);
+	if (!fp) error_occured();
 
 	while(fscanf(fp, "%lf%c", &val, &c) == 2) {
+		if (c != ',') break;
 		n++;
-		if (c == '\n' || c == '\r') break;
 	}
+	n++;
 
 	res = matrix_init(n, 0);
 	rewind(fp);
 
-	while (fscanf(fp, "%lf%c", &val, &c) == 2) {
-		if (c == ',') {
-			done = 0;
-			values[i] = val;
-			i++;
-		} else if (c == '\n' || c == '\r') {
-			values[i] = val;
+	while (fscanf(fp, "%lf", &val) == 1) {
+		values[i] = val;
+		i++;
+		if (i == n) {
 			v = vector_init(values, n);
 			v_new = vector_copy(v);
 			matrix_add_row(res, v_new);
-			done = 1;
 			i = 0;
+		}
+		if (!fscanf(fp, "%c", &c)) {
+			break;
 		}
 	}
 
-	if (!done) {
-		values[i] = val;
-		v = vector_init(values, n);
-		v_new = vector_copy(v);
-		matrix_add_row(res, v_new);
-	}
-
 	result = fclose(fp);
-	assert(result != EOF);
+	if (result == EOF) error_occured();
 	if (v) free(v);
 
 	return res;

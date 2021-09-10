@@ -1,19 +1,13 @@
 #include "../include/logger.h"
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void log_err(char* msg, ...) {
-	va_list args;
-
-	va_start(args, msg);
-	vfprintf(stderr, msg, args);
+void invalid_input() {
+	printf("Invalid Input!");
 	exit(EXIT_FAILURE);
 }
 
-void log_info(char* msg, ...) {
-	va_list args;
-
-	va_start(args, msg);
-	vfprintf(stderr, msg, args);
+void error_occured() {
+	printf("An Error Has Occured");
+	exit(EXIT_FAILURE);
 }

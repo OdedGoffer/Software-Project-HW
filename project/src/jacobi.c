@@ -6,7 +6,7 @@
 #include "../include/jacobi_utils.h"
 
 #define JACOBI_MAX_ITER 100
-#define EPSILON 0.01
+#define EPSILON 0.1
 
 int check_convergence(matrix* A, matrix* A_tag) {
 	double A_off, A_tag_off;

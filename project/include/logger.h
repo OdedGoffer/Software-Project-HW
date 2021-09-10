@@ -1,8 +1,8 @@
 #ifndef PROJECT_LOGGER_H
 #define PROJECT_LOGGER_H
 
-void log_err(char* msg, ...);
+void invalid_input();
 
-void log_info(char* msg, ...);
+void error_occured();
 
 #endif

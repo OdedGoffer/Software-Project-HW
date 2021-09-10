@@ -1,5 +1,4 @@
 #include "../include/eigengap.h"
-#include <stdlib.h>
 
 void stableSelectionSort(matrix* mat, double* a, int n) {
 	int i, j, min; 
