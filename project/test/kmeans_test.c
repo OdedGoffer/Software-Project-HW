@@ -17,8 +17,6 @@ void TEST_kmeans() {
 
 	centroids = kmeans(input, K);
 
-	matrix_print(centroids);
-
 	for (i = 0; i < K; i++) {
 		assertf(vector_dist(centroids->rows[i], expected->rows[i]) < EPSILON, "wrong output value");
 	}

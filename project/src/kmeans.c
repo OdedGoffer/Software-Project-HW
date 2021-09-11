@@ -186,7 +186,7 @@ matrix* kmeans(matrix* inpt, int K) {
 		change = 0;
 		for (i = 0; i < m; i++) {
 			min_S = closest_clust(vectors[i].vector, clusters, K);
-			if (vectors->S != min_S) {
+			if (vectors[i].S != min_S) {
 				change = 1;
 				add_S(min_S, &vectors[i]);
 			}

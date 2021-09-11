@@ -43,33 +43,6 @@ matrix* list_to_matrix(PyObject* pList, int n, int m) {
 	return mat;
 }
 
-int* list_to_int_array(PyObject* pList, int m) {
-	int i, val;
-	int *res;
-	PyObject* pItem;
-
-	if (m != PyList_Size(pList)) {
-		PyErr_SetString(PyExc_ValueError, "bad list size");
-		return NULL;
-	}
-
-	res = (int*) malloc(m * sizeof(int));
-	assert(res);
-
-	for (i = 0; i < m; i++) {
-		pItem = PyList_GetItem(pList, i);
-		val = (int) PyLong_AsLong(pItem);
-		res[i] = val;
-	}
-
-	if (PyErr_Occurred()) {
-		free(res);
-		return NULL;
-	}
-
-	return res;
-}
-
 double* list_to_double_array(PyObject* pList, int m) {
 	int i;
 	double val;
@@ -130,24 +103,6 @@ PyObject* double_array_to_list(double* arr, int n) {
 	pList = PyList_New(n);
 	for (i = 0; i < n; i++) {
 		pFloat = Py_BuildValue("d", arr[i]);
-		PyList_SetItem(pList, i, pFloat);
-	}
-
-	if (PyErr_Occurred()) {
-		return NULL;
-	}
-
-	return pList;
-}
-
-PyObject* int_array_to_list(int* arr, int n) {
-	PyObject* pList;
-	PyObject* pFloat;
-	int i;
-
-	pList = PyList_New(n);
-	for (i = 0; i < n; i++) {
-		pFloat = Py_BuildValue("i", arr[i]);
 		PyList_SetItem(pList, i, pFloat);
 	}
 
@@ -246,8 +201,7 @@ static PyObject* api_jacobi(PyObject* self, PyObject* args) {
 
 static PyObject* api_kmeans(PyObject* self, PyObject* args) {
 	int n, m, k;
-	matrix* input;
-	int* output;
+	matrix *input, *output;
 	PyObject *pListIn, *pListOut;
 
 	if (!PyArg_ParseTuple(args, "O!iii", &PyList_Type, &pListIn, &n, &m, &k)) return NULL;
@@ -257,33 +211,9 @@ static PyObject* api_kmeans(PyObject* self, PyObject* args) {
 
 	output = kmeans(input, k);
 
-	pListOut = int_array_to_list(output, m);
+	pListOut = matrix_to_list(output);
 
 	return pListOut;
-}
-
-static PyObject* api_calculate_centroids(PyObject* self, PyObject* args) {
-	int n, m, k;
-	int* centroids_arr;
-	matrix *vectors, *centroids;
-	PyObject *pListVectors, *pListCentroidsArr, *pListCentroids;
-
-	if (!PyArg_ParseTuple(args, "O!O!iii", &PyList_Type, &pListCentroidsArr, &PyList_Type, &pListVectors, &n, &m, &k)) return NULL;
-
-	vectors = list_to_matrix(pListVectors, n ,m);
-	if (!vectors) return NULL;
-	centroids_arr = list_to_int_array(pListCentroidsArr, m);
-	if (!centroids_arr) return NULL;
-
-	centroids = calculate_centroids(centroids_arr, vectors, k);
-
-	pListCentroids = matrix_to_list(centroids);
-
-	matrix_free(vectors);
-	matrix_free(centroids);
-	free(centroids_arr);
-
-	return pListCentroids;
 }
 
 static PyObject* api_eigengap(PyObject* self, PyObject* args) {
@@ -334,12 +264,6 @@ static PyMethodDef spkmeansMethods[] = {
 		 "kmeans", (PyCFunction) api_kmeans, METH_VARARGS,
 		 PyDoc_STR("Classic K-Means algorithm. Output in a list of integers, indicating to which cluster each vector belongs.\n"
 				   "Usage: kmeans(mat V, int dimension, int num_of_vectors, int k)")
-	},
-	{
-			"calculate_centroids", (PyCFunction) api_calculate_centroids, METH_VARARGS,
-					PyDoc_STR("Calculate actual cluster centroids given a list of vectors and a list indicating to which "
-							  "cluster each vector belongs.\n"
-							  "Usage: calculate_centroids(list centroids_array, mat vectors, int dimension, int num_of_vectors, int k)")
 	},
 	{
 			"eigengap_heuristic", (PyCFunction) api_eigengap, METH_VARARGS,

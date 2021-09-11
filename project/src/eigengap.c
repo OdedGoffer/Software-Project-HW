@@ -1,4 +1,5 @@
 #include "../include/eigengap.h"
+#include "../include/logger.h"
 
 /*
  *
@@ -70,6 +71,7 @@ matrix* get_T(matrix* U) {
 
 	for (i=0; i<m; i++) {
 		norm = vector_dist(M->rows[i], zero);
+		if (norm == 0) error_occured();
 		for (j=0; j<n; j++) {
 			val = M->rows[i]->values[j] / norm;
 			matrix_set(i, j, T, val);

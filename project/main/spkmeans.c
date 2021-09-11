@@ -8,7 +8,6 @@
 #include "../include/parse_file.h"
 #include "../include/WAM.h"
 #include "../include/logger.h"
-#include "../include/calculate_centroids.h"
 
 typedef enum {
 	_SPK,
@@ -69,7 +68,6 @@ void do_spkmeans(matrix* input, int K) {
 	matrix *W, *D, *Lnorm, *T, *centroids;
 	vectors_values_pair pair;
 	vectors_k_pair vectors_pair;
-	int* centroids_arr;
 
 	W = WAM(input);
 
@@ -84,15 +82,11 @@ void do_spkmeans(matrix* input, int K) {
 	T = vectors_pair.vectors;
 	K = vectors_pair.k;
 
-	centroids_arr = kmeans(T, K);
-
-	centroids = calculate_centroids(centroids_arr, T, K);
-	/*centroids = calculate_centroids(centroids_arr, input, K);*/
+	centroids = kmeans(T, K);
 
 	matrix_free(W);
 	matrix_free(D);
 	matrix_free(T);
-	free(centroids_arr);
 
 	matrix_print(centroids);
 	matrix_free(centroids);

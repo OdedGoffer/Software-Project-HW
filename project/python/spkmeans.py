@@ -76,39 +76,36 @@ def format_T(centroids, T):
 	T = pd.concat([centroids, T])
 	return T.to_numpy().flatten().tolist()
 
-def format_vectors(new_vectors, vectors):
-	vectors = vectors.drop([i for i in new_vectors.index])
-	vectors = pd.concat([new_vectors, vectors])
-	return vectors.to_numpy().flatten().tolist()
+# def format_vectors(new_vectors, vectors):
+# 	vectors = vectors.drop([i for i in new_vectors.index])
+# 	vectors = pd.concat([new_vectors, vectors])
+# 	return vectors.to_numpy().flatten().tolist()
 
 
 # Algo 1.1
-def smart_centroids(T, vectors, K):
+def smart_centroids(T, K):
 	N, d = T.shape
 	if N <= K:
 		return (None, None, None)
-
 	T['Dist'] = T['Prob'] = 0.0
 	idx = np.random.choice(N)
 	centroids = T.iloc[[idx]]
-	new_vectors = vectors.iloc[[idx]]
-
+	# new_vectors = vectors.iloc[[idx]]
 	Z = 1
 	while (Z < K):
 		for i in range(N):
 			T['Dist'][i] = closest_dist(centroids, T.iloc[i].to_numpy())
 		sumd = sum(T['Dist'])
-		for i in range(N):
-			T['Prob'][i] = T['Dist'][i] / sumd
+		T['Prob'] = T['Dist'] / sumd
 		Z += 1
 		row_num = np.random.choice(N, p=T['Prob'])
 		centroids = centroids.append(T.iloc[row_num])
-		new_vectors = new_vectors.append(vectors.iloc[row_num])
+		# new_vectors = new_vectors.append(vectors.iloc[row_num])
 
 	print_chosen_centroids(centroids)
 	centroids_arr = format_T(centroids, T)
-	vectors_arr = format_vectors(new_vectors, vectors)
-	return centroids_arr, vectors_arr
+	# vectors_arr = format_vectors(new_vectors, vectors)
+	return centroids_arr
 
 ########
 # C API
@@ -170,37 +167,32 @@ def do_jacobi(mat, dim):
 
 
 def do_spk(mat, dim, vec_num, k):
-	try:
-		func_name = 'WAM'
-		W = c_api.WAM(mat, dim, vec_num)
+	func_name = 'WAM'
+	W = c_api.WAM(mat, dim, vec_num)
 
-		func_name = 'DDG'
-		D = c_api.DDG(W, vec_num)
+	func_name = 'DDG'
+	D = c_api.DDG(W, vec_num)
 
-		func_name = 'LNORM'
-		L = c_api.LNORM(W, D, vec_num)
+	func_name = 'LNORM'
+	L = c_api.LNORM(W, D, vec_num)
 
-		func_name = 'jacobi'
-		eigenvectors, eigenvalues = c_api.jacobi(L, vec_num)
+	func_name = 'jacobi'
+	eigenvectors, eigenvalues = c_api.jacobi(L, vec_num)
 
-		func_name = 'eigengap'
-		T, k = c_api.eigengap_heuristic(eigenvectors, eigenvalues, k)
-		T = [T[i:i + k] for i in range(0, vec_num * k, k)]
-		T = pd.DataFrame(T)
+	func_name = 'eigengap'
+	T, k = c_api.eigengap_heuristic(eigenvectors, eigenvalues, k)
+	T = [T[i:i + k] for i in range(0, vec_num * k, k)]
+	T = pd.DataFrame(T)
 
-		func_name = 'smart_centroids'
-		vectors = [mat[i:i + dim] for i in range(0, dim * vec_num, dim)]
-		vectors = pd.DataFrame(vectors)
-		T, mat = smart_centroids(T, vectors, k)
+	func_name = 'smart_centroids'
+	# vectors = [mat[i:i + dim] for i in range(0, dim * vec_num, dim)]
+	# vectors = pd.DataFrame(vectors)
+	T = smart_centroids(T, k)
 
-		func_name = 'kmeans'
-		centroids = c_api.kmeans(T, k, vec_num, k)
+	func_name = 'kmeans'
+	centroids = c_api.kmeans(T, k, vec_num, k)
 
-	except ValueError as e:
-		print(f"{func_name} method returned an error: {e}")
-		sys.exit()
-
-	print_matrix(centroids, dim, k)
+	print_matrix(centroids, k, k)
 
 #######
 # Main
