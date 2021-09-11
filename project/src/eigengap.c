@@ -37,7 +37,7 @@ void stableSelectionSort(matrix* mat, double* a, int n) {
 int get_k(double* eigenvalues, int k, int n) {
 	double delta;
 	double max_diff = 0;
-	int i, index = 0;
+	int i, index = 1;
 
 	if (k != 0) {
 		return k;
@@ -60,23 +60,25 @@ matrix* get_T(matrix* U) {
 	double norm, val;
 	vector* zero;
 
-	n = U->n;
-	m = U->m;
+	M = matrix_transpose(U);
+	matrix_free(U);
+
+	n = M->n;
+	m = M->m;
 	T = matrix_init(n, m);
 	zero = vector_init_zero(n);
 
 	for (i=0; i<m; i++) {
-		norm = vector_dist(U->rows[i], zero);
+		norm = vector_dist(M->rows[i], zero);
 		for (j=0; j<n; j++) {
-			val = U->rows[i]->values[j] / norm;
+			val = M->rows[i]->values[j] / norm;
 			matrix_set(i, j, T, val);
 		}
 	}
 
 	vector_free(zero);
-	M = matrix_transpose(T);
-	matrix_free(T);
-	return M;
+	matrix_free(M);
+	return T;
 }
 
 vectors_k_pair eigengap_heuristic(vectors_values_pair pair, int k) {

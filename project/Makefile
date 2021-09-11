@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
-LDFLAGS = -Wno-unused-command-line-argument
+CFLAGS = -g -ansi -Wall -Wextra -Werror -pedantic-errors
+LDFLAGS = -g -Wno-unused-command-line-argument
 LMFLAG = -lm
 SRCDIR = src
 INCLDIR = include

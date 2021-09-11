@@ -80,7 +80,7 @@ double get_s(double t, double c) {
 	return c * t;
 }
 
-matrix* get_P(matrix* A) {
+matrix* get_P_and_update_A(matrix* A) {
 	double theta, c, t, s, val;
 	ituple ij;
 	int n, i, j, p;

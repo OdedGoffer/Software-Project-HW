@@ -12,7 +12,7 @@
  */
 
 #define JACOBI_MAX_ITER 100
-#define EPSILON 0.1
+#define EPSILON 0.001
 
 int check_convergence(matrix* A, matrix* A_tag) {
 	double A_off, A_tag_off;
@@ -66,7 +66,7 @@ vectors_values_pair jacobi(matrix* A) {
 
 	for (i = 0; i < JACOBI_MAX_ITER; i++) {
 		A_tag = matrix_copy(A);
-		P = get_P(A);
+		P = get_P_and_update_A(A);
 		P_mult = multiply_P(P, P_mult);
 
 		if (check_convergence(A, A_tag)) done = 1;

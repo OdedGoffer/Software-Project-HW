@@ -194,10 +194,7 @@ def do_spk(mat, dim, vec_num, k):
 		T, mat = smart_centroids(T, vectors, k)
 
 		func_name = 'kmeans'
-		index_list = c_api.kmeans(T, k, vec_num, k)
-
-		func_name = 'calculate_centroids'
-		centroids = c_api.calculate_centroids(index_list, mat, dim, vec_num, k)
+		centroids = c_api.kmeans(T, k, vec_num, k)
 
 	except ValueError as e:
 		print(f"{func_name} method returned an error: {e}")

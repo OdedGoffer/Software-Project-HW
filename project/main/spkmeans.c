@@ -77,23 +77,21 @@ void do_spkmeans(matrix* input, int K) {
 
 	Lnorm = LNORM(W, D);
 
-
 	pair = jacobi(Lnorm);
 
 	vectors_pair = eigengap_heuristic(pair, K);
-
 
 	T = vectors_pair.vectors;
 	K = vectors_pair.k;
 
 	centroids_arr = kmeans(T, K);
 
-	centroids = calculate_centroids(centroids_arr, input, K);
+	centroids = calculate_centroids(centroids_arr, T, K);
+	/*centroids = calculate_centroids(centroids_arr, input, K);*/
 
 	matrix_free(W);
 	matrix_free(D);
 	matrix_free(T);
-	eigenvectors_free(pair);
 	free(centroids_arr);
 
 	matrix_print(centroids);

@@ -33,7 +33,7 @@ void TEST_get_P() {
 	matrix_set(0, 1, mat, 1);
 	matrix_set(1, 0, mat, 1);
 
-	P = get_P(mat);
+	P = get_P_and_update_A(mat);
 
 	assertf(matrix_get(0, 0, P) == expected, "Wrong value at A(0,0)");
 	assertf(matrix_get(0, 1, P) == expected, "Wrong value at A(0,1)");

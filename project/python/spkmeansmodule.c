@@ -306,7 +306,6 @@ static PyObject* api_eigengap(PyObject* self, PyObject* args) {
 	pListRes = matrix_to_list(vkp.vectors);
 	pTuple = Py_BuildValue("Oi", pListRes, vkp.k);
 
-	eigenvectors_free(vvp);
 	matrix_free(vkp.vectors);
 
 	return pTuple;

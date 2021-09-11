@@ -13,6 +13,6 @@ typedef struct ituple {
 ituple get_largest_off_i_j(matrix* mat);
 
 /*Returns 'P'; transition matrix of A*/
-matrix* get_P(matrix* A);
+matrix* get_P_and_update_A(matrix* A);
 
 #endif

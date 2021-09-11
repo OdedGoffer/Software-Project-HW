@@ -147,8 +147,8 @@ void add_S(S* S, vector_list* e) {
 }
 
 /*Returns the closest cluster to vector 'v'.*/
-int closest_clust(vector* v, S* clusters, int K) {
-	int closest_clust;
+S* closest_clust(vector* v, S* clusters, int K) {
+	S* closest_clust;
 	double min_dist;
 	vector* center;
 	int i;
@@ -157,11 +157,11 @@ int closest_clust(vector* v, S* clusters, int K) {
 
 	center = clusters[0].center;
 	min_dist = vector_dist(v, center);
-	closest_clust = 0;
+	closest_clust = clusters;
 	for (i = 1; i < K; i++) {
 		center = clusters[i].center;
 		if (min_dist > vector_dist(v, center)) {
-			closest_clust = i;
+			closest_clust = &clusters[i];
 			min_dist = vector_dist(v, center);
 		}
 	}
@@ -169,30 +169,26 @@ int closest_clust(vector* v, S* clusters, int K) {
 }
 
 /*Classic K-means algorithm.*/
-int* kmeans(matrix* inpt, int K) {
-	S* clusters;
+matrix* kmeans(matrix* inpt, int K) {
+	S *clusters, *min_S;
 	vector_list* vectors;
-	int iter = 0, change, i, S_idx, m;
-	int* centroid_indices;
+	matrix* centroids;
+	int iter = 0, change, i, m, n;
 	assert(inpt);
 
 	vectors = vectors_init(inpt);
 	clusters = clusters_init(vectors, K);
+	n = inpt->n;
 	m = inpt->m;
-
-	centroid_indices = (int*) calloc(m, sizeof(int));
-	assert(centroid_indices);
-	for (i = 0; i < K; i++) centroid_indices[i] = i;
 
 	while (iter < KMEANS_MAX_ITER) {
 		iter++;
 		change = 0;
 		for (i = 0; i < m; i++) {
-			S_idx = closest_clust(vectors[i].vector, clusters, K);
-			if (vectors[i].S != &clusters[S_idx]) {
+			min_S = closest_clust(vectors[i].vector, clusters, K);
+			if (vectors->S != min_S) {
 				change = 1;
-				add_S(&clusters[S_idx], &vectors[i]);
-				centroid_indices[i] = S_idx;
+				add_S(min_S, &vectors[i]);
 			}
 		}
 
@@ -201,7 +197,11 @@ int* kmeans(matrix* inpt, int K) {
 		for (i = 0; i < K; i++) recenter(&clusters[i]);
 	}
 
+	centroids = matrix_init(n, 0);
+	for (i = 0; i < K; i++) matrix_add_row(centroids, clusters[i].center);
+
 	free(vectors);
 	free(clusters);
-	return centroid_indices;
+	return centroids;
 }
+

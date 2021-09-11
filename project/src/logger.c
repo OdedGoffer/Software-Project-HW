@@ -9,11 +9,11 @@
  */
 
 void invalid_input() {
-	printf("Invalid Input!");
+	printf("Invalid Input!\n");
 	exit(EXIT_FAILURE);
 }
 
 void error_occured() {
-	printf("An Error Has Occured");
+	printf("An Error Has Occured\n");
 	exit(EXIT_FAILURE);
 }

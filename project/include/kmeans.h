@@ -4,6 +4,6 @@
 #include "../include/matrix_utils.h"
 
 /*Classic K-means algorithm.*/
-int* kmeans(matrix* inpt, int K);
+matrix* kmeans(matrix* inpt, int K);
 
 #endif
