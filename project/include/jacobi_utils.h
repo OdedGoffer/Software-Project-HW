@@ -3,6 +3,12 @@
 
 #include "../include/matrix_utils.h"
 
+/*
+ *
+ * JACOBI UTILS
+ *
+ */
+
 /*Type 'ituple' is an integer tuple*/
 typedef struct ituple {
 	int i;

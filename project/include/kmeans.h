@@ -3,6 +3,12 @@
 
 #include "../include/matrix_utils.h"
 
+/*
+ *
+ * KMEANS
+ *
+ */
+
 /*Classic K-means algorithm.*/
 matrix* kmeans(matrix* inpt, int K);
 

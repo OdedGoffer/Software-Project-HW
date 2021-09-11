@@ -3,6 +3,12 @@
 
 #include "matrix_utils.h"
 
+/*
+ *
+ * LNORM
+ *
+ */
+
 matrix* LNORM(matrix* W, matrix* D);
 
 #endif

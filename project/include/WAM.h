@@ -3,6 +3,12 @@
 
 #include "../include/matrix_utils.h"
 
+/*
+ *
+ * WAM
+ *
+ */
+
 matrix* WAM(matrix* X);
 
 #endif

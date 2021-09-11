@@ -3,6 +3,12 @@
 
 #include "matrix_utils.h"
 
+/*
+ *
+ * PARSE FILE
+ *
+ */
+
 /*Parse csv file at path 'filename' to matrix.*/
 matrix* read_csv(char* filename);
 

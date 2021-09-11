@@ -4,6 +4,12 @@
 #include "matrix_utils.h"
 #include "jacobi.h"
 
+/*
+ *
+ * EIGENGAP
+ *
+ */
+
 /* Type 'vectors_k_pair' holds a matrix of normalized vectors and the
  * updates value of k (using Eigengap algorithm if required).*/
 typedef struct vectors_k_pair {

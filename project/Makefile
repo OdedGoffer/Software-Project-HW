@@ -8,8 +8,9 @@ OBJDIR = build
 PYDIR = python
 MAINDIR = main
 RELEASEDIR = release
-SRCNAMES := logger vector_utils matrix_utils parse_file WAM DDG LNORM jacobi_utils jacobi eigengap kmeans calculate_centroids
+SRCNAMES := logger vector_utils matrix_utils parse_file WAM DDG LNORM jacobi_utils jacobi eigengap kmeans
 SRCS := $(SRCNAMES:%=$(SRCDIR)/%.c)
+HEADERS := $(SRCNAMES:%=$(INCLDIR)/%.h)
 OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 ARGS ?= ddg 3 filelele
 
@@ -96,9 +97,13 @@ create_release_files: $(SRCS) $(MAINDIR)/$(TARGET).c
 	@mkdir -p $(RELEASEDIR)
 	@touch $(RELEASEDIR)/temp1
 	@touch $(RELEASEDIR)/temp2
+	@touch $(RELEASEDIR)/temp3
+	@touch $(RELEASEDIR)/$(TARGET).h
 	@touch $(RELEASEDIR)/$(TARGET).c
 	@cat $^ > $(RELEASEDIR)/temp1
+	@cat $(HEADERS) > $(RELEASEDIR)/temp3
 	@sed "/^#/d" $(RELEASEDIR)/temp1 > $(RELEASEDIR)/temp2
+	@sed "/^#/d" $(RELEASEDIR)/temp3 > $(RELEASEDIR)/$(TARGET).h
 	@cat $(INCLDIR)/project_includes.h $(RELEASEDIR)/temp2 > $(RELEASEDIR)/$(TARGET).c
 	-@rm $(RELEASEDIR)/temp*
 	@cp $(PYDIR)/setup_release.py $(RELEASEDIR)

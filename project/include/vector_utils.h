@@ -1,6 +1,12 @@
 #ifndef PROJECT_VECTOR_UTILS_H
 #define PROJECT_VECTOR_UTILS_H
 
+/*
+ *
+ * VECTOR UTILS
+ *
+ */
+
 typedef struct vector {
 	double* values;
 	int size;

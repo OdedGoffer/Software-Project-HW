@@ -3,6 +3,12 @@
 
 #include "vector_utils.h"
 
+/*
+ *
+ * MATRIX UTILS
+ *
+ */
+
 typedef struct matrix {
 	vector** rows;
 	/*Number of columns.*/

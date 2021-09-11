@@ -3,6 +3,12 @@
 
 #include "matrix_utils.h"
 
+/*
+ *
+ * DDG
+ *
+ */
+
 matrix* DDG(matrix* W);
 
 #endif

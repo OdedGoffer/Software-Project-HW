@@ -3,6 +3,12 @@
 
 #include "matrix_utils.h"
 
+/*
+ *
+ * JACOBI
+ *
+ */
+
 /* Type 'vectors_values_pair' holds a matrix of eigenvectors and an
  * array of corresponding eigenvalues.*/
 typedef struct vectors_values_pair {
