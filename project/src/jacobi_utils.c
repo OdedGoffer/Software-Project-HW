@@ -9,6 +9,7 @@
  *
  */
 
+/* Returns index (i,j) of largest off-center element of 'mat'.*/
 ituple get_largest_off_i_j(matrix* mat) {
 	double val = 0.0;
 	double curr;
@@ -80,6 +81,7 @@ double get_s(double t, double c) {
 	return c * t;
 }
 
+/* Calculate matrix 'P' and update A = A' as defined in jacobi algorithm.*/
 matrix* get_P_and_update_A(matrix* A) {
 	double theta, c, t, s, val;
 	ituple ij;

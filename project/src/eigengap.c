@@ -7,6 +7,8 @@
  *
  */
 
+/* Stable selection-sort on array 'a'. In addition, we reorder the rows of matrix
+ * 'mat' using the same permutation as selection-sort on 'a'. */
 void stableSelectionSort(matrix* mat, double* a, int n) {
 	int i, j, min; 
 	double key;
@@ -35,6 +37,8 @@ void stableSelectionSort(matrix* mat, double* a, int n) {
     }
 }
 
+/* Calculate K values from eigenvalues using eigengap-heuristic.
+ * Retrun K if K != 0.*/
 int get_k(double* eigenvalues, int k, int n) {
 	double delta;
 	double max_diff = 0;
@@ -55,6 +59,7 @@ int get_k(double* eigenvalues, int k, int n) {
 	return index;
 }
 
+/*Transpose and normalize rows of matrix u.*/
 matrix* get_T(matrix* U) {
 	matrix *T, *M;
 	int i, j, n, m;

@@ -9,6 +9,7 @@
  *
  */
 
+/* Read csv file at path 'filename' into a matrix object and return.*/
 matrix* read_csv(char* filename) {
 	FILE* fp;
 	int result, i = 0, n = 0;

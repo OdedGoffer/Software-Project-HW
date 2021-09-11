@@ -11,6 +11,7 @@
  *
  */
 
+/* Creates a new vector object.*/
 vector* vector_init(double* values, int size) {
 	vector* v;
 
@@ -21,6 +22,7 @@ vector* vector_init(double* values, int size) {
 	return v;
 }
 
+/* Creates a new vector object with zero values.*/
 vector* vector_init_zero(int size) {
 	vector* v;
 
@@ -36,6 +38,7 @@ void vector_free(vector* v) {
 	free(v);
 }
 
+/* Adds v2 to v1 in place.*/
 void vector_add(vector* v1, vector* v2) {
 	int i;
 	assert(v1 != NULL && v2 != NULL);
@@ -46,6 +49,7 @@ void vector_add(vector* v1, vector* v2) {
 	}
 }
 
+/* Divide all values of v by c in place.*/
 void vector_divide(vector* v, double c) {
 	int i;
 	assert (v);
@@ -56,6 +60,7 @@ void vector_divide(vector* v, double c) {
 	}
 }
 
+/* Make v equal to zero vector in place.*/
 void vector_zero(vector* v) {
 	int i;
 	assert(v);
@@ -65,6 +70,7 @@ void vector_zero(vector* v) {
 	}
 }
 
+/* Creates a deep copy of v.*/
 vector* vector_copy(vector* v) {
 	double* vals_cpy;
 	assert(v != NULL);
@@ -76,6 +82,7 @@ vector* vector_copy(vector* v) {
 	return vector_init(vals_cpy, v->size);
 }
 
+/* Euclidean distance between vectors*/
 double vector_dist(vector* v1, vector* v2) {
 	double sum = 0;
 	double diff;
@@ -103,6 +110,7 @@ void vector_print(vector* v) {
 	printf("%.4f\n", v->values[n-1]);
 }
 
+/* Returns the sum of all values in vector object.*/
 double vector_values_sum(vector* v) {
 	double sum = 0;
 	int i;

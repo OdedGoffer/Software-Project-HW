@@ -71,6 +71,7 @@ void matrix_add_row(matrix* mat, vector* row) {
 	mat->m++;
 }
 
+/* Returns a deep copy of matrix 'mat'.*/
 matrix* matrix_copy(matrix* mat) {
 	matrix* new_mat;
 	int n;
@@ -115,6 +116,7 @@ void matrix_diagonal_pow(matrix* mat, double a) {
 	}
 }
 
+/*Returns a pointer to the Identity matrix of size n*/
 matrix* matrix_eye(int n) {
 	matrix* mat;
 	int i;
@@ -130,6 +132,7 @@ matrix* matrix_eye(int n) {
 	return mat;
 }
 
+/*Returns A - B. Returns a new matrix.*/
 matrix* matrix_subtract(matrix* A, matrix* B) {
 	matrix* ret;
 	int i, j, n;
@@ -145,6 +148,7 @@ matrix* matrix_subtract(matrix* A, matrix* B) {
 	return ret;
 }
 
+/*Returns A * B. Returns a new matrix.*/
 matrix* matrix_mult(matrix* A, matrix* B) {
 	int i, j, k, n;
 	double sum = 0;
@@ -164,6 +168,8 @@ matrix* matrix_mult(matrix* A, matrix* B) {
 
 	return ret;
 }
+
+/* Calculates off(mat)^2 as defined in Jacobi algorithm.*/
 double matrix_off(matrix* mat) {
 	int n, m, i, j;
 	double sum = 0;
@@ -219,6 +225,7 @@ matrix* matrix_transpose(matrix* mat) {
 	return mat_transpose;
 }
 
+/* Swap rows 'i' and 'j' of matrix 'mat'.*/
 void matrix_swap(matrix* mat, int i, int j) {
 	vector* tmp;
 
@@ -227,6 +234,7 @@ void matrix_swap(matrix* mat, int i, int j) {
 	mat->rows[j] = tmp; 
 }
 
+/* Returns a slice of matrix 'mat' containing only first 'k' rows.*/
 void matrix_slice(matrix* mat, int k) {
 	int i, m;
 	vector** new_rows;

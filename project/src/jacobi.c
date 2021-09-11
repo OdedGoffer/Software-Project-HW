@@ -24,6 +24,7 @@ int check_convergence(matrix* A, matrix* A_tag) {
 	return 0;
 }
 
+/* Returns (P_mult * P) */
 matrix* multiply_P(matrix* P, matrix* P_mult) {
 	matrix *P_mult_old;
 	assert(P);
@@ -38,6 +39,7 @@ matrix* multiply_P(matrix* P, matrix* P_mult) {
 	return matrix_copy(P);
 }
 
+/* Returns diagonal elements of 'A' as an array.*/
 double* diagonal_to_array(matrix* A) {
 	double* res;
 	int n, m, i;
