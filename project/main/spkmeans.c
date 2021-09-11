@@ -87,6 +87,7 @@ void do_spkmeans(matrix* input, int K) {
 	matrix_free(W);
 	matrix_free(D);
 	matrix_free(T);
+	free(pair.eigenvalues);
 
 	matrix_print(centroids);
 	matrix_free(centroids);
