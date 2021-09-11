@@ -42,7 +42,7 @@ void matrix_free(matrix* mat) {
 	if (mat == NULL) return;
 
 	for (i=0; i<mat->m; i++) {
-		free(mat->rows[i]);
+		vector_free(mat->rows[i]);
 	}
 	free(mat->rows);
 	free(mat);
@@ -63,6 +63,7 @@ void matrix_add_row(matrix* mat, vector* row) {
 		new_rows = (vector**) calloc((m * 2), sizeof(vector*));
 		assert(new_rows != NULL);
 		memcpy(new_rows, mat->rows, (mat->m) * sizeof(vector*));
+		free(mat->rows);
 		mat->rows = new_rows;
 		mat->row_cap = 2 * m;
 	}
@@ -81,10 +82,10 @@ matrix* matrix_copy(matrix* mat) {
 
 	n = mat->n;
 	m = mat->m;
-	new_mat = matrix_init(n, m);
+	new_mat = matrix_init(n, 0);
 
 	for (i=0; i<m; i++) {
-		new_mat->rows[i] = vector_copy(mat->rows[i]);
+		matrix_add_row(new_mat, vector_copy(mat->rows[i]));
 	}
 
 	return new_mat;

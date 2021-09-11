@@ -36,6 +36,7 @@ matrix* read_csv(char* filename) {
 		if (i == n) {
 			v = vector_init(values, n);
 			v_new = vector_copy(v);
+			free(v);
 			matrix_add_row(res, v_new);
 			i = 0;
 		}
@@ -46,7 +47,6 @@ matrix* read_csv(char* filename) {
 
 	result = fclose(fp);
 	if (result == EOF) error_occured();
-	if (v) free(v);
 
 	return res;
 }

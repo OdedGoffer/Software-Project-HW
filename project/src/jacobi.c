@@ -42,12 +42,11 @@ matrix* multiply_P(matrix* P, matrix* P_mult) {
 /* Returns diagonal elements of 'A' as an array.*/
 double* diagonal_to_array(matrix* A) {
 	double* res;
-	int n, m, i;
+	int n, i;
 	assert(A);
 
 	n = A->n;
-	m = A->m;
-	assert(n == m);
+	assert(n == A->m);
 
 	res = (double*)malloc(n*sizeof(double));
 	assert(res);
